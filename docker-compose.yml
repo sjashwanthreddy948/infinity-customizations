@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: partnerledger_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: partnerledger_secure_password_2026
+      POSTGRES_DB: partnerledger
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./server/src/db/schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: partnerledger_app
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://postgres:partnerledger_secure_password_2026@postgres:5432/partnerledger
+      JWT_SECRET: partnerledger-super-secure-production-secret-2026
+    depends_on:
+      - postgres
+    volumes:
+      - app_uploads:/app/server/uploads
+
+volumes:
+  pgdata:
+  app_uploads:
