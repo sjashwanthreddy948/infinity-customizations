@@ -132,9 +132,10 @@ async function start() {
       await seedDemoData();
     }
 
-    server.listen(PORT, () => {
-      console.log(`🚀 Infinity Customizations server listening on http://localhost:${PORT}`);
-      console.log(`⚡ WebSocket live sync available at ws://localhost:${PORT}/ws`);
+    const portNumber = Number(PORT);
+    server.listen(portNumber, '0.0.0.0', () => {
+      console.log(`🚀 Infinity Customizations server listening on http://0.0.0.0:${portNumber}`);
+      console.log(`⚡ WebSocket live sync available at ws://0.0.0.0:${portNumber}/ws`);
     });
   } catch (error) {
     console.error('Fatal server startup error:', error);
