@@ -266,8 +266,8 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Itemized Product Profit Breakdown */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+      <div className="bg-white dark:bg-[#082A5E] rounded-2xl border border-slate-200 dark:border-blue-900/50 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-blue-900/40 flex items-center justify-between">
           <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] dark:text-white">
             Itemized Profitability by Product
           </h3>
@@ -275,7 +275,7 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         {/* Mobile Product Cards (Phones < md) */}
-        <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-blue-900/30">
           {itemized.length === 0 ? (
             <div className="p-8 text-center text-xs text-slate-400">No product sales data in this period.</div>
           ) : (
@@ -286,7 +286,7 @@ export const ReportsPage: React.FC = () => {
                     {item.is_tshirt ? (
                       <span className="px-1.5 py-0.5 rounded bg-blue-100 text-[#0B3A82] text-[9px] font-bold uppercase">T-Shirt</span>
                     ) : (
-                      <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[9px] font-bold uppercase">Merch</span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-blue-900/40 text-slate-700 dark:text-slate-300 text-[9px] font-bold uppercase">Merch</span>
                     )}
                     <span className="font-bold text-xs text-slate-900 dark:text-white">{item.product_name}</span>
                   </div>
@@ -296,15 +296,15 @@ export const ReportsPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-4 gap-1.5 text-center pt-1">
-                  <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-800">
+                  <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40">
                     <p className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Units</p>
                     <p className="text-xs font-bold text-slate-800 dark:text-white">{item.items_sold}</p>
                   </div>
-                  <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-800">
+                  <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40">
                     <p className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Revenue</p>
                     <p className="text-xs font-bold text-slate-900 dark:text-white">₹{item.revenue.toLocaleString('en-IN')}</p>
                   </div>
-                  <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-800">
+                  <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40">
                     <p className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Cost</p>
                     <p className="text-xs font-bold text-rose-600 dark:text-rose-400">₹{item.total_cost.toLocaleString('en-IN')}</p>
                   </div>
@@ -321,7 +321,7 @@ export const ReportsPage: React.FC = () => {
         {/* Desktop Table (Hidden on phones < md) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-100 dark:bg-navy-850 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-slate-800">
+            <thead className="bg-slate-100 dark:bg-blue-950/80 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-blue-900/40">
               <tr>
                 <th className="py-3 px-4">Product Name</th>
                 <th className="py-3 px-4 text-center">Orders</th>
@@ -332,14 +332,14 @@ export const ReportsPage: React.FC = () => {
                 <th className="py-3 px-4 text-right">Margin %</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-blue-900/30">
               {itemized.map((item: any) => (
-                <tr key={item.product_name} className="hover:bg-blue-50/40 dark:hover:bg-navy-850/50 transition-colors">
+                <tr key={item.product_name} className="hover:bg-blue-50/40 dark:hover:bg-blue-900/20 transition-colors">
                   <td className="py-3 px-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     {item.is_tshirt ? (
                       <span className="px-1.5 py-0.5 rounded bg-blue-100 text-[#0B3A82] text-[9px] font-bold uppercase">T-Shirt</span>
                     ) : (
-                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-700 dark:text-slate-300 text-[9px] font-bold uppercase">Merch</span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-blue-900/40 text-slate-700 dark:text-slate-300 text-[9px] font-bold uppercase">Merch</span>
                     )}
                     <span>{item.product_name}</span>
                   </td>

@@ -137,33 +137,33 @@ export const ExpensesPage: React.FC = () => {
           expenses.map((exp: any) => (
             <div
               key={exp.id}
-              className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3"
+              className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-sm space-y-3"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="font-bold text-xs text-[#0B3A82] font-mono">{exp.expense_number}</span>
-                  <p className="text-[11px] text-slate-600 font-medium">{exp.date}</p>
+                  <span className="font-bold text-xs text-[#0B3A82] dark:text-[#D4AF37] font-mono">{exp.expense_number}</span>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">{exp.date}</p>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200">
+                <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-blue-950 text-slate-800 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-blue-800">
                   {exp.category}
                 </span>
               </div>
 
               <div>
-                <p className="text-xs font-bold text-slate-900">{exp.description}</p>
-                {exp.notes && <p className="text-[11px] text-slate-600 italic mt-0.5">{exp.notes}</p>}
+                <p className="text-xs font-bold text-slate-900 dark:text-white">{exp.description}</p>
+                {exp.notes && <p className="text-[11px] text-slate-600 dark:text-slate-400 italic mt-0.5">{exp.notes}</p>}
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-blue-900/40">
                 <div className="flex items-center gap-1.5">
                   <span className="w-5 h-5 rounded-full bg-[#0B3A82] text-[#D4AF37] flex items-center justify-center text-[10px] font-bold">
                     {exp.created_by_name?.charAt(0) || 'P'}
                   </span>
-                  <span className="text-xs text-slate-700 font-medium">{exp.created_by_name}</span>
-                  <span className="text-[10px] text-slate-500 font-mono">({exp.payment_method})</span>
+                  <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">{exp.created_by_name}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">({exp.payment_method})</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-black text-rose-600 font-mono">₹{exp.amount.toLocaleString('en-IN')}</span>
+                  <span className="text-sm font-black text-rose-600 dark:text-rose-400 font-mono">₹{exp.amount.toLocaleString('en-IN')}</span>
                 </div>
               </div>
             </div>
@@ -172,7 +172,7 @@ export const ExpensesPage: React.FC = () => {
       </div>
 
       {/* Desktop Expenses Table (Hidden on mobile < md) */}
-      <div className="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="hidden md:block bg-white dark:bg-[#082A5E] rounded-2xl border border-slate-200 dark:border-blue-900/50 shadow-sm overflow-hidden">
         {loading ? (
           <TableSkeleton rows={5} columns={6} />
         ) : expenses.length === 0 ? (
@@ -186,7 +186,7 @@ export const ExpensesPage: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-100 text-slate-700 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200">
+              <thead className="bg-slate-100 dark:bg-blue-950/80 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-blue-900/40">
                 <tr>
                   <th className="py-3.5 px-4">Expense # & Date</th>
                   <th className="py-3.5 px-4">Category</th>
@@ -196,30 +196,30 @@ export const ExpensesPage: React.FC = () => {
                   <th className="py-3.5 px-4">Recorded By</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-blue-900/30">
                 {expenses.map((exp: any) => (
-                  <tr key={exp.id} className="hover:bg-blue-50/40 transition-colors">
+                  <tr key={exp.id} className="hover:bg-blue-50/40 dark:hover:bg-blue-900/20 transition-colors">
                     <td className="py-3 px-4">
-                      <p className="font-bold text-[#0B3A82]">{exp.expense_number}</p>
-                      <p className="text-[11px] text-slate-600 font-medium">{exp.date}</p>
+                      <p className="font-bold text-[#0B3A82] dark:text-white">{exp.expense_number}</p>
+                      <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">{exp.date}</p>
                     </td>
 
                     <td className="py-3 px-4">
-                      <span className="px-2 py-0.5 rounded-full bg-slate-100 font-semibold text-slate-800">
+                      <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-blue-950 font-semibold text-slate-800 dark:text-slate-200">
                         {exp.category}
                       </span>
                     </td>
 
-                    <td className="py-3 px-4 font-semibold text-[#172033]">
+                    <td className="py-3 px-4 font-semibold text-[#172033] dark:text-white">
                       {exp.description}
-                      {exp.notes && <p className="text-[10px] text-slate-600 font-normal italic">{exp.notes}</p>}
+                      {exp.notes && <p className="text-[10px] text-slate-600 dark:text-slate-400 font-normal italic">{exp.notes}</p>}
                     </td>
 
-                    <td className="py-3 px-4 text-slate-700 font-mono font-medium">
+                    <td className="py-3 px-4 text-slate-700 dark:text-slate-300 font-mono font-medium">
                       {exp.payment_method}
                     </td>
 
-                    <td className="py-3 px-4 text-right font-black text-rose-600 text-sm">
+                    <td className="py-3 px-4 text-right font-black text-rose-600 dark:text-rose-400 text-sm">
                       ₹{exp.amount.toLocaleString('en-IN')}
                     </td>
 
@@ -228,7 +228,7 @@ export const ExpensesPage: React.FC = () => {
                         <span className="w-5 h-5 rounded-full bg-[#0B3A82] text-[#D4AF37] flex items-center justify-center text-[10px] font-bold">
                           {exp.created_by_name?.charAt(0) || 'P'}
                         </span>
-                        <span className="text-slate-700 font-medium">{exp.created_by_name}</span>
+                        <span className="text-slate-700 dark:text-slate-300 font-medium">{exp.created_by_name}</span>
                       </div>
                     </td>
                   </tr>

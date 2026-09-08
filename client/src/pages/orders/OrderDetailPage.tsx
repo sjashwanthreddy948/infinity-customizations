@@ -154,7 +154,7 @@ export const OrderDetailPage: React.FC = () => {
   const partnerShare = order?.partner_share_allocation || (order ? calculateOrderPartnerShare(order) : null);
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-36 sm:pb-12">
+    <div className="space-y-6 max-w-5xl mx-auto pb-16 sm:pb-8">
       {/* Top Header & Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -810,36 +810,6 @@ export const OrderDetailPage: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Mobile Sticky Quick Action Bar */}
-      <div className="sm:hidden fixed bottom-16 left-0 right-0 z-30 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 flex items-center gap-2 shadow-lg">
-        {Number(order.payment_pending) > 0 ? (
-          <button
-            onClick={() => setIsPaymentOpen(true)}
-            className="flex-1 py-2.5 px-3 text-xs font-bold rounded-xl bg-emerald-600 text-white shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
-          >
-            <CreditCard className="w-4 h-4" />
-            <span>Mark Payment (₹{fmt(order.payment_pending)})</span>
-          </button>
-        ) : null}
-
-        {order.invoice_id ? (
-          <button
-            onClick={() => navigate(`/invoices/${order.invoice_id}`)}
-            className="py-2.5 px-3 text-xs font-bold rounded-xl bg-[#0B3A82] text-white shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
-          >
-            <FileText className="w-4 h-4 text-[#D4AF37]" />
-            <span>Invoice</span>
-          </button>
-        ) : (
-          <button
-            onClick={() => navigate(`/invoices`)}
-            className="py-2.5 px-3 text-xs font-bold rounded-xl bg-[#0B3A82] text-white shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
-          >
-            <FileText className="w-4 h-4" />
-            <span>New Invoice</span>
-          </button>
-        )}
-      </div>
     </div>
   );
 };

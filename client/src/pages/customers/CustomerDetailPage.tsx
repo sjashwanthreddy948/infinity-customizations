@@ -129,7 +129,7 @@ export const CustomerDetailPage: React.FC = () => {
         </div>
 
         {/* Mobile Order History Cards (< md) */}
-        <div className="md:hidden divide-y divide-slate-100">
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-blue-900/30">
           {orders.length === 0 ? (
             <div className="p-8 text-center text-xs text-slate-400">No orders recorded for this customer yet.</div>
           ) : (
@@ -137,26 +137,26 @@ export const CustomerDetailPage: React.FC = () => {
               <div
                 key={o.id}
                 onClick={() => navigate(`/orders/${o.id}`)}
-                className="p-4 space-y-2.5 active:bg-slate-50 transition-colors cursor-pointer"
+                className="p-4 space-y-2.5 active:bg-slate-50 dark:active:bg-[#051E44] transition-colors cursor-pointer"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-black text-xs text-[#0B3A82]">#{o.order_number}</span>
+                  <span className="font-mono font-black text-xs text-[#0B3A82] dark:text-[#D4AF37]">#{o.order_number}</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                     o.payment_status === 'PAID'
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                      : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
                   }`}>
                     {o.payment_status}
                   </span>
                 </div>
                 <div className="flex items-start justify-between gap-2 text-xs">
                   <div>
-                    <p className="font-bold text-slate-800">{o.product_name}</p>
-                    <p className="text-[11px] text-slate-400">{o.order_date}</p>
+                    <p className="font-bold text-slate-800 dark:text-white">{o.product_name}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{o.order_date}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-black text-[#0B3A82]">₹{o.selling_price.toLocaleString('en-IN')}</p>
-                    <p className="text-[10px] font-bold text-[#D4AF37]">+₹{o.profit.toLocaleString('en-IN')} profit</p>
+                    <p className="font-black text-[#0B3A82] dark:text-white">₹{o.selling_price.toLocaleString('en-IN')}</p>
+                    <p className="text-[10px] font-bold text-[#9A7B1C] dark:text-[#D4AF37]">+₹{o.profit.toLocaleString('en-IN')} profit</p>
                   </div>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export const CustomerDetailPage: React.FC = () => {
         </div>
 
         {/* Mobile Invoice History Cards (< md) */}
-        <div className="md:hidden divide-y divide-slate-100">
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-blue-900/30">
           {invoices.length === 0 ? (
             <div className="p-8 text-center text-xs text-slate-400">No invoices generated for this customer yet.</div>
           ) : (
@@ -236,24 +236,24 @@ export const CustomerDetailPage: React.FC = () => {
               <div
                 key={inv.id}
                 onClick={() => navigate(`/invoices/${inv.id}`)}
-                className="p-4 space-y-2.5 active:bg-slate-50 transition-colors cursor-pointer"
+                className="p-4 space-y-2.5 active:bg-slate-50 dark:active:bg-[#051E44] transition-colors cursor-pointer"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-black text-xs text-[#0B3A82]">{inv.invoice_number}</span>
+                  <span className="font-mono font-black text-xs text-[#0B3A82] dark:text-[#D4AF37]">{inv.invoice_number}</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    inv.status === 'PAID' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                    inv.status === 'PAID' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400'
                   }`}>
                     {inv.status}
                   </span>
                 </div>
                 <div className="flex items-start justify-between gap-2 text-xs">
                   <div>
-                    <p className="text-[11px] text-slate-400">Issued: {inv.issue_date}</p>
-                    <p className="text-xs font-bold text-slate-800 mt-0.5">Total: ₹{inv.grand_total.toLocaleString('en-IN')}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Issued: {inv.issue_date}</p>
+                    <p className="text-xs font-bold text-slate-800 dark:text-white mt-0.5">Total: ₹{inv.grand_total.toLocaleString('en-IN')}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[11px] text-slate-400">Balance Due</p>
-                    <p className={`text-xs font-bold ${inv.balance_due > 0 ? 'text-amber-600 font-black' : 'text-slate-500'}`}>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Balance Due</p>
+                    <p className={`text-xs font-bold ${inv.balance_due > 0 ? 'text-amber-600 dark:text-amber-400 font-black' : 'text-slate-500 dark:text-slate-400'}`}>
                       ₹{inv.balance_due.toLocaleString('en-IN')}
                     </p>
                   </div>

@@ -26,11 +26,16 @@
   }
 
   body {
-    background-color: #F7F9FC;
+    background-color: #F8FAFC;
     color: #172033;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     overflow-x: hidden;
+  }
+
+  .dark body {
+    background-color: #051E44;
+    color: #F8FAFC;
   }
 }
 

@@ -232,10 +232,10 @@ export const TShirtsPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             {salesByNeckType.length > 0 ? (
               salesByNeckType.map((item: any) => (
-                <div key={item.neck_type} className="p-3.5 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200 space-y-1.5">
+                <div key={item.neck_type} className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                      item.neck_type === 'Collar' ? 'bg-[#0B3A82] text-white' : 'bg-blue-100 text-[#0B3A82]'
+                      item.neck_type === 'Collar' ? 'bg-[#0B3A82] text-white' : 'bg-blue-100 dark:bg-blue-950 text-[#0B3A82] dark:text-[#D4AF37]'
                     }`}>
                       {item.neck_type}
                     </span>
@@ -270,9 +270,9 @@ export const TShirtsPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             {salesByFabric.length > 0 ? (
               salesByFabric.map((item: any) => (
-                <div key={item.fabric} className="p-3 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200 space-y-1">
+                <div key={item.fabric} className="p-3 rounded-xl bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#D4AF37]/20 text-[#8C7118]">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#D4AF37]/20 text-[#8C7118] dark:text-[#F5E7B2]">
                       {item.fabric}
                     </span>
                     <span className="text-xs font-bold text-slate-900 dark:text-white">{item.count} pcs</span>
@@ -335,54 +335,54 @@ export const TShirtsPage: React.FC = () => {
       </div>
 
       {/* Top-Performing T-Shirt Orders */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] flex items-center gap-2">
+      <div className="bg-white dark:bg-[#082A5E] rounded-2xl border border-slate-200 dark:border-blue-900/50 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-100 dark:border-blue-900/40 flex items-center justify-between">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] dark:text-[#D4AF37] flex items-center gap-2">
             <Award className="w-4 h-4 text-[#D4AF37]" />
             <span>Top Performing T-Shirt Orders</span>
           </h3>
-          <span className="text-xs text-slate-600 font-semibold">Highest margin deals</span>
+          <span className="text-xs text-slate-600 dark:text-slate-400 font-semibold">Highest margin deals</span>
         </div>
 
         {/* Mobile Top Orders List (Phones < md) */}
-        <div className="md:hidden divide-y divide-slate-100">
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-blue-900/30">
           {topOrders.map((o: any) => (
             <div
               key={o.id}
               onClick={() => navigate(`/orders/${o.id}`)}
-              className="p-4 space-y-2.5 active:bg-slate-50 transition-colors cursor-pointer"
+              className="p-4 space-y-2.5 active:bg-slate-50 dark:active:bg-[#051E44] transition-colors cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-xs text-[#0B3A82] font-mono">{o.order_number}</span>
-                  <p className="font-bold text-sm text-slate-900 mt-0.5">{o.customer_name}</p>
+                  <span className="font-bold text-xs text-[#0B3A82] dark:text-[#D4AF37] font-mono">{o.order_number}</span>
+                  <p className="font-bold text-sm text-slate-900 dark:text-white mt-0.5">{o.customer_name}</p>
                 </div>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800">
                   {o.profit_margin}% margin
                 </span>
               </div>
 
               <div className="flex items-center gap-2 text-xs">
-                <span className="font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0B3A82] border border-blue-100">
+                <span className="font-bold px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950 text-[#0B3A82] dark:text-[#D4AF37] border border-blue-100 dark:border-blue-800">
                   {o.tshirt_size || 'Custom'}
                 </span>
-                <span className="text-slate-700 font-semibold">{o.tshirt_color}</span>
-                <span className="text-slate-600 font-medium">· {o.tshirt_print_type}</span>
-                <span className="text-slate-700 font-bold ml-auto">Qty: {o.quantity}</span>
+                <span className="text-slate-700 dark:text-slate-200 font-semibold">{o.tshirt_color}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">· {o.tshirt_print_type}</span>
+                <span className="text-slate-700 dark:text-slate-200 font-bold ml-auto">Qty: {o.quantity}</span>
               </div>
 
-              <div className="grid grid-cols-3 gap-1.5 text-center pt-1 border-t border-slate-100">
-                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200">
-                  <p className="text-[8px] uppercase font-bold text-slate-600">Total Price</p>
-                  <p className="text-xs font-bold text-slate-900">₹{o.selling_price.toLocaleString('en-IN')}</p>
+              <div className="grid grid-cols-3 gap-1.5 text-center pt-1 border-t border-slate-100 dark:border-blue-900/40">
+                <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/50">
+                  <p className="text-[8px] uppercase font-bold text-slate-600 dark:text-slate-400">Total Price</p>
+                  <p className="text-xs font-bold text-slate-900 dark:text-white">₹{o.selling_price.toLocaleString('en-IN')}</p>
                 </div>
-                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200">
-                  <p className="text-[8px] uppercase font-bold text-slate-600">Cost</p>
-                  <p className="text-xs font-bold text-rose-600">₹{o.total_cost.toLocaleString('en-IN')}</p>
+                <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/50">
+                  <p className="text-[8px] uppercase font-bold text-slate-600 dark:text-slate-400">Cost</p>
+                  <p className="text-xs font-bold text-rose-600 dark:text-rose-400">₹{o.total_cost.toLocaleString('en-IN')}</p>
                 </div>
-                <div className="p-1.5 rounded-lg bg-amber-50/60 border border-[#D4AF37]/40">
-                  <p className="text-[8px] uppercase font-bold text-amber-900">Profit</p>
-                  <p className="text-xs font-black text-[#9A7B1C]">₹{o.profit.toLocaleString('en-IN')}</p>
+                <div className="p-1.5 rounded-lg bg-amber-50/60 dark:bg-amber-950/30 border border-[#D4AF37]/40">
+                  <p className="text-[8px] uppercase font-bold text-amber-900 dark:text-[#F5E7B2]">Profit</p>
+                  <p className="text-xs font-black text-[#9A7B1C] dark:text-[#D4AF37]">₹{o.profit.toLocaleString('en-IN')}</p>
                 </div>
               </div>
             </div>
@@ -392,7 +392,7 @@ export const TShirtsPage: React.FC = () => {
         {/* Desktop Table (Hidden on phones < md) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-100 text-slate-700 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200">
+            <thead className="bg-slate-100 dark:bg-blue-950/80 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-blue-900/40">
               <tr>
                 <th className="py-3 px-4">Order #</th>
                 <th className="py-3 px-4">Customer</th>
@@ -405,42 +405,42 @@ export const TShirtsPage: React.FC = () => {
                 <th className="py-3 px-4">Partner</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-blue-900/30">
               {topOrders.map((o: any) => (
                 <tr
                   key={o.id}
                   onClick={() => navigate(`/orders/${o.id}`)}
-                  className="hover:bg-blue-50/40 cursor-pointer transition-colors"
+                  className="hover:bg-blue-50/40 dark:hover:bg-blue-900/20 cursor-pointer transition-colors"
                 >
-                  <td className="py-3 px-4 font-bold text-[#0B3A82]">
+                  <td className="py-3 px-4 font-bold text-[#0B3A82] dark:text-white">
                     {o.order_number}
                   </td>
-                  <td className="py-3 px-4 font-semibold text-slate-900">
+                  <td className="py-3 px-4 font-semibold text-slate-900 dark:text-slate-100">
                     {o.customer_name}
                   </td>
                   <td className="py-3 px-4">
-                    <span className="font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#0B3A82]">
+                    <span className="font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-[#0B3A82] dark:text-[#D4AF37]">
                       {o.tshirt_size}
                     </span>
-                    <span className="ml-2 text-slate-700 font-medium">{o.tshirt_color}</span>
-                    <span className="text-slate-600 font-medium ml-1">x{o.quantity}</span>
+                    <span className="ml-2 text-slate-700 dark:text-slate-300 font-medium">{o.tshirt_color}</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-medium ml-1">x{o.quantity}</span>
                   </td>
-                  <td className="py-3 px-4 text-slate-700 font-medium">
+                  <td className="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">
                     {o.tshirt_print_type}
                   </td>
-                  <td className="py-3 px-4 text-right font-bold text-slate-900">
+                  <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">
                     ₹{o.selling_price.toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3 px-4 text-right text-rose-600 font-bold">
+                  <td className="py-3 px-4 text-right text-rose-600 dark:text-rose-400 font-bold">
                     ₹{o.total_cost.toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3 px-4 text-right font-black text-[#9A7B1C]">
+                  <td className="py-3 px-4 text-right font-black text-[#9A7B1C] dark:text-[#D4AF37]">
                     ₹{o.profit.toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3 px-4 text-right font-bold text-emerald-600">
+                  <td className="py-3 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
                     {o.profit_margin}%
                   </td>
-                  <td className="py-3 px-4 text-slate-700 font-medium">
+                  <td className="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">
                     {o.created_by_name}
                   </td>
                 </tr>

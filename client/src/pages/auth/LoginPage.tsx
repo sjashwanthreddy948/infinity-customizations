@@ -44,7 +44,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#051E44] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="flex items-center justify-center mb-4">
@@ -53,14 +53,14 @@ export const LoginPage: React.FC = () => {
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#0B3A82] dark:text-white uppercase">
           INFINITY <span className="text-[#D4AF37]">CUSTOMIZATIONS</span>
         </h1>
-        <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-200 font-semibold">
+        <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">
           Business Management & Smart Invoice System
         </p>
       </div>
 
       {/* Main Login Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 sm:px-10 rounded-3xl shadow-xl border border-slate-200 space-y-6">
+        <div className="bg-white dark:bg-[#082A5E] py-8 px-6 sm:px-10 rounded-3xl shadow-xl border border-slate-200 dark:border-blue-900/60 space-y-6">
           {/* Quick Demo Partner Login Buttons */}
           <div className="space-y-2.5">
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 text-center">
@@ -71,12 +71,12 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 onClick={() => handleQuickLogin('jashwanth@infinitycustomizations.com')}
                 disabled={loading}
-                className="p-3 rounded-2xl border-2 border-[#0B3A82]/30 hover:border-[#0B3A82] bg-blue-50/40 hover:bg-blue-50 text-left transition-all group"
+                className="p-3 rounded-2xl border-2 border-[#0B3A82]/30 hover:border-[#0B3A82] bg-blue-50/40 dark:bg-blue-950/40 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-left transition-all group"
               >
-                <span className="block text-[10px] uppercase font-black text-[#0B3A82]">
+                <span className="block text-[10px] uppercase font-black text-[#0B3A82] dark:text-[#D4AF37]">
                   Partner 1 (Owner)
                 </span>
-                <span className="block text-xs font-black text-slate-900 mt-0.5">
+                <span className="block text-xs font-black text-slate-900 dark:text-white mt-0.5">
                   Jashwanth Reddy
                 </span>
               </button>
@@ -85,12 +85,12 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 onClick={() => handleQuickLogin('rajshekar@infinitycustomizations.com')}
                 disabled={loading}
-                className="p-3 rounded-2xl border-2 border-[#0B3A82]/30 hover:border-[#0B3A82] bg-blue-50/40 hover:bg-blue-50 text-left transition-all group"
+                className="p-3 rounded-2xl border-2 border-[#0B3A82]/30 hover:border-[#0B3A82] bg-blue-50/40 dark:bg-blue-950/40 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-left transition-all group"
               >
-                <span className="block text-[10px] uppercase font-black text-[#0B3A82]">
+                <span className="block text-[10px] uppercase font-black text-[#0B3A82] dark:text-[#D4AF37]">
                   Partner 2 (Partner)
                 </span>
-                <span className="block text-xs font-black text-slate-900 mt-0.5">
+                <span className="block text-xs font-black text-slate-900 dark:text-white mt-0.5">
                   Rajshekar Reddy
                 </span>
               </button>

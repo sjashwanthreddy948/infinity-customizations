@@ -14,7 +14,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem('partnerledger_theme');
     if (saved === 'light' || saved === 'dark') return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark'; // Default dark for fintech aesthetic
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
   useEffect(() => {

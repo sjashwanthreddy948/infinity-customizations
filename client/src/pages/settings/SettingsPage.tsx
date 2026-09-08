@@ -109,13 +109,13 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* Mobile Product Default Cards (< md) */}
-        <div className="md:hidden divide-y divide-slate-100 p-3 space-y-3">
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-blue-900/30 p-3 space-y-3">
           {products.map((p) => (
-            <div key={p.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <div key={p.id} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xs font-bold text-slate-900">{p.name}</h3>
-                  <span className="text-[10px] text-slate-500">{p.category}</span>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">{p.name}</h3>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">{p.category}</span>
                 </div>
                 <button
                   type="button"
@@ -131,34 +131,34 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="p-2 rounded-xl bg-white border border-slate-200">
-                  <label className="block text-[9px] uppercase font-bold text-[#0B3A82] mb-0.5">Selling (₹)</label>
+                <div className="p-2 rounded-xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50">
+                  <label className="block text-[9px] uppercase font-bold text-[#0B3A82] dark:text-blue-300 mb-0.5">Selling (₹)</label>
                   <input
                     type="number"
                     min="0"
                     value={p.default_selling_price}
                     onChange={(e) => handleProductFieldChange(p.id, 'default_selling_price', Math.max(0, parseInt(e.target.value, 10) || 0))}
-                    className="w-full px-1.5 py-1 text-xs font-bold text-[#0B3A82] bg-slate-50 rounded-lg border border-slate-200 focus:outline-none"
+                    className="w-full px-1.5 py-1 text-xs font-bold text-[#0B3A82] dark:text-white bg-slate-50 dark:bg-[#051E44] rounded-lg border border-slate-200 dark:border-blue-900/50 focus:outline-none"
                   />
                 </div>
-                <div className="p-2 rounded-xl bg-white border border-slate-200">
-                  <label className="block text-[9px] uppercase font-bold text-rose-600 mb-0.5">Blank (₹)</label>
+                <div className="p-2 rounded-xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50">
+                  <label className="block text-[9px] uppercase font-bold text-rose-600 dark:text-rose-400 mb-0.5">Blank (₹)</label>
                   <input
                     type="number"
                     min="0"
                     value={p.default_product_cost}
                     onChange={(e) => handleProductFieldChange(p.id, 'default_product_cost', Math.max(0, parseInt(e.target.value, 10) || 0))}
-                    className="w-full px-1.5 py-1 text-xs font-bold text-rose-600 bg-slate-50 rounded-lg border border-slate-200 focus:outline-none"
+                    className="w-full px-1.5 py-1 text-xs font-bold text-rose-600 dark:text-rose-400 bg-slate-50 dark:bg-[#051E44] rounded-lg border border-slate-200 dark:border-blue-900/50 focus:outline-none"
                   />
                 </div>
-                <div className="p-2 rounded-xl bg-white border border-slate-200">
-                  <label className="block text-[9px] uppercase font-bold text-amber-600 mb-0.5">Print (₹)</label>
+                <div className="p-2 rounded-xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50">
+                  <label className="block text-[9px] uppercase font-bold text-amber-600 dark:text-[#D4AF37] mb-0.5">Print (₹)</label>
                   <input
                     type="number"
                     min="0"
                     value={p.default_printing_cost}
                     onChange={(e) => handleProductFieldChange(p.id, 'default_printing_cost', Math.max(0, parseInt(e.target.value, 10) || 0))}
-                    className="w-full px-1.5 py-1 text-xs font-bold text-amber-600 bg-slate-50 rounded-lg border border-slate-200 focus:outline-none"
+                    className="w-full px-1.5 py-1 text-xs font-bold text-amber-600 dark:text-[#D4AF37] bg-slate-50 dark:bg-[#051E44] rounded-lg border border-slate-200 dark:border-blue-900/50 focus:outline-none"
                   />
                 </div>
               </div>

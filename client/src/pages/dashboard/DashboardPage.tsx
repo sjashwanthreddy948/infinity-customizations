@@ -85,7 +85,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Date Range Selector & Actions */}
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center p-1 rounded-xl bg-white border border-slate-200 shadow-xs overflow-x-auto no-scrollbar max-w-full">
+          <div className="flex items-center p-1 rounded-xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/60 shadow-xs overflow-x-auto no-scrollbar max-w-full">
             {[
               { label: 'All', value: 'all' },
               { label: 'Today', value: 'today' },
@@ -99,7 +99,7 @@ export const DashboardPage: React.FC = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
                   range === tab.value
                     ? 'bg-[#0B3A82] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-[#0B3A82]'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-[#0B3A82] dark:hover:text-white'
                 }`}
               >
                 {tab.label}
@@ -425,16 +425,16 @@ export const DashboardPage: React.FC = () => {
             <div
               key={o.id}
               onClick={() => navigate(`/orders/${o.id}`)}
-              className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 active:bg-blue-50/40 transition-colors space-y-2 cursor-pointer"
+              className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/60 active:bg-blue-50/40 dark:active:bg-blue-950/60 transition-colors space-y-2 cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono font-black text-xs text-[#0B3A82]">#{o.order_number}</span>
+                <span className="font-mono font-black text-xs text-[#0B3A82] dark:text-[#D4AF37]">#{o.order_number}</span>
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
                   o.payment_status === 'PAID'
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
                     : o.payment_status === 'PARTIALLY_PAID'
-                    ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                    : 'bg-rose-50 text-rose-700 border border-rose-200'
+                    ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
+                    : 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
                 }`}>
                   {o.payment_status === 'PAID' ? 'Paid' : o.payment_status === 'PARTIALLY_PAID' ? 'Partial' : 'Pending'}
                 </span>
@@ -451,15 +451,15 @@ export const DashboardPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 text-[10px]">
+              <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-blue-900/40 text-[10px]">
                 <span className={`px-2 py-0.5 rounded-md font-bold ${
                   o.is_partner_shared === 1 || o.is_tshirt === 1
-                    ? 'bg-blue-50 text-[#0B3A82] border border-blue-200'
-                    : 'bg-slate-100 text-slate-700 border border-slate-200'
+                    ? 'bg-blue-50 dark:bg-blue-950/60 text-[#0B3A82] dark:text-[#D4AF37] border border-blue-200 dark:border-blue-800'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                 }`}>
                   {o.is_partner_shared === 1 || o.is_tshirt === 1 ? '🤝 Shared (50/50)' : '🔒 100% Jashwanth'}
                 </span>
-                <span className="text-slate-500 font-medium">By: <strong className="text-slate-800 dark:text-slate-200">{o.created_by_name}</strong></span>
+                <span className="text-slate-500 dark:text-slate-400 font-medium">By: <strong className="text-slate-800 dark:text-slate-200">{o.created_by_name}</strong></span>
               </div>
             </div>
           ))}
