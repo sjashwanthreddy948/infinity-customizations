@@ -7,6 +7,7 @@ import { WebSocketProvider } from './context/WebSocketContext.js';
 
 // Layout
 import { AppLayout } from './components/layout/AppLayout.js';
+import { ErrorBoundary } from './components/common/ErrorBoundary.js';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage.js';
@@ -64,45 +65,47 @@ export const App: React.FC = () => {
       <ToastProvider>
         <AuthProvider>
           <WebSocketProvider>
-            <BrowserRouter>
-              <Routes>
-                {/* Public Auth Routes */}
-                <Route
-                  path="/login"
-                  element={
-                    <PublicOnlyRoute>
-                      <LoginPage />
-                    </PublicOnlyRoute>
-                  }
-                />
+            <ErrorBoundary>
+              <BrowserRouter>
+                <Routes>
+                  {/* Public Auth Routes */}
+                  <Route
+                    path="/login"
+                    element={
+                      <PublicOnlyRoute>
+                        <LoginPage />
+                      </PublicOnlyRoute>
+                    }
+                  />
 
-                {/* Protected Business App Routes */}
-                <Route
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/orders" element={<OrdersPage />} />
-                  <Route path="/orders/:id" element={<OrderDetailPage />} />
-                  <Route path="/t-shirts" element={<TShirtsPage />} />
-                  <Route path="/customers" element={<CustomersPage />} />
-                  <Route path="/customers/:id" element={<CustomerDetailPage />} />
-                  <Route path="/invoices" element={<InvoicesPage />} />
-                  <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
-                  <Route path="/expenses" element={<ExpensesPage />} />
-                  <Route path="/reports" element={<ReportsPage />} />
-                  <Route path="/ai-invoice" element={<AIInvoicePage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                </Route>
+                  {/* Protected Business App Routes */}
+                  <Route
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/orders/:id" element={<OrderDetailPage />} />
+                    <Route path="/t-shirts" element={<TShirtsPage />} />
+                    <Route path="/customers" element={<CustomersPage />} />
+                    <Route path="/customers/:id" element={<CustomerDetailPage />} />
+                    <Route path="/invoices" element={<InvoicesPage />} />
+                    <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+                    <Route path="/expenses" element={<ExpensesPage />} />
+                    <Route path="/reports" element={<ReportsPage />} />
+                    <Route path="/ai-invoice" element={<AIInvoicePage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                  </Route>
 
-                {/* Catch-all fallback */}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
-            </BrowserRouter>
+                  {/* Catch-all fallback */}
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              </BrowserRouter>
+            </ErrorBoundary>
           </WebSocketProvider>
         </AuthProvider>
       </ToastProvider>

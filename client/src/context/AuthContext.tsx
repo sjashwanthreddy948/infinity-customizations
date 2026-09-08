@@ -17,7 +17,18 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('partnerledger_token'));
+  const [token, setToken] = useState<string | null>(() => {
+    const stored = localStorage.getItem('partnerledger_token');
+    if (stored) return stored;
+    // If not explicitly logged out, provide default partner session for seamless deep linking (e.g. /orders/ord-4)
+    const isExplicitLogout = localStorage.getItem('infinity_explicit_logout');
+    if (!isExplicitLogout) {
+      const defaultToken = 'demo-jwt-usr-jashwanth-1-default';
+      localStorage.setItem('partnerledger_token', defaultToken);
+      return defaultToken;
+    }
+    return null;
+  });
   const [user, setUser] = useState<User | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [partners, setPartners] = useState<any[]>([]);
@@ -126,6 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (res.ok && data.token) {
+        localStorage.removeItem('infinity_explicit_logout');
         localStorage.setItem('partnerledger_token', data.token);
         setToken(data.token);
         setUser(data.user);
@@ -166,6 +178,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       partner_percentage: 50
     };
 
+    localStorage.removeItem('infinity_explicit_logout');
     localStorage.setItem('partnerledger_token', fallbackToken);
     setToken(fallbackToken);
     setUser(fallbackUser as any);
@@ -214,6 +227,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    localStorage.setItem('infinity_explicit_logout', 'true');
     localStorage.removeItem('partnerledger_token');
     setToken(null);
     setUser(null);

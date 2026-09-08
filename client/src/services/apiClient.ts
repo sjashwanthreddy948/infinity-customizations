@@ -23,6 +23,8 @@ interface MockOrder {
   customer_id: string;
   customer_name: string;
   customer_phone: string;
+  customer_email?: string;
+  customer_address?: string;
   product_name: string;
   quantity: number;
   selling_price: number;
@@ -37,6 +39,7 @@ interface MockOrder {
   profit_margin: number;
   payment_status: 'PAID' | 'PARTIALLY_PAID' | 'PENDING';
   payment_received: number;
+  payment_pending?: number;
   available_amount: number;
   is_tshirt: number;
   tshirt_neck_type?: string;
@@ -45,6 +48,10 @@ interface MockOrder {
   tshirt_size_breakdown?: string;
   tshirt_color?: string;
   tshirt_print_type?: string;
+  tshirt_front_print?: boolean;
+  tshirt_back_print?: boolean;
+  tshirt_sleeve_print?: boolean;
+  tshirt_variants?: any;
   print_meters?: number;
   print_rate_per_meter?: number;
   has_id_cards?: number;
@@ -54,9 +61,17 @@ interface MockOrder {
   id_card_selling_price?: number;
   id_card_cost?: number;
   id_card_profit?: number;
+  id_card_total_cost?: number;
+  id_card_total_price?: number;
+  id_card_type?: string;
   order_date: string;
+  created_at?: string;
   created_by_name: string;
   created_by: string;
+  invoice_id?: string | null;
+  invoice_number?: string | null;
+  notes?: string;
+  partner_share_allocation?: any;
 }
 
 interface MockInvoice {
@@ -222,6 +237,8 @@ const INITIAL_ORDERS: MockOrder[] = [
     customer_id: 'cust-1',
     customer_name: 'Rahul Sharma',
     customer_phone: '+91 98490 11223',
+    customer_email: 'rahul.sharma@example.com',
+    customer_address: 'Flat 402, Banjara Hills, Hyderabad',
     product_name: 'Custom Printed T-Shirt',
     quantity: 10,
     selling_price: 6500,
@@ -236,6 +253,7 @@ const INITIAL_ORDERS: MockOrder[] = [
     profit_margin: 40.8,
     payment_status: 'PAID',
     payment_received: 6500,
+    payment_pending: 0,
     available_amount: 2650,
     is_tshirt: 1,
     tshirt_neck_type: 'Collar',
@@ -244,6 +262,8 @@ const INITIAL_ORDERS: MockOrder[] = [
     tshirt_size_breakdown: 'M: 4, L: 4, XL: 2',
     tshirt_color: 'Navy Blue',
     tshirt_print_type: 'Front & Back',
+    tshirt_front_print: true,
+    tshirt_back_print: true,
     print_meters: 1.8,
     print_rate_per_meter: 300,
     has_id_cards: 1,
@@ -253,9 +273,15 @@ const INITIAL_ORDERS: MockOrder[] = [
     id_card_selling_price: 700,
     id_card_cost: 350,
     id_card_profit: 350,
+    id_card_total_cost: 350,
+    id_card_total_price: 700,
     order_date: '2026-09-02',
+    created_at: '2026-09-02T10:30:00.000Z',
     created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1'
+    created_by: 'usr-jashwanth-1',
+    invoice_id: 'inv-1',
+    invoice_number: 'INV-2026-0001',
+    notes: 'Urgent event batch order with customized ID cards'
   },
   {
     id: 'ord-2',
@@ -263,6 +289,8 @@ const INITIAL_ORDERS: MockOrder[] = [
     customer_id: 'cust-2',
     customer_name: 'Priya Patel',
     customer_phone: '+91 98490 22334',
+    customer_email: 'priya.patel@example.com',
+    customer_address: 'Villa 18, Gachibowli, Hyderabad',
     product_name: 'Custom Printed T-Shirt',
     quantity: 4,
     selling_price: 4800,
@@ -277,6 +305,7 @@ const INITIAL_ORDERS: MockOrder[] = [
     profit_margin: 41.7,
     payment_status: 'PAID',
     payment_received: 4800,
+    payment_pending: 0,
     available_amount: 2000,
     is_tshirt: 1,
     tshirt_neck_type: 'Round Neck',
@@ -285,12 +314,18 @@ const INITIAL_ORDERS: MockOrder[] = [
     tshirt_size_breakdown: 'M: 4',
     tshirt_color: 'White',
     tshirt_print_type: 'Front & Back',
+    tshirt_front_print: true,
+    tshirt_back_print: true,
     print_meters: 1.2,
     print_rate_per_meter: 300,
     has_id_cards: 0,
     order_date: '2026-09-03',
+    created_at: '2026-09-03T11:15:00.000Z',
     created_by_name: 'Rajshekar Reddy',
-    created_by: 'usr-rajshekar-2'
+    created_by: 'usr-rajshekar-2',
+    invoice_id: 'inv-2',
+    invoice_number: 'INV-2026-0002',
+    notes: 'White Pure Cotton Round Neck batch'
   },
   {
     id: 'ord-3',
@@ -298,6 +333,8 @@ const INITIAL_ORDERS: MockOrder[] = [
     customer_id: 'cust-3',
     customer_name: 'Vikram Malhotra',
     customer_phone: '+91 98490 33445',
+    customer_email: 'vikram.m@example.com',
+    customer_address: 'Plot 12, Madhapur, Hyderabad',
     product_name: 'Photo Frame',
     quantity: 2,
     selling_price: 3600,
@@ -312,11 +349,16 @@ const INITIAL_ORDERS: MockOrder[] = [
     profit_margin: 44.4,
     payment_status: 'PARTIALLY_PAID',
     payment_received: 2000,
+    payment_pending: 1600,
     available_amount: 0,
     is_tshirt: 0,
     order_date: '2026-09-04',
+    created_at: '2026-09-04T09:45:00.000Z',
     created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1'
+    created_by: 'usr-jashwanth-1',
+    invoice_id: 'inv-3',
+    invoice_number: 'INV-2026-0003',
+    notes: '12x18 Inch Matte Finish Premium Photo Frame (₹1,600 balance on hand delivery)'
   },
   {
     id: 'ord-4',
@@ -324,7 +366,9 @@ const INITIAL_ORDERS: MockOrder[] = [
     customer_id: 'cust-4',
     customer_name: 'Ananya Rao',
     customer_phone: '+91 98490 44556',
-    product_name: 'Bouquet',
+    customer_email: 'ananya.rao@example.com',
+    customer_address: 'Road No. 10, Jubilee Hills, Hyderabad',
+    product_name: 'Handcrafted Blossom Bouquet',
     quantity: 2,
     selling_price: 2598,
     product_cost: 1000,
@@ -338,11 +382,16 @@ const INITIAL_ORDERS: MockOrder[] = [
     profit_margin: 48.0,
     payment_status: 'PAID',
     payment_received: 2598,
+    payment_pending: 0,
     available_amount: 1248,
     is_tshirt: 0,
     order_date: '2026-09-05',
+    created_at: '2026-09-05T14:30:00.000Z',
     created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1'
+    created_by: 'usr-jashwanth-1',
+    invoice_id: 'inv-4',
+    invoice_number: 'INV-2026-0004',
+    notes: 'Premium Handcrafted Blossom Bouquet with personalized silk ribbon and greeting card'
   },
   {
     id: 'ord-5',
@@ -350,6 +399,8 @@ const INITIAL_ORDERS: MockOrder[] = [
     customer_id: 'cust-5',
     customer_name: 'Sneha Gupta',
     customer_phone: '+91 98490 55667',
+    customer_email: 'sneha.g@example.com',
+    customer_address: 'Apt 3B, Kondapur, Hyderabad',
     product_name: 'Custom Printed T-Shirt',
     quantity: 2,
     selling_price: 2598,
@@ -364,6 +415,7 @@ const INITIAL_ORDERS: MockOrder[] = [
     profit_margin: 48.0,
     payment_status: 'PAID',
     payment_received: 2598,
+    payment_pending: 0,
     available_amount: 1248,
     is_tshirt: 1,
     tshirt_neck_type: 'Round Neck',
@@ -372,12 +424,17 @@ const INITIAL_ORDERS: MockOrder[] = [
     tshirt_size_breakdown: 'S: 2',
     tshirt_color: 'Black',
     tshirt_print_type: 'Front Print',
+    tshirt_front_print: true,
     print_meters: 0.8,
     print_rate_per_meter: 300,
     has_id_cards: 0,
     order_date: '2026-09-06',
+    created_at: '2026-09-06T16:00:00.000Z',
     created_by_name: 'Rajshekar Reddy',
-    created_by: 'usr-rajshekar-2'
+    created_by: 'usr-rajshekar-2',
+    invoice_id: 'inv-5',
+    invoice_number: 'INV-2026-0005',
+    notes: 'Nano Curve Matte Black finish'
   },
   {
     id: 'ord-6',
@@ -385,6 +442,8 @@ const INITIAL_ORDERS: MockOrder[] = [
     customer_id: 'cust-6',
     customer_name: 'Karthik Iyer',
     customer_phone: '+91 98490 66778',
+    customer_email: 'karthik.i@example.com',
+    customer_address: 'Cyber Towers Lane, Hitec City, Hyderabad',
     product_name: 'Custom Printed T-Shirt',
     quantity: 15,
     selling_price: 9800,
@@ -399,6 +458,7 @@ const INITIAL_ORDERS: MockOrder[] = [
     profit_margin: 41.5,
     payment_status: 'PAID',
     payment_received: 9800,
+    payment_pending: 0,
     available_amount: 4070,
     is_tshirt: 1,
     tshirt_neck_type: 'Collar',
@@ -407,6 +467,8 @@ const INITIAL_ORDERS: MockOrder[] = [
     tshirt_size_breakdown: 'S: 3, M: 6, L: 4, XL: 2',
     tshirt_color: 'Royal Blue',
     tshirt_print_type: 'Front & Back',
+    tshirt_front_print: true,
+    tshirt_back_print: true,
     print_meters: 2.5,
     print_rate_per_meter: 300,
     has_id_cards: 1,
@@ -416,9 +478,15 @@ const INITIAL_ORDERS: MockOrder[] = [
     id_card_selling_price: 1050,
     id_card_cost: 525,
     id_card_profit: 525,
+    id_card_total_cost: 525,
+    id_card_total_price: 1050,
     order_date: '2026-09-07',
+    created_at: '2026-09-07T12:00:00.000Z',
     created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1'
+    created_by: 'usr-jashwanth-1',
+    invoice_id: 'inv-6',
+    invoice_number: 'INV-2026-0006',
+    notes: 'Annual tech fest batch uniforms and ID cards'
   }
 ];
 
@@ -483,6 +551,67 @@ const INITIAL_INVOICES: MockInvoice[] = [
     items: [
       { description: '12x18 Inch Matte Finish Premium Photo Frame', quantity: 2, unit_price: 1800, amount: 3600 }
     ]
+  },
+  {
+    id: 'inv-4',
+    invoice_number: 'INV-2026-0004',
+    customer_id: 'cust-4',
+    customer_name: 'Ananya Rao',
+    issue_date: '2026-09-05',
+    due_date: '2026-09-15',
+    subtotal: 2598,
+    tax_rate: 0,
+    tax_amount: 0,
+    grand_total: 2598,
+    amount_paid: 2598,
+    balance_due: 0,
+    status: 'PAID',
+    created_by_name: 'Jashwanth Reddy',
+    created_by: 'usr-jashwanth-1',
+    items: [
+      { description: 'Handcrafted Blossom Bouquet with Silk Ribbon & Greeting Card', quantity: 2, unit_price: 1299, amount: 2598 }
+    ]
+  },
+  {
+    id: 'inv-5',
+    invoice_number: 'INV-2026-0005',
+    customer_id: 'cust-5',
+    customer_name: 'Sneha Gupta',
+    issue_date: '2026-09-06',
+    due_date: '2026-09-16',
+    subtotal: 2598,
+    tax_rate: 0,
+    tax_amount: 0,
+    grand_total: 2598,
+    amount_paid: 2598,
+    balance_due: 0,
+    status: 'PAID',
+    created_by_name: 'Rajshekar Reddy',
+    created_by: 'usr-rajshekar-2',
+    items: [
+      { description: 'Custom Nano Curve Round Neck T-Shirts (Black, S)', quantity: 2, unit_price: 1299, amount: 2598 }
+    ]
+  },
+  {
+    id: 'inv-6',
+    invoice_number: 'INV-2026-0006',
+    customer_id: 'cust-6',
+    customer_name: 'Karthik Iyer',
+    issue_date: '2026-09-07',
+    due_date: '2026-09-17',
+    subtotal: 9800,
+    tax_rate: 0,
+    tax_amount: 0,
+    grand_total: 9800,
+    amount_paid: 9800,
+    balance_due: 0,
+    status: 'PAID',
+    created_by_name: 'Jashwanth Reddy',
+    created_by: 'usr-jashwanth-1',
+    items: [
+      { description: 'Collar Cotton T-Shirts (Royal Blue, Front & Back)', quantity: 15, unit_price: 583.33, amount: 8750 },
+      { description: 'Custom ID Cards + Printed Lanyards', quantity: 15, unit_price: 70, amount: 1050 }
+    ]
   }
 ];
 
@@ -531,12 +660,30 @@ class MockDatabase {
   }
 
   load() {
+    const DB_KEY = 'infinity_mock_db_v3';
     try {
-      const stored = localStorage.getItem('infinity_mock_db_v2');
+      localStorage.removeItem('infinity_mock_db_v1');
+      localStorage.removeItem('infinity_mock_db_v2');
+
+      const stored = localStorage.getItem(DB_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         this.customers = parsed.customers || INITIAL_CUSTOMERS;
-        this.orders = parsed.orders || INITIAL_ORDERS;
+        this.orders = (parsed.orders || INITIAL_ORDERS).map((o: any) => ({
+          ...o,
+          payment_pending: o.payment_pending !== undefined ? Number(o.payment_pending) : Math.max(0, (Number(o.selling_price) || 0) - (Number(o.payment_received) || 0)),
+          created_at: o.created_at || (o.order_date ? `${o.order_date}T12:00:00.000Z` : new Date().toISOString()),
+          product_cost: Number(o.product_cost) || 0,
+          printing_cost: Number(o.printing_cost) || 0,
+          delivery_cost: Number(o.delivery_cost) || 0,
+          other_cost: Number(o.other_cost) || 0,
+          tshirt_rapido_cost: Number(o.tshirt_rapido_cost) || 0,
+          print_rapido_cost: Number(o.print_rapido_cost) || 0,
+          total_cost: Number(o.total_cost) || 0,
+          selling_price: Number(o.selling_price) || 0,
+          profit: Number(o.profit) || 0,
+          available_amount: Number(o.available_amount) || 0
+        }));
         this.invoices = parsed.invoices || INITIAL_INVOICES;
         this.expenses = parsed.expenses || INITIAL_EXPENSES;
         return;
@@ -545,15 +692,15 @@ class MockDatabase {
       // ignore
     }
     this.customers = [...INITIAL_CUSTOMERS];
-    this.orders = [...INITIAL_ORDERS];
-    this.invoices = [...INITIAL_INVOICES];
-    this.expenses = [...INITIAL_EXPENSES];
+    this.orders = INITIAL_ORDERS.map(o => ({ ...o }));
+    this.invoices = INITIAL_INVOICES.map(i => ({ ...i }));
+    this.expenses = INITIAL_EXPENSES.map(e => ({ ...e }));
     this.save();
   }
 
   save() {
     try {
-      localStorage.setItem('infinity_mock_db_v2', JSON.stringify({
+      localStorage.setItem('infinity_mock_db_v3', JSON.stringify({
         customers: this.customers,
         orders: this.orders,
         invoices: this.invoices,
@@ -566,9 +713,9 @@ class MockDatabase {
 
   reset() {
     this.customers = [...INITIAL_CUSTOMERS];
-    this.orders = [...INITIAL_ORDERS];
-    this.invoices = [...INITIAL_INVOICES];
-    this.expenses = [...INITIAL_EXPENSES];
+    this.orders = INITIAL_ORDERS.map(o => ({ ...o }));
+    this.invoices = INITIAL_INVOICES.map(i => ({ ...i }));
+    this.expenses = INITIAL_EXPENSES.map(e => ({ ...e }));
     this.save();
   }
 }
@@ -722,6 +869,7 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         profit_margin: margin,
         payment_status: body.payment_status || (received >= selling ? 'PAID' : received > 0 ? 'PARTIALLY_PAID' : 'PENDING'),
         payment_received: received,
+        payment_pending: Math.max(0, selling - received),
         available_amount: available,
         is_tshirt: isTshirt ? 1 : 0,
         tshirt_neck_type: body.tshirt_neck_type || 'Round Neck',
@@ -740,6 +888,7 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         id_card_cost: Number(body.id_card_cost || 0),
         id_card_profit: Number(body.id_card_profit || 0),
         order_date: new Date().toISOString().split('T')[0],
+        created_at: new Date().toISOString(),
         created_by_name: mockDb.currentUser.full_name,
         created_by: mockDb.currentUser.id
       };
@@ -802,12 +951,49 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     return jsonResponse(filtered);
   }
 
-  // Single Order
+  // Single Order & Payments
   if (pathname.startsWith('/api/orders/')) {
     const parts = pathname.split('/');
     const orderId = parts[3];
-    const order = mockDb.orders.find(o => o.id === orderId || o.order_number === orderId) || mockDb.orders[0];
-    return jsonResponse(order);
+    const isPayments = parts[4] === 'payments';
+
+    let order = mockDb.orders.find(o => o.id === orderId || o.order_number === orderId);
+    if (!order && orderId === 'ord-4') {
+      order = INITIAL_ORDERS.find(o => o.id === 'ord-4');
+      if (order) mockDb.orders.push(order);
+    }
+    if (!order) {
+      order = mockDb.orders[0];
+    }
+
+    if (isPayments && method === 'POST') {
+      const payAmount = Number(body.amount || 0);
+      if (order && payAmount > 0) {
+        order.payment_received = (order.payment_received || 0) + payAmount;
+        order.payment_pending = Math.max(0, (order.selling_price || 0) - order.payment_received);
+        order.payment_status = order.payment_received >= order.selling_price ? 'PAID' : 'PARTIALLY_PAID';
+        order.available_amount = (order.payment_received || 0) - (order.total_cost || 0);
+        mockDb.save();
+      }
+      return jsonResponse({ success: true, order });
+    }
+
+    if (order) {
+      const customer = mockDb.customers.find(c => c.id === order.customer_id);
+      const invoice = mockDb.invoices.find(i => i.id === order.invoice_id || i.customer_id === order.customer_id);
+      const enrichedOrder = {
+        ...order,
+        customer_email: order.customer_email || customer?.email || 'customer@example.com',
+        customer_address: order.customer_address || customer?.address || 'Hyderabad, Telangana',
+        invoice_id: order.invoice_id || invoice?.id || null,
+        invoice_number: order.invoice_number || invoice?.invoice_number || null,
+        payment_pending: order.payment_pending !== undefined ? Number(order.payment_pending) : Math.max(0, (Number(order.selling_price) || 0) - (Number(order.payment_received) || 0)),
+        created_at: order.created_at || (order.order_date ? `${order.order_date}T12:00:00.000Z` : new Date().toISOString())
+      };
+      return jsonResponse(enrichedOrder);
+    }
+
+    return jsonResponse({ error: 'Order not found' }, 404);
   }
 
   // 7. Invoices

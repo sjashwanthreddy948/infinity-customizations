@@ -6,7 +6,31 @@ import {
   User, Phone, Mail, MapPin, Calendar, Check, X, Layers, Tag, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { calculateOrderPartnerShare } from '../../utils/partnerShare.js';
+import { calculateOrderPartnerShare } from '../../utils/partnerShare';
+
+const fmt = (val: any) => (Number(val) || 0).toLocaleString('en-IN');
+
+const formatDate = (dateStr: any) => {
+  if (!dateStr) return 'N/A';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return String(dateStr);
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch {
+    return String(dateStr);
+  }
+};
+
+const formatTime = (dateStr: any) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return '';
+  }
+};
 
 export const OrderDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,15 +53,24 @@ export const OrderDetailPage: React.FC = () => {
   const fetchOrder = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('partnerledger_token');
+      setError('');
+      let token = localStorage.getItem('partnerledger_token');
+      if (!token) {
+        token = 'demo-jwt-usr-jashwanth-1-default';
+        localStorage.setItem('partnerledger_token', token);
+      }
       const res = await fetch(`/api/orders/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Order not found');
       const data = await res.json();
+      const pending = data.payment_pending !== undefined 
+        ? Number(data.payment_pending) 
+        : Math.max(0, (Number(data.selling_price) || 0) - (Number(data.payment_received) || 0));
+      data.payment_pending = pending;
       setOrder(data);
-      if (data.payment_pending) {
-        setPaymentAmount(data.payment_pending.toString());
+      if (pending > 0) {
+        setPaymentAmount(pending.toString());
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load order');
@@ -147,14 +180,14 @@ export const OrderDetailPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Created by <span className="font-semibold text-[#0B3A82] dark:text-[#D4AF37]">{order.created_by_name}</span> · {new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} at {new Date(order.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+              Created by <span className="font-semibold text-[#0B3A82] dark:text-[#D4AF37]">{order.created_by_name || 'Partner'}</span> · {formatDate(order.created_at || order.order_date)} {formatTime(order.created_at) ? `at ${formatTime(order.created_at)}` : ''}
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
-          {order.payment_pending > 0 && (
+          {Number(order.payment_pending) > 0 && (
             <button
               onClick={() => setIsPaymentOpen(true)}
               className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-md flex items-center gap-1.5 transition-all"
@@ -170,7 +203,7 @@ export const OrderDetailPage: React.FC = () => {
               className="px-4 py-2 text-xs font-bold rounded-xl bg-[#0B3A82] hover:bg-[#082A5E] text-white shadow-md flex items-center gap-1.5 transition-all border border-[#D4AF37]/40"
             >
               <FileText className="w-4 h-4 text-[#D4AF37]" />
-              <span>View Invoice ({order.invoice_number})</span>
+              <span>View Invoice ({order.invoice_number || 'INV'})</span>
             </button>
           ) : (
             <button
@@ -204,7 +237,7 @@ export const OrderDetailPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-blue-900/40 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/40 text-[#0B3A82] dark:text-[#D4AF37] flex items-center justify-center font-bold">
-                  <Shirt className="w-5 h-5" />
+                  {order.is_tshirt ? <Shirt className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-[#172033] dark:text-white">{order.product_name}</h3>
@@ -212,7 +245,7 @@ export const OrderDetailPage: React.FC = () => {
                 </div>
               </div>
               <span className="text-lg font-black text-[#0B3A82] dark:text-white">
-                ₹{order.selling_price.toLocaleString('en-IN')}
+                ₹{fmt(order.selling_price)}
               </span>
             </div>
 
@@ -321,16 +354,16 @@ export const OrderDetailPage: React.FC = () => {
                               <div className="p-2 rounded-lg bg-white border border-slate-100">
                                 <p className="text-[10px] uppercase font-bold text-slate-400">Blank Cost</p>
                                 <p className="font-bold text-slate-700">₹{v.cost_per_shirt || 0} <span className="text-[10px] text-slate-400">/pc</span></p>
-                                <p className="text-[10px] font-semibold text-slate-400">Total: ₹{vCost.toLocaleString('en-IN')}</p>
+                                <p className="text-[10px] font-semibold text-slate-400">Total: ₹{fmt(vCost)}</p>
                               </div>
                               <div className="p-2 rounded-lg bg-white border border-slate-100">
                                 <p className="text-[10px] uppercase font-bold text-slate-400">Selling Price</p>
                                 <p className="font-bold text-[#0B3A82]">₹{v.selling_price_per_shirt || 0} <span className="text-[10px] text-slate-400">/pc</span></p>
-                                <p className="text-[10px] font-semibold text-slate-400">Total: ₹{vSell.toLocaleString('en-IN')}</p>
+                                <p className="text-[10px] font-semibold text-slate-400">Total: ₹{fmt(vSell)}</p>
                               </div>
                               <div className="p-2 rounded-lg bg-emerald-50/60 border border-emerald-100">
                                 <p className="text-[10px] uppercase font-bold text-emerald-700">Est. Profit</p>
-                                <p className="font-black text-emerald-600">₹{vProfit.toLocaleString('en-IN')}</p>
+                                <p className="font-black text-emerald-600">₹{fmt(vProfit)}</p>
                                 <p className="text-[10px] font-semibold text-emerald-600/70">+₹{(v.selling_price_per_shirt || 0) - (v.cost_per_shirt || 0)}/pc</p>
                               </div>
                             </div>
@@ -387,6 +420,35 @@ export const OrderDetailPage: React.FC = () => {
               );
             })()}
 
+            {/* Non-T-Shirt Merchandise Details Card */}
+            {!order.is_tshirt && (
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200 dark:border-blue-900/40 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] dark:text-[#D4AF37] flex items-center gap-1.5">
+                    <Tag className="w-4 h-4" />
+                    <span>Product Summary</span>
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[10px] font-bold border border-amber-200 dark:border-amber-800">
+                    Sole Merchandise (100% Jashwanth)
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs pt-1">
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40">
+                    <p className="text-[10px] uppercase font-bold text-slate-400">Unit Selling Price</p>
+                    <p className="font-bold text-[#0B3A82] dark:text-white mt-0.5">₹{fmt(order.quantity ? Math.round(order.selling_price / order.quantity) : order.selling_price)} / unit</p>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40">
+                    <p className="text-[10px] uppercase font-bold text-slate-400">Unit Cost</p>
+                    <p className="font-bold text-rose-600 dark:text-rose-400 mt-0.5">₹{fmt(order.quantity ? Math.round(order.total_cost / order.quantity) : order.total_cost)} / unit</p>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900 col-span-2 sm:col-span-1">
+                    <p className="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400">Unit Profit</p>
+                    <p className="font-black text-emerald-700 dark:text-emerald-400 mt-0.5">₹{fmt(order.quantity ? Math.round(order.profit / order.quantity) : order.profit)} / unit</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* ID Cards Section if Included */}
             {order.has_id_cards === 1 && (
               <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50/80 via-white to-amber-50/50 border border-blue-200 space-y-3">
@@ -409,17 +471,17 @@ export const OrderDetailPage: React.FC = () => {
                   <div className="p-2.5 rounded-lg bg-white border border-slate-200">
                     <p className="text-[10px] uppercase font-bold text-slate-400">Blank + Print Cost</p>
                     <p className="font-bold text-slate-800">₹{order.id_card_unit_cost || 0} <span className="text-[10px] text-slate-400">/card</span></p>
-                    <p className="text-[10px] font-bold text-rose-600">Total: ₹{(order.id_card_total_cost || 0).toLocaleString('en-IN')}</p>
+                    <p className="text-[10px] font-bold text-rose-600">Total: ₹{fmt(order.id_card_total_cost)}</p>
                   </div>
                   <div className="p-2.5 rounded-lg bg-white border border-slate-200">
                     <p className="text-[10px] uppercase font-bold text-slate-400">Customer Price</p>
                     <p className="font-bold text-[#0B3A82]">₹{order.id_card_unit_price || 0} <span className="text-[10px] text-slate-400">/card</span></p>
-                    <p className="text-[10px] font-bold text-blue-700">Total: ₹{(order.id_card_total_price || 0).toLocaleString('en-IN')}</p>
+                    <p className="text-[10px] font-bold text-blue-700">Total: ₹{fmt(order.id_card_total_price)}</p>
                   </div>
                   <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
                     <p className="text-[10px] uppercase font-bold text-emerald-700">ID Cards Profit</p>
                     <p className="font-black text-emerald-700 text-sm">
-                      ₹{((order.id_card_total_price || 0) - (order.id_card_total_cost || 0)).toLocaleString('en-IN')}
+                      ₹{fmt((order.id_card_total_price || 0) - (order.id_card_total_cost || 0))}
                     </p>
                     <p className="text-[10px] font-bold text-emerald-600">+₹{(order.id_card_unit_price || 0) - (order.id_card_unit_cost || 0)}/card</p>
                   </div>
@@ -477,7 +539,7 @@ export const OrderDetailPage: React.FC = () => {
                 <span className="text-xs font-bold uppercase tracking-wider text-[#F5E7B2]">Customer Payment</span>
                 <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-white/10 text-[#D4AF37]">Total Order Price</span>
               </div>
-              <p className="text-3xl font-black text-white mt-1">₹{order.selling_price?.toLocaleString('en-IN')}</p>
+              <p className="text-3xl font-black text-white mt-1">₹{fmt(order.selling_price)}</p>
             </div>
 
             {/* Cost Breakdown */}
@@ -486,13 +548,13 @@ export const OrderDetailPage: React.FC = () => {
 
               <div className="flex justify-between text-xs text-slate-300">
                 <span>{order.is_tshirt ? 'T-Shirt Blank Procurement' : 'Product / Material Cost'}</span>
-                <span className="font-semibold text-white">₹{(order.product_cost || 0).toLocaleString('en-IN')}</span>
+                <span className="font-semibold text-white">₹{fmt(order.product_cost)}</span>
               </div>
 
-              {order.has_id_cards === 1 && (order.id_card_total_cost > 0) && (
+              {order.has_id_cards === 1 && (Number(order.id_card_total_cost) > 0) && (
                 <div className="flex justify-between text-xs text-slate-300">
                   <span>ID Cards Production ({order.id_card_quantity} pcs @ ₹{order.id_card_unit_cost || 0})</span>
-                  <span className="font-semibold text-white">₹{(order.id_card_total_cost || 0).toLocaleString('en-IN')}</span>
+                  <span className="font-semibold text-white">₹{fmt(order.id_card_total_cost)}</span>
                 </div>
               )}
 
@@ -503,38 +565,38 @@ export const OrderDetailPage: React.FC = () => {
                     ? ` (${order.print_meters}m @ ₹${order.print_rate_per_meter || 300}/m)`
                     : ''}
                 </span>
-                <span className="font-semibold text-white">₹{(order.printing_cost || 0).toLocaleString('en-IN')}</span>
+                <span className="font-semibold text-white">₹{fmt(order.printing_cost)}</span>
               </div>
 
-              {(order.tshirt_rapido_cost > 0) && (
+              {(Number(order.tshirt_rapido_cost) > 0) && (
                 <div className="flex justify-between text-xs text-slate-300">
                   <span>T-Shirt Rapido (Procurement)</span>
-                  <span className="font-semibold text-white">₹{order.tshirt_rapido_cost.toLocaleString('en-IN')}</span>
+                  <span className="font-semibold text-white">₹{fmt(order.tshirt_rapido_cost)}</span>
                 </div>
               )}
 
-              {(order.print_rapido_cost > 0) && (
+              {(Number(order.print_rapido_cost) > 0) && (
                 <div className="flex justify-between text-xs text-slate-300">
                   <span>Print Rapido (Drop / Pickup)</span>
-                  <span className="font-semibold text-white">₹{order.print_rapido_cost.toLocaleString('en-IN')}</span>
+                  <span className="font-semibold text-white">₹{fmt(order.print_rapido_cost)}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-xs text-slate-300">
                 <span>Customer Delivery / Rapido</span>
-                <span className="font-semibold text-white">₹{(order.delivery_cost || 0).toLocaleString('en-IN')}</span>
+                <span className="font-semibold text-white">₹{fmt(order.delivery_cost)}</span>
               </div>
 
-              {order.other_cost > 0 && (
+              {Number(order.other_cost) > 0 && (
                 <div className="flex justify-between text-xs text-slate-300">
                   <span>Other / Packaging</span>
-                  <span className="font-semibold text-white">₹{order.other_cost.toLocaleString('en-IN')}</span>
+                  <span className="font-semibold text-white">₹{fmt(order.other_cost)}</span>
                 </div>
               )}
 
               <div className="border-t border-white/15 pt-2 flex justify-between text-xs font-black text-rose-300">
                 <span>TOTAL ORDER COST</span>
-                <span className="text-rose-200">₹{(order.total_cost || 0).toLocaleString('en-IN')}</span>
+                <span className="text-rose-200">₹{fmt(order.total_cost)}</span>
               </div>
             </div>
 
@@ -543,7 +605,7 @@ export const OrderDetailPage: React.FC = () => {
               <div className="flex justify-between items-center p-3 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/40">
                 <div>
                   <p className="text-[10px] uppercase font-bold text-[#F5E7B2]">NET PROFIT</p>
-                  <p className="text-2xl font-black text-[#D4AF37]">₹{(order.profit || 0).toLocaleString('en-IN')}</p>
+                  <p className="text-2xl font-black text-[#D4AF37]">₹{fmt(order.profit)}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] uppercase font-bold text-[#F5E7B2]">PROFIT MARGIN</p>
@@ -554,14 +616,14 @@ export const OrderDetailPage: React.FC = () => {
               <div className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/10">
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-300">AVAILABLE CASH IN HAND</p>
-                  <p className={`text-lg font-black ${order.available_amount >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                    ₹{(order.available_amount || 0).toLocaleString('en-IN')}
+                  <p className={`text-lg font-black ${Number(order.available_amount) >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                    ₹{fmt(order.available_amount)}
                   </p>
                   <p className="text-[9px] text-slate-400">Advance Received - Total Cost</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] uppercase font-semibold text-slate-300">ADVANCE RECEIVED</p>
-                  <p className="text-base font-bold text-emerald-300">₹{(order.payment_received || 0).toLocaleString('en-IN')}</p>
+                  <p className="text-base font-bold text-emerald-300">₹{fmt(order.payment_received)}</p>
                 </div>
               </div>
             </div>
@@ -573,15 +635,15 @@ export const OrderDetailPage: React.FC = () => {
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-slate-400">Customer Total:</span>
-                <span className="font-bold text-[#172033] dark:text-white">₹{order.selling_price.toLocaleString('en-IN')}</span>
+                <span className="font-bold text-[#172033] dark:text-white">₹{fmt(order.selling_price)}</span>
               </div>
               <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
                 <span>Amount Paid:</span>
-                <span className="font-bold">₹{order.payment_received.toLocaleString('en-IN')}</span>
+                <span className="font-bold">₹{fmt(order.payment_received)}</span>
               </div>
               <div className="flex justify-between text-amber-600 dark:text-amber-400 border-t border-slate-100 dark:border-blue-900/40 pt-1.5">
                 <span>Pending Balance:</span>
-                <span className="font-bold">₹{order.payment_pending.toLocaleString('en-IN')}</span>
+                <span className="font-bold">₹{fmt(order.payment_pending)}</span>
               </div>
             </div>
           </div>
@@ -608,7 +670,7 @@ export const OrderDetailPage: React.FC = () => {
                     Jashwanth Reddy
                   </span>
                   <p className="text-lg font-black text-slate-900 dark:text-white font-mono">
-                    ₹{partnerShare.jashwanthShare.toLocaleString('en-IN')}
+                    ₹{fmt(partnerShare?.jashwanthShare)}
                   </p>
                   <p className="text-[10px] text-slate-400 font-semibold">
                     {partnerShare.isShared ? '50% Shared Profit' : '100% Retained Profit'}
@@ -620,7 +682,7 @@ export const OrderDetailPage: React.FC = () => {
                     Rajshekar Reddy
                   </span>
                   <p className="text-lg font-black text-slate-900 dark:text-white font-mono">
-                    ₹{partnerShare.rajshekarShare.toLocaleString('en-IN')}
+                    ₹{fmt(partnerShare?.rajshekarShare)}
                   </p>
                   <p className="text-[10px] text-slate-400 font-semibold">
                     {partnerShare.isShared ? '50% Shared Profit' : 'Excluded from Share (₹0)'}
@@ -663,7 +725,7 @@ export const OrderDetailPage: React.FC = () => {
                   onChange={(e) => setPaymentAmount(e.target.value)}
                   className="w-full px-3 py-2 text-base font-bold rounded-xl border border-slate-200 dark:border-blue-900/60 bg-white dark:bg-[#051E44] text-[#172033] dark:text-white"
                 />
-                <p className="text-[11px] text-slate-400 mt-1">Pending: ₹{order.payment_pending.toLocaleString('en-IN')}</p>
+                <p className="text-[11px] text-slate-400 mt-1">Pending: ₹{fmt(order.payment_pending)}</p>
               </div>
 
               <div>
@@ -738,7 +800,7 @@ export const OrderDetailPage: React.FC = () => {
                   <div key={log.id} className="p-3 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-100 dark:border-blue-900/40 text-xs space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-[#0B3A82] dark:text-[#D4AF37]">{log.actorName}</span>
-                      <span className="text-[10px] text-slate-400">{new Date(log.createdAt).toLocaleDateString()}</span>
+                      <span className="text-[10px] text-slate-400">{formatDate(log.createdAt)}</span>
                     </div>
                     <p className="text-slate-700 dark:text-slate-200">{log.action}: {log.reason || 'Action executed'}</p>
                   </div>
@@ -750,13 +812,13 @@ export const OrderDetailPage: React.FC = () => {
       )}
       {/* Mobile Sticky Quick Action Bar */}
       <div className="sm:hidden fixed bottom-16 left-0 right-0 z-30 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 flex items-center gap-2 shadow-lg">
-        {order.payment_pending > 0 ? (
+        {Number(order.payment_pending) > 0 ? (
           <button
             onClick={() => setIsPaymentOpen(true)}
             className="flex-1 py-2.5 px-3 text-xs font-bold rounded-xl bg-emerald-600 text-white shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
           >
             <CreditCard className="w-4 h-4" />
-            <span>Mark Payment (₹{order.payment_pending.toLocaleString('en-IN')})</span>
+            <span>Mark Payment (₹{fmt(order.payment_pending)})</span>
           </button>
         ) : null}
 
