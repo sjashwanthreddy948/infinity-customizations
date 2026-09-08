@@ -169,7 +169,7 @@ export const SettingsPage: React.FC = () => {
         {/* Desktop Products Table (>= md) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#F7F9FC] dark:bg-blue-950/60 text-slate-400 uppercase text-[10px] tracking-wider font-semibold border-b border-slate-100 dark:border-blue-900/40">
+            <thead className="bg-slate-100 dark:bg-blue-950/80 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-blue-900/40">
               <tr>
                 <th className="py-3 px-4">Product Name</th>
                 <th className="py-3 px-4">Category</th>

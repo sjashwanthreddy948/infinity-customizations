@@ -60,15 +60,15 @@ export const CustomersPage: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
         <div className="relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-500" />
           <input
             type="text"
             placeholder="Search by customer name, phone number, address, or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-blue-900/60 bg-slate-50 dark:bg-[#051E44] text-[#172033] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0B3A82]"
+            className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-slate-300 dark:border-blue-900/60 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white placeholder:text-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-[#0B3A82]"
           />
         </div>
       </div>
@@ -101,32 +101,32 @@ export const CustomersPage: React.FC = () => {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-black text-sm text-[#0B3A82]">{c.name}</h3>
-                    <p className="text-[10px] text-slate-400 font-mono">{c.customer_code}</p>
+                    <p className="text-[11px] text-slate-600 font-mono font-medium">{c.customer_code}</p>
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0B3A82] font-bold text-xs border border-blue-100">
                     {c.active_orders_count || c.total_orders || 0} Orders
                   </span>
                 </div>
 
-                <div className="text-xs text-slate-600 flex items-center justify-between">
-                  <span className="font-semibold text-slate-700">{c.phone}</span>
-                  {c.address && <span className="text-[11px] text-slate-400 truncate max-w-[160px]">{c.address}</span>}
+                <div className="text-xs text-slate-700 flex items-center justify-between font-medium">
+                  <span className="font-bold text-slate-800">{c.phone}</span>
+                  {c.address && <span className="text-[11px] text-slate-600 truncate max-w-[160px]">{c.address}</span>}
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
-                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                    <p className="text-[9px] uppercase font-bold text-slate-400">Total Spent</p>
+                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
+                    <p className="text-[9px] uppercase font-bold text-slate-600">Total Spent</p>
                     <p className="text-xs font-bold text-slate-900 mt-0.5">₹{spent.toLocaleString('en-IN')}</p>
                   </div>
-                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                    <p className="text-[9px] uppercase font-bold text-slate-400">Balance Due</p>
-                    <p className={`text-xs font-bold mt-0.5 ${pending > 0 ? 'text-amber-600 font-black' : 'text-slate-400'}`}>
+                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
+                    <p className="text-[9px] uppercase font-bold text-slate-600">Balance Due</p>
+                    <p className={`text-xs font-bold mt-0.5 ${pending > 0 ? 'text-amber-600 font-black' : 'text-slate-500'}`}>
                       ₹{pending.toLocaleString('en-IN')}
                     </p>
                   </div>
-                  <div className="p-2 rounded-xl bg-blue-50/50 border border-blue-100/50">
-                    <p className="text-[9px] uppercase font-bold text-[#0B3A82]">Profit</p>
-                    <p className="text-xs font-black text-[#D4AF37] mt-0.5">₹{profit.toLocaleString('en-IN')}</p>
+                  <div className="p-2 rounded-xl bg-amber-50/60 border border-[#D4AF37]/40">
+                    <p className="text-[9px] uppercase font-bold text-amber-900">Profit</p>
+                    <p className="text-xs font-black text-[#9A7B1C] mt-0.5">₹{profit.toLocaleString('en-IN')}</p>
                   </div>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export const CustomersPage: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F7F9FC] text-slate-400 uppercase text-[10px] tracking-wider font-semibold border-b border-slate-100">
+              <thead className="bg-slate-100 dark:bg-navy-850 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200">
                 <tr>
                   <th className="py-3.5 px-4">Customer Name</th>
                   <th className="py-3.5 px-4">Phone & Area</th>
@@ -171,12 +171,12 @@ export const CustomersPage: React.FC = () => {
                   >
                     <td className="py-3 px-4">
                       <p className="font-bold text-[#0B3A82]">{c.name}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">{c.customer_code}</p>
+                      <p className="text-[11px] text-slate-600 font-mono font-medium">{c.customer_code}</p>
                     </td>
 
                     <td className="py-3 px-4">
-                      <p className="font-semibold text-slate-700">{c.phone}</p>
-                      {c.address && <p className="text-[11px] text-slate-400 truncate max-w-[180px]">{c.address}</p>}
+                      <p className="font-semibold text-slate-800">{c.phone}</p>
+                      {c.address && <p className="text-[11px] text-slate-600 truncate max-w-[180px] font-medium">{c.address}</p>}
                     </td>
 
                     <td className="py-3 px-4 text-center">
@@ -185,11 +185,11 @@ export const CustomersPage: React.FC = () => {
                       </span>
                     </td>
 
-                    <td className="py-3 px-4 text-right font-bold text-slate-800">
+                    <td className="py-3 px-4 text-right font-bold text-slate-900">
                       ₹{(c.calculated_spent !== undefined ? c.calculated_spent : c.total_spent).toLocaleString('en-IN')}
                     </td>
 
-                    <td className="py-3 px-4 text-right text-emerald-600 font-semibold">
+                    <td className="py-3 px-4 text-right text-emerald-600 font-bold">
                       ₹{(c.calculated_paid !== undefined ? c.calculated_paid : c.total_paid).toLocaleString('en-IN')}
                     </td>
 
@@ -199,11 +199,11 @@ export const CustomersPage: React.FC = () => {
                           ₹{(c.calculated_pending !== undefined ? c.calculated_pending : c.outstanding_balance).toLocaleString('en-IN')}
                         </span>
                       ) : (
-                        <span className="text-slate-400 font-medium">₹0</span>
+                        <span className="text-slate-500 font-medium">₹0</span>
                       )}
                     </td>
 
-                    <td className="py-3 px-4 text-right font-black text-[#D4AF37]">
+                    <td className="py-3 px-4 text-right font-black text-[#9A7B1C]">
                       ₹{(c.calculated_profit !== undefined ? c.calculated_profit : c.total_profit_generated).toLocaleString('en-IN')}
                     </td>
 
@@ -213,7 +213,7 @@ export const CustomersPage: React.FC = () => {
                           e.stopPropagation();
                           navigate(`/customers/${c.id}`);
                         }}
-                        className="p-1 rounded-lg text-slate-400 hover:text-[#0B3A82]"
+                        className="p-1 rounded-lg text-slate-600 hover:text-[#0B3A82]"
                       >
                         <Eye className="w-4 h-4" />
                       </button>

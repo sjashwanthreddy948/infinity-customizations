@@ -167,7 +167,7 @@ export const CustomerDetailPage: React.FC = () => {
         {/* Desktop Orders Table (>= md) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#F7F9FC] dark:bg-blue-950/60 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+            <thead className="bg-slate-100 dark:bg-blue-950/80 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-blue-900/40">
               <tr>
                 <th className="py-3 px-4">Order #</th>
                 <th className="py-3 px-4">Date</th>
@@ -186,7 +186,7 @@ export const CustomerDetailPage: React.FC = () => {
                 orders.map((o: any) => (
                   <tr key={o.id} onClick={() => navigate(`/orders/${o.id}`)} className="hover:bg-blue-50/40 dark:hover:bg-blue-900/20 cursor-pointer transition-colors">
                     <td className="py-3 px-4 font-bold text-[#0B3A82] dark:text-white">{o.order_number}</td>
-                    <td className="py-3 px-4 text-slate-500 dark:text-slate-400">{o.order_date}</td>
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-400 font-medium">{o.order_date}</td>
                     <td className="py-3 px-4">
                       <span className="font-semibold text-slate-800 dark:text-slate-200">{o.product_name}</span>
                       {o.is_tshirt === 1 && o.tshirt_size && (
@@ -195,8 +195,8 @@ export const CustomerDetailPage: React.FC = () => {
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right font-bold">₹{o.selling_price.toLocaleString('en-IN')}</td>
-                    <td className="py-3 px-4 text-right font-black text-[#D4AF37]">₹{o.profit.toLocaleString('en-IN')}</td>
+                    <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">₹{o.selling_price.toLocaleString('en-IN')}</td>
+                    <td className="py-3 px-4 text-right font-black text-[#9A7B1C] dark:text-[#D4AF37]">₹{o.profit.toLocaleString('en-IN')}</td>
                     <td className="py-3 px-4 text-center">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         o.payment_status === 'PAID' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400'
@@ -266,7 +266,7 @@ export const CustomerDetailPage: React.FC = () => {
         {/* Desktop Invoice Table (>= md) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#F7F9FC] dark:bg-blue-950/60 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+            <thead className="bg-slate-100 dark:bg-blue-950/80 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-blue-900/40">
               <tr>
                 <th className="py-3 px-4">Invoice #</th>
                 <th className="py-3 px-4">Date</th>

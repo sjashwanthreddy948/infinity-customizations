@@ -178,15 +178,15 @@ export const AIInvoicePage: React.FC = () => {
         <h1 className="text-3xl font-black text-[#172033] dark:text-white">
           AI Invoice Assistant
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+        <p className="text-sm text-slate-600 dark:text-slate-300 font-medium max-w-xl mx-auto">
           Type or paste an order in everyday language. AI extracts the customer, specifications, and costs. Review the numbers before saving.
         </p>
       </div>
 
       {/* Input Card */}
-      <div className="p-6 rounded-3xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-xl space-y-4">
+      <div className="p-6 rounded-3xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-xl space-y-4">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
             Natural Language Order Prompt
           </label>
           <div className="relative">
@@ -195,7 +195,7 @@ export const AIInvoicePage: React.FC = () => {
               placeholder="e.g. Rahul ordered 2 black XL t-shirts with front printing for ₹2500. T-shirt cost is ₹900, printing is ₹400 and Rapido is ₹120. Generate invoice."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full p-3.5 sm:p-4 text-base sm:text-sm rounded-2xl border border-slate-200 dark:border-blue-900/60 bg-slate-50/70 dark:bg-[#051E44] text-[#172033] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0B3A82]"
+              className="w-full p-3.5 sm:p-4 text-base sm:text-sm rounded-2xl border border-slate-300 dark:border-blue-900/60 bg-slate-50 dark:bg-[#051E44] text-[#172033] dark:text-white placeholder:text-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-[#0B3A82]"
             />
             <div className="flex justify-end mt-2.5 sm:mt-0 sm:absolute sm:right-3 sm:bottom-3">
               <button
@@ -222,7 +222,7 @@ export const AIInvoicePage: React.FC = () => {
 
         {/* Sample Prompt Chips */}
         <div>
-          <p className="text-[11px] font-bold text-slate-400 mb-2 flex items-center gap-1">
+          <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1">
             <span>Try sample prompts:</span>
           </p>
           <div className="flex flex-wrap gap-2">
@@ -234,7 +234,7 @@ export const AIInvoicePage: React.FC = () => {
                   setPrompt(sample);
                   handleExtract(sample);
                 }}
-                className="text-left text-xs px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-blue-950/60 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-blue-900/40 transition-colors"
+                className="text-left text-xs px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-blue-950/60 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-blue-900/40 font-medium transition-colors"
               >
                 "{sample.slice(0, 50)}..."
               </button>
@@ -304,107 +304,107 @@ export const AIInvoicePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
             <div>
-              <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Customer Name</label>
+              <label className="block font-bold text-slate-800 dark:text-slate-200 mb-1">Customer Name</label>
               <input
                 type="text"
                 value={reviewCustomer}
                 onChange={(e) => setReviewCustomer(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-blue-900 bg-slate-50 dark:bg-[#051E44] text-slate-800 dark:text-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-medium"
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
+              <label className="block font-bold text-slate-800 dark:text-slate-200 mb-1">Phone Number</label>
               <input
                 type="text"
                 value={reviewPhone}
                 onChange={(e) => setReviewPhone(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-blue-900 bg-slate-50 dark:bg-[#051E44] text-slate-800 dark:text-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-medium"
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Product</label>
+              <label className="block font-bold text-slate-800 dark:text-slate-200 mb-1">Product</label>
               <input
                 type="text"
                 value={reviewProduct}
                 onChange={(e) => setReviewProduct(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-blue-900 bg-slate-50 dark:bg-[#051E44] text-slate-800 dark:text-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-medium"
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Quantity</label>
+              <label className="block font-bold text-slate-800 dark:text-slate-200 mb-1">Quantity</label>
               <input
                 type="number"
                 min="1"
                 value={reviewQuantity}
                 onChange={(e) => setReviewQuantity(parseInt(e.target.value, 10) || 1)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-blue-900 bg-slate-50 dark:bg-[#051E44] text-slate-800 dark:text-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-medium"
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">T-Shirt Size</label>
+              <label className="block font-bold text-slate-800 dark:text-slate-200 mb-1">T-Shirt Size</label>
               <input
                 type="text"
                 value={reviewSize}
                 onChange={(e) => setReviewSize(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-blue-900 bg-slate-50 dark:bg-[#051E44] text-slate-800 dark:text-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-medium"
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Color & Print</label>
+              <label className="block font-bold text-slate-800 dark:text-slate-200 mb-1">Color & Print</label>
               <input
                 type="text"
                 value={`${reviewColor} - ${reviewPrintType}`}
                 onChange={(e) => setReviewColor(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-blue-900 bg-slate-50 dark:bg-[#051E44] text-slate-800 dark:text-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-medium"
               />
             </div>
           </div>
 
           {/* Cost Items Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 rounded-2xl bg-[#F7F9FC] dark:bg-blue-950/60 border border-slate-100 dark:border-blue-900/40 text-xs">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-blue-950/60 border border-slate-200 dark:border-blue-900/40 text-xs">
             <div>
-              <label className="block font-bold text-slate-500 mb-1">Selling Amount</label>
+              <label className="block font-bold text-slate-700 dark:text-slate-200 mb-1">Selling Amount</label>
               <input
                 type="number"
                 value={reviewSelling}
                 onChange={(e) => setReviewSelling(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 font-bold rounded-lg border border-slate-200 dark:border-blue-900 bg-white dark:bg-[#051E44]"
+                className="w-full px-2.5 py-1.5 font-bold rounded-lg border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block font-bold text-slate-500 mb-1">Product Cost</label>
+              <label className="block font-bold text-slate-700 dark:text-slate-200 mb-1">Product Cost</label>
               <input
                 type="number"
                 value={reviewProdCost}
                 onChange={(e) => setReviewProdCost(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-blue-900 bg-white dark:bg-[#051E44]"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-semibold"
               />
             </div>
             <div>
-              <label className="block font-bold text-slate-500 mb-1">Printing Cost</label>
+              <label className="block font-bold text-slate-700 dark:text-slate-200 mb-1">Printing Cost</label>
               <input
                 type="number"
                 value={reviewPrintCost}
                 onChange={(e) => setReviewPrintCost(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-blue-900 bg-white dark:bg-[#051E44]"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-semibold"
               />
             </div>
             <div>
-              <label className="block font-bold text-slate-500 mb-1">Rapido / Delivery</label>
+              <label className="block font-bold text-slate-700 dark:text-slate-200 mb-1">Rapido / Delivery</label>
               <input
                 type="number"
                 value={reviewDelivery}
                 onChange={(e) => setReviewDelivery(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-blue-900 bg-white dark:bg-[#051E44]"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-semibold"
               />
             </div>
             <div>
-              <label className="block font-bold text-slate-500 mb-1">Other Cost</label>
+              <label className="block font-bold text-slate-700 dark:text-slate-200 mb-1">Other Cost</label>
               <input
                 type="number"
                 value={reviewOther}
                 onChange={(e) => setReviewOther(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-blue-900 bg-white dark:bg-[#051E44]"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-blue-900 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-semibold"
               />
             </div>
           </div>
@@ -448,8 +448,8 @@ export const AIInvoicePage: React.FC = () => {
       {/* AI Business Insights based on Real Database Metrics */}
       {insights.length > 0 && (
         <div className="space-y-3 pt-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <Lightbulb className="w-4 h-4 text-[#D4AF37]" />
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+            <Lightbulb className="w-4 h-4 text-[#9A7B1C] dark:text-[#D4AF37]" />
             <span>AI Business Insights (Calculated from Real Database Data)</span>
           </h3>
 
@@ -457,14 +457,14 @@ export const AIInvoicePage: React.FC = () => {
             {insights.map((insight) => (
               <div
                 key={insight.id}
-                className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card flex items-start gap-3"
+                className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card flex items-start gap-3"
               >
-                <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-[#D4AF37] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-[#9A7B1C] dark:text-[#D4AF37] flex items-center justify-center shrink-0">
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-[#172033] dark:text-white">{insight.title}</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-300 mt-0.5">{insight.text}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5 font-medium">{insight.text}</p>
                 </div>
               </div>
             ))}

@@ -120,62 +120,62 @@ export const DashboardPage: React.FC = () => {
       {/* 2. THE 6 REQUIRED FINANCIAL CARDS (INR ₹) */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* TOTAL REVENUE */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Revenue</p>
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Total Revenue</p>
           <p className="text-xl sm:text-2xl font-bold text-[#0B3A82] dark:text-white mt-1">
             ₹{(cards.totalRevenue || 0).toLocaleString('en-IN')}
           </p>
-          <p className="text-[10px] text-slate-400 mt-0.5">Gross order sales</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Gross order sales</p>
         </div>
 
         {/* TOTAL COST */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Cost</p>
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Total Cost</p>
           <p className="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1">
             ₹{(cards.totalCost || 0).toLocaleString('en-IN')}
           </p>
-          <p className="text-[10px] text-slate-400 mt-0.5">Blanks + Print + Rapido</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Blanks + Print + Rapido</p>
         </div>
 
         {/* TOTAL PROFIT (Prominent Gold Highlight) */}
         <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-950/40 dark:to-blue-900/50 border border-[#D4AF37]/50 shadow-card">
           <div className="flex items-center justify-between">
-            <p className="text-[10px] uppercase font-bold tracking-wider text-amber-800 dark:text-[#F5E7B2]">Total Profit</p>
+            <p className="text-[10px] uppercase font-bold tracking-wider text-amber-900 dark:text-[#F5E7B2]">Total Profit</p>
             <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#D4AF37] text-[#082A5E]">
               {cards.totalRevenue > 0 ? Math.round(((cards.totalProfit || 0) / cards.totalRevenue) * 100) : 0}% margin
             </span>
           </div>
-          <p className="text-xl sm:text-2xl font-black text-[#D4AF37] mt-1">
+          <p className="text-xl sm:text-2xl font-black text-[#9A7B1C] dark:text-[#D4AF37] mt-1">
             ₹{(cards.totalProfit || 0).toLocaleString('en-IN')}
           </p>
-          <p className="text-[10px] text-amber-800/80 dark:text-amber-300 mt-0.5">Net earned</p>
+          <p className="text-[10px] text-amber-900/80 dark:text-amber-300 mt-0.5 font-medium">Net earned</p>
         </div>
 
         {/* AVAILABLE AMOUNT */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Available Amount</p>
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Available Amount</p>
           <p className={`text-xl sm:text-2xl font-bold mt-1 ${cards.availableAmount >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}`}>
             ₹{(cards.availableAmount || 0).toLocaleString('en-IN')}
           </p>
-          <p className="text-[10px] text-slate-400 mt-0.5">Paid minus costs</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Paid minus costs</p>
         </div>
 
         {/* TOTAL ORDERS */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Orders</p>
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Total Orders</p>
           <p className="text-xl sm:text-2xl font-bold text-[#172033] dark:text-white mt-1">
             {cards.totalOrders || 0}
           </p>
-          <p className="text-[10px] text-slate-400 mt-0.5">Completed orders</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Completed orders</p>
         </div>
 
         {/* PENDING PAYMENTS */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Pending Payments</p>
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Pending Payments</p>
           <p className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">
             ₹{(cards.pendingPayments || 0).toLocaleString('en-IN')}
           </p>
-          <p className="text-[10px] text-slate-400 mt-0.5">Receivable from clients</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Receivable from clients</p>
         </div>
       </div>
 
@@ -442,12 +442,12 @@ export const DashboardPage: React.FC = () => {
 
               <div className="flex items-center justify-between text-xs">
                 <div>
-                  <p className="font-bold text-slate-800">{o.customer_name}</p>
-                  <p className="text-[10px] text-slate-500">{o.product_name}</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{o.customer_name}</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-300 font-medium">{o.product_name}</p>
                 </div>
                 <div className="text-right">
-                  <span className="font-black text-[#0B3A82] block">₹{o.selling_price?.toLocaleString('en-IN')}</span>
-                  <span className="text-[10px] font-black text-[#D4AF37] block">+₹{o.profit?.toLocaleString('en-IN')} profit</span>
+                  <span className="font-black text-[#0B3A82] dark:text-white block">₹{o.selling_price?.toLocaleString('en-IN')}</span>
+                  <span className="text-[10px] font-black text-[#9A7B1C] dark:text-[#D4AF37] block">+₹{o.profit?.toLocaleString('en-IN')} profit</span>
                 </div>
               </div>
 
@@ -455,11 +455,11 @@ export const DashboardPage: React.FC = () => {
                 <span className={`px-2 py-0.5 rounded-md font-bold ${
                   o.is_partner_shared === 1 || o.is_tshirt === 1
                     ? 'bg-blue-50 text-[#0B3A82] border border-blue-200'
-                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+                    : 'bg-slate-100 text-slate-700 border border-slate-200'
                 }`}>
                   {o.is_partner_shared === 1 || o.is_tshirt === 1 ? '🤝 Shared (50/50)' : '🔒 100% Jashwanth'}
                 </span>
-                <span className="text-slate-400">By: <strong className="text-slate-600">{o.created_by_name}</strong></span>
+                <span className="text-slate-500 font-medium">By: <strong className="text-slate-800 dark:text-slate-200">{o.created_by_name}</strong></span>
               </div>
             </div>
           ))}
@@ -468,7 +468,7 @@ export const DashboardPage: React.FC = () => {
         {/* Desktop Recent Orders Table (Hidden on screens < md) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#F7F9FC] dark:bg-blue-950/60 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+            <thead className="bg-slate-100 dark:bg-blue-950/80 text-slate-700 dark:text-slate-200 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200 dark:border-blue-900/40">
               <tr>
                 <th className="py-3 px-4">Order #</th>
                 <th className="py-3 px-4">Customer</th>
@@ -517,7 +517,7 @@ export const DashboardPage: React.FC = () => {
                   <td className="py-3 px-4 text-right text-rose-600 dark:text-rose-400">
                     ₹{o.total_cost.toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3 px-4 text-right font-black text-[#D4AF37]">
+                  <td className="py-3 px-4 text-right font-black text-[#9A7B1C] dark:text-[#D4AF37]">
                     ₹{o.profit.toLocaleString('en-IN')}
                   </td>
                   <td className="py-3 px-4 text-center">

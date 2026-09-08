@@ -159,7 +159,7 @@ export const CashBankPage: React.FC = () => {
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             Cash & Bank Management
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-0.5">
             Strictly derived balances. Direct manipulation disabled for audit security.
           </p>
         </div>
@@ -195,40 +195,40 @@ export const CashBankPage: React.FC = () => {
           <div className="text-2xl font-black font-mono my-2 text-white">
             {currencySymbol}{summary.totalLiquid.toLocaleString('en-IN')}
           </div>
-          <p className="text-[11px] text-slate-400">Total verified available funds</p>
+          <p className="text-[11px] text-slate-300 font-medium">Total verified available funds</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">CASH IN HAND</span>
+          <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">CASH IN HAND</span>
             <Wallet className="w-4 h-4 text-teal-500" />
           </div>
           <div className="text-2xl font-black font-mono my-2 text-slate-900 dark:text-white">
             {currencySymbol}{summary.cashTotal.toLocaleString('en-IN')}
           </div>
-          <p className="text-[11px] text-slate-400">Office vault physical currency</p>
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Office vault physical currency</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">BANK CURRENT A/C</span>
+          <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">BANK CURRENT A/C</span>
             <Building2 className="w-4 h-4 text-brand-500" />
           </div>
           <div className="text-2xl font-black font-mono my-2 text-slate-900 dark:text-white">
             {currencySymbol}{summary.bankTotal.toLocaleString('en-IN')}
           </div>
-          <p className="text-[11px] text-slate-400">HDFC Primary Business Account</p>
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">HDFC Primary Business Account</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">BUSINESS UPI</span>
+          <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">BUSINESS UPI</span>
             <CreditCard className="w-4 h-4 text-purple-500" />
           </div>
           <div className="text-2xl font-black font-mono my-2 text-slate-900 dark:text-white">
             {currencySymbol}{summary.upiTotal.toLocaleString('en-IN')}
           </div>
-          <p className="text-[11px] text-slate-400">Instant merchant UPI collections</p>
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Instant merchant UPI collections</p>
         </div>
       </div>
 
@@ -256,7 +256,7 @@ export const CashBankPage: React.FC = () => {
                 )}
               </div>
               <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline">
-                <span className="text-xs text-slate-400">Derived Balance:</span>
+                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Derived Balance:</span>
                 <span className="text-base font-black font-mono text-slate-900 dark:text-white">
                   {currencySymbol}{acc.current_balance.toLocaleString('en-IN')}
                 </span>
@@ -285,7 +285,7 @@ export const CashBankPage: React.FC = () => {
                   <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">
                     {t.transaction_number}
                   </span>
-                  <span className="text-[11px] text-slate-400">{t.date}</span>
+                  <span className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">{t.date}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
@@ -302,7 +302,7 @@ export const CashBankPage: React.FC = () => {
                   </p>
                 )}
                 <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/60">
-                  <span className="text-[11px] text-slate-400">By {t.actor_name}</span>
+                  <span className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">By {t.actor_name}</span>
                   <div className="font-mono font-bold text-xs">
                     {isInflow && <span className="text-emerald-600 dark:text-emerald-400">+{currencySymbol}{t.amount.toLocaleString('en-IN')}</span>}
                     {isOutflow && <span className="text-rose-600 dark:text-rose-400">-{currencySymbol}{t.amount.toLocaleString('en-IN')}</span>}
@@ -317,7 +317,7 @@ export const CashBankPage: React.FC = () => {
         {/* Desktop Table (hidden md:block) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase tracking-wider font-semibold">
+            <thead className="bg-slate-100 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 uppercase tracking-wider font-bold text-[11px]">
               <tr>
                 <th className="py-3 px-4">TX #</th>
                 <th className="py-3 px-4">Date</th>
@@ -340,7 +340,7 @@ export const CashBankPage: React.FC = () => {
                     <td className="py-3 px-4 font-mono font-semibold text-slate-700 dark:text-slate-300">
                       {t.transaction_number}
                     </td>
-                    <td className="py-3 px-4 text-slate-500">{t.date}</td>
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-400 font-medium">{t.date}</td>
                     <td className="py-3 px-4 font-medium text-slate-800 dark:text-slate-200">
                       {t.account_name || 'Main Account'}
                       {t.to_account_name && ` -> ${t.to_account_name}`}
@@ -350,7 +350,7 @@ export const CashBankPage: React.FC = () => {
                         {t.type}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-600 dark:text-slate-300 max-w-xs truncate">
+                    <td className="py-3 px-4 text-slate-700 dark:text-slate-300 max-w-xs truncate font-medium">
                       {t.description}
                     </td>
                     <td className="py-3 px-4 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
@@ -360,7 +360,7 @@ export const CashBankPage: React.FC = () => {
                       {isOutflow ? `${currencySymbol}${t.amount.toLocaleString('en-IN')}` : '-'}
                       {isTransfer && <span className="text-brand-500 font-normal">Transfer</span>}
                     </td>
-                    <td className="py-3 px-4 text-slate-500 font-medium">{t.actor_name}</td>
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-300 font-medium">{t.actor_name}</td>
                   </tr>
                 );
               })}
@@ -377,28 +377,28 @@ export const CashBankPage: React.FC = () => {
             <h3 className="text-base font-bold text-slate-900 dark:text-white">Inter-Account Transfer</h3>
             <form onSubmit={handleTransfer} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">From Account</label>
-                <select value={fromAccount} onChange={(e) => setFromAccount(e.target.value)} className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">From Account</label>
+                <select value={fromAccount} onChange={(e) => setFromAccount(e.target.value)} className="w-full p-2.5 text-xs font-semibold rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white">
                   {accounts.map((a: any) => <option key={a.id} value={a.id}>{a.account_name} (Avail: ₹{a.current_balance.toLocaleString('en-IN')})</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">To Account</label>
-                <select value={toAccount} onChange={(e) => setToAccount(e.target.value)} className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">To Account</label>
+                <select value={toAccount} onChange={(e) => setToAccount(e.target.value)} className="w-full p-2.5 text-xs font-semibold rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white">
                   {accounts.map((a: any) => <option key={a.id} value={a.id}>{a.account_name} (Avail: ₹{a.current_balance.toLocaleString('en-IN')})</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Transfer Amount (₹)</label>
-                <input type="number" min="1" value={transferAmount} onChange={(e) => setTransferAmount(e.target.value)} placeholder="0.00" className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 font-mono font-bold" required />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Transfer Amount (₹)</label>
+                <input type="number" min="1" value={transferAmount} onChange={(e) => setTransferAmount(e.target.value)} placeholder="0.00" className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold" required />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Description</label>
-                <input type="text" value={transferDesc} onChange={(e) => setTransferDesc(e.target.value)} className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Description</label>
+                <input type="text" value={transferDesc} onChange={(e) => setTransferDesc(e.target.value)} className="w-full p-2.5 text-xs font-medium rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowTransferModal(false)} className="px-4 py-2 text-xs rounded-xl bg-slate-100 dark:bg-navy-800">Cancel</button>
-                <button type="submit" disabled={isSubmittingTransfer} className="px-4 py-2 text-xs rounded-xl bg-[#0B3A82] text-white font-semibold shadow-md shadow-blue-900/20 border border-[#D4AF37]/30">Confirm Transfer</button>
+                <button type="button" onClick={() => setShowTransferModal(false)} className="px-4 py-2 text-xs font-bold rounded-xl bg-slate-100 dark:bg-navy-800 text-slate-700 dark:text-slate-300">Cancel</button>
+                <button type="submit" disabled={isSubmittingTransfer} className="px-4 py-2 text-xs rounded-xl bg-[#0B3A82] text-white font-bold shadow-md shadow-blue-900/20 border border-[#D4AF37]/30">Confirm Transfer</button>
               </div>
             </form>
           </div>
@@ -413,22 +413,22 @@ export const CashBankPage: React.FC = () => {
             <h3 className="text-base font-bold text-slate-900 dark:text-white">Record {entryType === 'DEPOSIT' ? 'Deposit / Cash Inflow' : 'Withdrawal / Cash Outflow'}</h3>
             <form onSubmit={handleEntry} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Target Account</label>
-                <select value={targetAccount} onChange={(e) => setTargetAccount(e.target.value)} className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Target Account</label>
+                <select value={targetAccount} onChange={(e) => setTargetAccount(e.target.value)} className="w-full p-2.5 text-xs font-semibold rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white">
                   {accounts.map((a: any) => <option key={a.id} value={a.id}>{a.account_name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Amount (₹)</label>
-                <input type="number" min="1" value={entryAmount} onChange={(e) => setEntryAmount(e.target.value)} placeholder="0.00" className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 font-mono font-bold" required />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Amount (₹)</label>
+                <input type="number" min="1" value={entryAmount} onChange={(e) => setEntryAmount(e.target.value)} placeholder="0.00" className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold" required />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Description</label>
-                <input type="text" value={entryDesc} onChange={(e) => setEntryDesc(e.target.value)} placeholder="e.g. Petty cash replenishment or capital withdrawal" className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700" required />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Description</label>
+                <input type="text" value={entryDesc} onChange={(e) => setEntryDesc(e.target.value)} placeholder="e.g. Petty cash replenishment or capital withdrawal" className="w-full p-2.5 text-xs font-medium rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" required />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowEntryModal(false)} className="px-4 py-2 text-xs rounded-xl bg-slate-100 dark:bg-navy-800">Cancel</button>
-                <button type="submit" disabled={isSubmittingEntry} className="px-4 py-2 text-xs rounded-xl bg-[#0B3A82] text-white font-semibold shadow-md shadow-blue-900/20 border border-[#D4AF37]/30">Record Entry</button>
+                <button type="button" onClick={() => setShowEntryModal(false)} className="px-4 py-2 text-xs font-bold rounded-xl bg-slate-100 dark:bg-navy-800 text-slate-700 dark:text-slate-300">Cancel</button>
+                <button type="submit" disabled={isSubmittingEntry} className="px-4 py-2 text-xs rounded-xl bg-[#0B3A82] text-white font-bold shadow-md shadow-blue-900/20 border border-[#D4AF37]/30">Record Entry</button>
               </div>
             </form>
           </div>

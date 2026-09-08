@@ -104,26 +104,26 @@ export const InvoicesPage: React.FC = () => {
       {/* Filters & Search */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search invoice # or customer..."
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-[#0B3A82]"
           />
         </div>
 
         {/* Status Pills */}
-        <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto p-1 bg-slate-100 rounded-xl text-xs font-medium no-scrollbar">
+        <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto p-1 bg-slate-100 rounded-xl text-xs font-semibold no-scrollbar border border-slate-200">
           {['ALL', 'SENT', 'PARTIAL', 'PAID', 'OVERDUE', 'VOID'].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                 statusFilter === st
-                  ? 'bg-white text-slate-900 shadow-xs font-bold'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white text-slate-900 shadow-sm font-black'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {st}
@@ -155,7 +155,7 @@ export const InvoicesPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-mono font-black text-sm text-[#0B3A82]">{inv.invoice_number}</span>
-                  <span className="text-[10px] text-slate-400 block">Issued: {inv.issue_date}</span>
+                  <span className="text-[11px] text-slate-600 block font-medium">Issued: {inv.issue_date}</span>
                 </div>
                 {getStatusBadge(inv.status)}
               </div>
@@ -164,10 +164,10 @@ export const InvoicesPage: React.FC = () => {
               <div className="border-t border-slate-100 pt-2 flex items-center justify-between">
                 <div>
                   <p className="font-bold text-xs text-slate-900">{inv.customer_name}</p>
-                  <p className="text-[10px] text-slate-400">Due: {inv.due_date}</p>
+                  <p className="text-[11px] text-slate-600 font-medium">Due: {inv.due_date}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[9px] uppercase font-bold text-slate-400 block">Grand Total</span>
+                  <span className="text-[9px] uppercase font-bold text-slate-600 block">Grand Total</span>
                   <span className="text-sm font-black text-slate-900">{currencySymbol}{inv.grand_total.toLocaleString('en-IN')}</span>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export const InvoicesPage: React.FC = () => {
                       ✓ Paid in Full
                     </span>
                   )}
-                  <span className="text-[10px] text-slate-400 block">By: {inv.created_by_name}</span>
+                  <span className="text-[11px] text-slate-600 block font-medium">By: {inv.created_by_name}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
@@ -224,7 +224,7 @@ export const InvoicesPage: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase tracking-wider font-semibold">
+              <thead className="bg-slate-100 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 uppercase tracking-wider font-bold text-[11px]">
                 <tr>
                   <th className="py-3.5 px-4">Invoice #</th>
                   <th className="py-3.5 px-4">Customer</th>
@@ -250,25 +250,25 @@ export const InvoicesPage: React.FC = () => {
                     <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
                       {inv.customer_name}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">{inv.issue_date}</td>
-                    <td className="py-3.5 px-4 text-slate-500">{inv.due_date}</td>
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">{inv.issue_date}</td>
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">{inv.due_date}</td>
                     <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-white">
                       {currencySymbol}{inv.grand_total.toLocaleString('en-IN')}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-semibold text-rose-600 dark:text-rose-400">
+                    <td className="py-3.5 px-4 text-right font-mono font-bold text-rose-600 dark:text-rose-400">
                       {inv.balance_due > 0 ? `${currencySymbol}${inv.balance_due.toLocaleString('en-IN')}` : '₹0'}
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       {getStatusBadge(inv.status)}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
+                    <td className="py-3.5 px-4 text-slate-700 dark:text-slate-200 font-medium">
                       {inv.created_by_name}
                     </td>
                     <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => navigate(`/invoices/${inv.id}`)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-navy-800"
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-navy-800"
                           title="View Invoice"
                         >
                           <Eye className="w-4 h-4" />
@@ -285,7 +285,7 @@ export const InvoicesPage: React.FC = () => {
                         {inv.status !== 'VOID' && (
                           <button
                             onClick={() => setVoidInvoice(inv)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                            className="p-1.5 rounded-lg text-slate-600 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
                             title="Void Invoice"
                           >
                             <Ban className="w-4 h-4" />

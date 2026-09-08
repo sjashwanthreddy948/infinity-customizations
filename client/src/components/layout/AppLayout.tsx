@@ -128,7 +128,7 @@ export const AppLayout: React.FC = () => {
                 <span>INFINITY</span>
                 <span className="text-[#D4AF37]">CUSTOMIZATIONS</span>
               </span>
-              <p className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold -mt-0.5">
+              <p className="text-[9px] uppercase tracking-wider text-slate-600 font-bold -mt-0.5">
                 Business Management & Smart Invoice
               </p>
             </div>
@@ -140,20 +140,20 @@ export const AppLayout: React.FC = () => {
           {/* Mobile Search Icon Button */}
           <button
             onClick={() => setSearchOpen(true)}
-            className="sm:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 active:scale-95 transition-transform"
+            className="sm:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-transform"
             title="Search"
           >
-            <Search className="w-5 h-5 text-slate-600" />
+            <Search className="w-5 h-5 text-slate-700" />
           </button>
 
           {/* Global Search Bar (Ctrl+K) */}
           <button
             onClick={() => setSearchOpen(true)}
-            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-400 hover:text-slate-600 text-xs transition-colors"
+            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-600 hover:text-slate-900 text-xs transition-colors shadow-2xs"
           >
-            <Search className="w-3.5 h-3.5 text-slate-400" />
-            <span>Search orders, invoices, customers...</span>
-            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200 text-slate-600">
+            <Search className="w-3.5 h-3.5 text-slate-600" />
+            <span className="font-medium">Search orders, invoices, customers...</span>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-bold">
               Ctrl+K
             </kbd>
           </button>
@@ -272,7 +272,7 @@ export const AppLayout: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-900">{isPartner1 ? 'Jashwanth Reddy' : 'Rajshekar Reddy'}</p>
-                  <p className="text-[10px] text-slate-400">Equal Partner (50%)</p>
+                  <p className="text-[10px] text-slate-600 font-medium">Equal Partner (50%)</p>
                 </div>
               </div>
               <button
@@ -290,7 +290,7 @@ export const AppLayout: React.FC = () => {
 
           {/* Navigation Links */}
           <div className="p-3 sm:p-4 space-y-1 flex-1 overflow-y-auto bg-white">
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">
               Menu Navigation
             </p>
             {navItems.map((item) => {
@@ -305,13 +305,13 @@ export const AppLayout: React.FC = () => {
                       isActive
                         ? 'bg-[#0B3A82] text-white shadow-md shadow-blue-900/20 font-bold'
                         : item.gold
-                        ? 'text-[#B89327] hover:bg-amber-50'
+                        ? 'text-[#9A7B1C] hover:bg-amber-50 font-bold'
                         : 'text-slate-700 hover:bg-slate-50 hover:text-[#0B3A82]'
                     }
                   `}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${item.gold ? 'text-[#D4AF37]' : ''}`} />
+                    <Icon className={`w-4 h-4 ${item.gold ? 'text-[#9A7B1C]' : ''}`} />
                     <span>{item.label}</span>
                   </div>
                   {item.highlight && (
@@ -320,7 +320,7 @@ export const AppLayout: React.FC = () => {
                     </span>
                   )}
                   {item.gold && (
-                    <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+                    <Sparkles className="w-3 h-3 text-[#9A7B1C]" />
                   )}
                 </NavLink>
               );
@@ -330,14 +330,14 @@ export const AppLayout: React.FC = () => {
           {/* Sidebar Footer Partner Transparency Card & Mobile Logout */}
           <div className="p-4 border-t border-slate-200 bg-white space-y-3">
             <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] space-y-1">
-              <div className="flex items-center justify-between text-slate-500">
+              <div className="flex items-center justify-between text-slate-600 font-semibold">
                 <span>Partnership</span>
-                <span className="text-emerald-600 font-bold">50 / 50</span>
+                <span className="text-emerald-700 font-bold">50 / 50</span>
               </div>
               <p className="font-bold text-[#0B3A82]">
                 Jashwanth & Rajshekar Reddy
               </p>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px] text-slate-600 font-medium">
                 100% Financial Transparency
               </p>
             </div>
@@ -375,7 +375,7 @@ export const AppLayout: React.FC = () => {
           to="/dashboard"
           className={({ isActive }) =>
             `flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all ${
-              isActive ? 'text-[#0B3A82] font-black scale-105' : 'text-slate-400 hover:text-slate-600 font-medium'
+              isActive ? 'text-[#0B3A82] font-black scale-105' : 'text-slate-600 hover:text-slate-900 font-semibold'
             }`
           }
         >
@@ -387,7 +387,7 @@ export const AppLayout: React.FC = () => {
           to="/orders"
           className={({ isActive }) =>
             `flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all ${
-              isActive ? 'text-[#0B3A82] font-black scale-105' : 'text-slate-400 hover:text-slate-600 font-medium'
+              isActive ? 'text-[#0B3A82] font-black scale-105' : 'text-slate-600 hover:text-slate-900 font-semibold'
             }`
           }
         >
@@ -408,7 +408,7 @@ export const AppLayout: React.FC = () => {
           to="/invoices"
           className={({ isActive }) =>
             `flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all ${
-              isActive ? 'text-[#0B3A82] font-black scale-105' : 'text-slate-400 hover:text-slate-600 font-medium'
+              isActive ? 'text-[#0B3A82] font-black scale-105' : 'text-slate-600 hover:text-slate-900 font-semibold'
             }`
           }
         >
@@ -418,7 +418,7 @@ export const AppLayout: React.FC = () => {
 
         <button
           onClick={() => setSidebarOpen(true)}
-          className="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-slate-400 hover:text-slate-600 font-medium transition-all active:scale-95 cursor-pointer"
+          className="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-slate-600 hover:text-slate-900 font-semibold transition-all active:scale-95 cursor-pointer"
         >
           <Menu className="w-5 h-5" />
           <span className="text-[10px] mt-0.5">Menu</span>

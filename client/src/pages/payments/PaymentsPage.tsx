@@ -148,7 +148,7 @@ export const PaymentsPage: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F7F9FC] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold">
+              <thead className="bg-slate-100 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 uppercase tracking-wider font-bold text-[11px]">
                 <tr>
                   <th className="py-3.5 px-4">Payment #</th>
                   <th className="py-3.5 px-4">Date</th>
@@ -160,17 +160,17 @@ export const PaymentsPage: React.FC = () => {
                   <th className="py-3.5 px-4">Recorded By</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {payments.map((p) => (
-                  <tr key={p.id} className="hover:bg-blue-50/40 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#0B3A82]">
+                  <tr key={p.id} className="hover:bg-blue-50/40 dark:hover:bg-navy-850/50 transition-colors">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0B3A82] dark:text-blue-400">
                       {p.payment_number}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">{p.date}</td>
-                    <td className="py-3.5 px-4 font-semibold text-slate-900">
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400 font-medium">{p.date}</td>
+                    <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
                       {p.customer_name || 'General Payment'}
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-600">
+                    <td className="py-3.5 px-4 font-mono font-semibold text-slate-700 dark:text-slate-300">
                       {p.invoice_number || '-'}
                     </td>
                     <td className="py-3.5 px-4 text-slate-700 font-medium">

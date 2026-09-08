@@ -44,13 +44,13 @@ export const SalesPage: React.FC = () => {
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             Direct Sales & Deliverables
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-0.5">
             Fast counter & project sales with instantaneous revenue posting
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md shadow-emerald-600/20"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md shadow-emerald-600/20 active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Record Sale</span>
@@ -58,13 +58,13 @@ export const SalesPage: React.FC = () => {
       </div>
 
       <div className="relative w-full sm:w-80">
-        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+        <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search sale # or customer..."
-          className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
       </div>
 
@@ -73,9 +73,9 @@ export const SalesPage: React.FC = () => {
           <div className="p-8 text-center text-xs text-slate-400 animate-pulse">Loading sales...</div>
         ) : sales.length === 0 ? (
           <div className="p-12 text-center space-y-3">
-            <ShoppingCart className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">No direct sales yet</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <ShoppingCart className="w-10 h-10 text-slate-400 dark:text-slate-500 mx-auto" />
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">No direct sales yet</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-sm mx-auto font-medium">
               Record counter sales or ad-hoc project packages directly without generating formal invoices.
             </p>
             <button
@@ -88,7 +88,7 @@ export const SalesPage: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase tracking-wider font-semibold">
+              <thead className="bg-slate-100 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 uppercase tracking-wider font-bold text-[11px]">
                 <tr>
                   <th className="py-3.5 px-4">Sale #</th>
                   <th className="py-3.5 px-4">Date</th>
@@ -106,7 +106,7 @@ export const SalesPage: React.FC = () => {
                     <td className="py-3.5 px-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">
                       {s.sale_number}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">{s.date}</td>
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400 font-medium">{s.date}</td>
                     <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-slate-100">{s.customer_name}</td>
                     <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-white">
                       {currencySymbol}{s.grand_total.toLocaleString('en-IN')}
@@ -114,13 +114,13 @@ export const SalesPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-right font-mono font-semibold text-emerald-600 dark:text-emerald-400">
                       {currencySymbol}{s.amount_paid.toLocaleString('en-IN')}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">{s.payment_method}</td>
+                    <td className="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-medium">{s.payment_method}</td>
                     <td className="py-3.5 px-4 text-center">
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
                         {s.payment_status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500 font-medium">{s.created_by_name}</td>
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">{s.created_by_name}</td>
                   </tr>
                 ))}
               </tbody>

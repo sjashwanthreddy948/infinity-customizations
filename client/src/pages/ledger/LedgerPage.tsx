@@ -181,7 +181,7 @@ export const LedgerPage: React.FC = () => {
             {/* Desktop Table (hidden md:block) */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead className="bg-slate-100 dark:bg-navy-850 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 uppercase tracking-wider font-bold text-[11px]">
                   <tr>
                     <th className="py-3.5 px-4">Date</th>
                     <th className="py-3.5 px-4">TX ID</th>

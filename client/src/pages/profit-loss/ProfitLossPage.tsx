@@ -151,23 +151,23 @@ export const ProfitLossPage: React.FC = () => {
       {/* Summary KPI Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 print:hidden">
         <div className="p-5 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">GROSS REVENUE</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">GROSS REVENUE</span>
           <div className="text-2xl font-black font-mono text-slate-900 dark:text-white mt-1">
             {currencySymbol}{revenue.totalRevenue.toLocaleString('en-IN')}
           </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">OPERATING EXPENSES</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">OPERATING EXPENSES</span>
           <div className="text-2xl font-black font-mono text-rose-600 dark:text-rose-400 mt-1">
             {currencySymbol}{expenses.totalExpenses.toLocaleString('en-IN')}
           </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex justify-between items-center text-slate-400">
+          <div className="flex justify-between items-center text-slate-700 dark:text-slate-300">
             <span className="text-xs font-bold uppercase tracking-wider">NET PROFIT</span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
               {margin}% Margin
             </span>
           </div>
@@ -270,11 +270,11 @@ export const ProfitLossPage: React.FC = () => {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px]">
               <div className="bg-white dark:bg-navy-800/80 p-2 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                <span className="text-slate-500">Shared Merch (50/50 Split):</span>
-                <strong className="text-slate-800 dark:text-slate-200 font-mono">{currencySymbol}{sharedProfit.toLocaleString('en-IN')}</strong>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">Shared Merch (50/50 Split):</span>
+                <strong className="text-slate-900 dark:text-slate-100 font-mono">{currencySymbol}{sharedProfit.toLocaleString('en-IN')}</strong>
               </div>
               <div className="bg-white dark:bg-navy-800/80 p-2 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                <span className="text-slate-500">Sole Owner Merch (100% Jashwanth):</span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">Sole Owner Merch (100% Jashwanth):</span>
                 <strong className="text-[#0B3A82] dark:text-blue-400 font-mono">{currencySymbol}{soleProfit.toLocaleString('en-IN')}</strong>
               </div>
             </div>
@@ -283,12 +283,12 @@ export const ProfitLossPage: React.FC = () => {
           <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div className="p-4 bg-white dark:bg-navy-900 rounded-xl border border-blue-300 dark:border-blue-900/60 shadow-xs space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[#0B3A82] font-black text-xs uppercase tracking-wider">Jashwanth Reddy</span>
+                <span className="text-[#0B3A82] dark:text-blue-400 font-black text-xs uppercase tracking-wider">Jashwanth Reddy</span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">
                   Owner & Partner
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
                 50% Shared ({currencySymbol}{jashwanthShared.toLocaleString('en-IN')}) + 100% Sole ({currencySymbol}{jashwanthSole.toLocaleString('en-IN')})
               </p>
               <div className="pt-2 text-xl font-mono font-black text-slate-900 dark:text-white">
@@ -298,12 +298,12 @@ export const ProfitLossPage: React.FC = () => {
 
             <div className="p-4 bg-white dark:bg-navy-900 rounded-xl border border-[#D4AF37]/50 dark:border-amber-900/50 shadow-xs space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[#B89327] font-black text-xs uppercase tracking-wider">Rajshekar Reddy</span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                <span className="text-[#9A7B1C] dark:text-[#D4AF37] font-black text-xs uppercase tracking-wider">Rajshekar Reddy</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200">
                   Partner (Shared Merch Only)
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
                 50% Shared T-Shirts, ID Cards & Caps ({currencySymbol}0 from Bouquets, Frames & Gifts)
               </p>
               <div className="pt-2 text-xl font-mono font-black text-[#0B3A82] dark:text-emerald-400">

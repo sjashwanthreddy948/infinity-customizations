@@ -88,36 +88,36 @@ export const TShirtsPage: React.FC = () => {
 
       {/* 7 Key T-Shirt Metric Cards (Prompt Specified) */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">T-Shirts Sold</p>
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">T-Shirts Sold</p>
           <p className="text-xl font-bold text-[#0B3A82] dark:text-white mt-1">{summary.totalTshirtsSold || 0} pcs</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">{summary.totalOrders || 0} orders</p>
+          <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium mt-0.5">{summary.totalOrders || 0} orders</p>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">T-Shirt Revenue</p>
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">T-Shirt Revenue</p>
           <p className="text-xl font-bold text-[#0B3A82] dark:text-white mt-1">₹{(summary.totalRevenue || 0).toLocaleString('en-IN')}</p>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Blank T-Shirt Cost</p>
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Blank T-Shirt Cost</p>
           <p className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1">₹{(summary.totalProductCost || 0).toLocaleString('en-IN')}</p>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Printing Cost</p>
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Printing Cost</p>
           <p className="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">₹{(summary.totalPrintingCost || 0).toLocaleString('en-IN')}</p>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Delivery / Rapido</p>
-          <p className="text-xl font-bold text-slate-700 dark:text-slate-200 mt-1">₹{(summary.totalDeliveryCost || 0).toLocaleString('en-IN')}</p>
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">Delivery / Rapido</p>
+          <p className="text-xl font-bold text-slate-800 dark:text-slate-200 mt-1">₹{(summary.totalDeliveryCost || 0).toLocaleString('en-IN')}</p>
         </div>
 
         <div className="p-3.5 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/40 dark:to-blue-900/50 border border-[#D4AF37]/50 shadow-card">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-amber-800 dark:text-[#F5E7B2]">Total Profit</p>
-          <p className="text-xl font-black text-[#D4AF37] mt-1">₹{(summary.totalProfit || 0).toLocaleString('en-IN')}</p>
-          <p className="text-[10px] text-amber-700 dark:text-amber-300 mt-0.5">{summary.profitMargin}% margin</p>
+          <p className="text-[10px] uppercase font-bold tracking-wider text-amber-900 dark:text-[#F5E7B2]">Total Profit</p>
+          <p className="text-xl font-black text-[#9A7B1C] dark:text-[#D4AF37] mt-1">₹{(summary.totalProfit || 0).toLocaleString('en-IN')}</p>
+          <p className="text-[10px] text-amber-900 dark:text-amber-300 font-bold mt-0.5">{summary.profitMargin}% margin</p>
         </div>
 
         <div className="p-3.5 rounded-2xl bg-[#082A5E] text-white border border-[#D4AF37]/40 shadow-card col-span-2 md:col-span-1">
@@ -130,13 +130,13 @@ export const TShirtsPage: React.FC = () => {
       {/* Visual Charts: Sales by Size & Sales by Color */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales by Size (S, M, L, XL, XXL) */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card space-y-4">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] dark:text-[#D4AF37] flex items-center gap-2">
               <BarChart2 className="w-4 h-4" />
               <span>Sales by T-Shirt Size (S, M, L, XL, XXL)</span>
             </h3>
-            <span className="text-[11px] text-slate-400">Unit Volume</span>
+            <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Unit Volume</span>
           </div>
 
           <div className="h-64">
@@ -220,19 +220,19 @@ export const TShirtsPage: React.FC = () => {
       {/* Neck Styles & Fabric Quality Intelligence */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Neck Styles Breakdown (Round Neck vs Collar) */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card space-y-4">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] dark:text-[#D4AF37] flex items-center gap-2">
               <Shirt className="w-4 h-4" />
               <span>Neck Style Breakdown</span>
             </h3>
-            <span className="text-[11px] text-slate-400">Round Neck vs Collar</span>
+            <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Round Neck vs Collar</span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {salesByNeckType.length > 0 ? (
               salesByNeckType.map((item: any) => (
-                <div key={item.neck_type} className="p-3.5 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200/70 space-y-1.5">
+                <div key={item.neck_type} className="p-3.5 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className={`px-2 py-0.5 rounded text-xs font-bold ${
                       item.neck_type === 'Collar' ? 'bg-[#0B3A82] text-white' : 'bg-blue-100 text-[#0B3A82]'
@@ -242,35 +242,35 @@ export const TShirtsPage: React.FC = () => {
                     <span className="text-xs font-black text-slate-900 dark:text-white">{item.count} pcs</span>
                   </div>
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold">Revenue</span>
+                    <span className="text-slate-600 dark:text-slate-300 text-[10px] uppercase font-bold">Revenue</span>
                     <span className="font-bold text-[#0B3A82] dark:text-[#D4AF37]">₹{(item.revenue || 0).toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-emerald-700 text-[10px] uppercase font-bold">Profit</span>
-                    <span className="font-black text-emerald-600">₹{(item.profit || 0).toLocaleString('en-IN')}</span>
+                    <span className="text-emerald-800 dark:text-emerald-300 text-[10px] uppercase font-bold">Profit</span>
+                    <span className="font-black text-emerald-600 dark:text-emerald-400">₹{(item.profit || 0).toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="col-span-2 text-xs text-slate-400 py-4 text-center">No neck style breakdown recorded yet.</p>
+              <p className="col-span-2 text-xs text-slate-500 py-4 text-center">No neck style breakdown recorded yet.</p>
             )}
           </div>
         </div>
 
         {/* Fabric Quality Breakdown */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-100 dark:border-blue-900/50 shadow-card space-y-4">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] dark:text-[#D4AF37] flex items-center gap-2">
               <Layers className="w-4 h-4" />
               <span>Fabric Quality Breakdown</span>
             </h3>
-            <span className="text-[11px] text-slate-400">Pure Cotton, Cotton, Poly, Nano</span>
+            <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Pure Cotton, Cotton, Poly, Nano</span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {salesByFabric.length > 0 ? (
               salesByFabric.map((item: any) => (
-                <div key={item.fabric} className="p-3 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200/70 space-y-1">
+                <div key={item.fabric} className="p-3 rounded-xl bg-slate-50 dark:bg-blue-950/40 border border-slate-200 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#D4AF37]/20 text-[#8C7118]">
                       {item.fabric}
@@ -278,17 +278,17 @@ export const TShirtsPage: React.FC = () => {
                     <span className="text-xs font-bold text-slate-900 dark:text-white">{item.count} pcs</span>
                   </div>
                   <div className="flex items-center justify-between text-[11px] pt-1">
-                    <span className="text-slate-400">Revenue</span>
+                    <span className="text-slate-600 dark:text-slate-300 font-medium">Revenue</span>
                     <span className="font-bold text-[#0B3A82] dark:text-[#D4AF37]">₹{(item.revenue || 0).toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-emerald-700">Profit</span>
-                    <span className="font-bold text-emerald-600">₹{(item.profit || 0).toLocaleString('en-IN')}</span>
+                    <span className="text-emerald-800 dark:text-emerald-300 font-medium">Profit</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">₹{(item.profit || 0).toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="col-span-2 text-xs text-slate-400 py-4 text-center">No fabric data recorded yet.</p>
+              <p className="col-span-2 text-xs text-slate-500 py-4 text-center">No fabric data recorded yet.</p>
             )}
           </div>
         </div>
@@ -306,7 +306,7 @@ export const TShirtsPage: React.FC = () => {
                 <h3 className="text-base font-bold text-white">Custom ID Cards & Lanyards Cross-Sell</h3>
                 <span className="px-2 py-0.5 rounded-full bg-[#D4AF37] text-[#082A5E] text-[10px] font-black uppercase">Add-On</span>
               </div>
-              <p className="text-xs text-blue-100/80 mt-0.5">
+              <p className="text-xs text-blue-100/90 font-medium mt-0.5">
                 Paired with custom printed T-shirts for college events, fests, and corporate teams
               </p>
             </div>
@@ -314,16 +314,16 @@ export const TShirtsPage: React.FC = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
             <div className="p-2.5 rounded-xl bg-white/10 border border-white/10">
-              <p className="text-[9px] uppercase font-bold text-blue-200">ID Cards Sold</p>
+              <p className="text-[9px] uppercase font-bold text-blue-100">ID Cards Sold</p>
               <p className="text-base font-black text-white mt-0.5">{idCardsSummary.total_id_cards_sold || 0} pcs</p>
               <p className="text-[9px] text-blue-200">{idCardsSummary.orders_with_id_cards || 0} orders</p>
             </div>
             <div className="p-2.5 rounded-xl bg-white/10 border border-white/10">
-              <p className="text-[9px] uppercase font-bold text-blue-200">Total Revenue</p>
+              <p className="text-[9px] uppercase font-bold text-blue-100">Total Revenue</p>
               <p className="text-base font-black text-[#F5E7B2] mt-0.5">₹{(idCardsSummary.id_card_revenue || 0).toLocaleString('en-IN')}</p>
             </div>
             <div className="p-2.5 rounded-xl bg-white/10 border border-white/10">
-              <p className="text-[9px] uppercase font-bold text-blue-200">Procurement Cost</p>
+              <p className="text-[9px] uppercase font-bold text-blue-100">Procurement Cost</p>
               <p className="text-base font-black text-rose-300 mt-0.5">₹{(idCardsSummary.id_card_cost || 0).toLocaleString('en-IN')}</p>
             </div>
             <div className="p-2.5 rounded-xl bg-[#D4AF37]/25 border border-[#D4AF37]/50">
@@ -341,7 +341,7 @@ export const TShirtsPage: React.FC = () => {
             <Award className="w-4 h-4 text-[#D4AF37]" />
             <span>Top Performing T-Shirt Orders</span>
           </h3>
-          <span className="text-xs text-slate-400 font-medium">Highest margin deals</span>
+          <span className="text-xs text-slate-600 font-semibold">Highest margin deals</span>
         </div>
 
         {/* Mobile Top Orders List (Phones < md) */}
@@ -366,23 +366,23 @@ export const TShirtsPage: React.FC = () => {
                 <span className="font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0B3A82] border border-blue-100">
                   {o.tshirt_size || 'Custom'}
                 </span>
-                <span className="text-slate-600 font-medium">{o.tshirt_color}</span>
-                <span className="text-slate-400">· {o.tshirt_print_type}</span>
-                <span className="text-slate-500 font-bold ml-auto">Qty: {o.quantity}</span>
+                <span className="text-slate-700 font-semibold">{o.tshirt_color}</span>
+                <span className="text-slate-600 font-medium">· {o.tshirt_print_type}</span>
+                <span className="text-slate-700 font-bold ml-auto">Qty: {o.quantity}</span>
               </div>
 
               <div className="grid grid-cols-3 gap-1.5 text-center pt-1 border-t border-slate-100">
-                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">
-                  <p className="text-[8px] uppercase font-bold text-slate-400">Total Price</p>
+                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200">
+                  <p className="text-[8px] uppercase font-bold text-slate-600">Total Price</p>
                   <p className="text-xs font-bold text-slate-900">₹{o.selling_price.toLocaleString('en-IN')}</p>
                 </div>
-                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">
-                  <p className="text-[8px] uppercase font-bold text-slate-400">Cost</p>
+                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200">
+                  <p className="text-[8px] uppercase font-bold text-slate-600">Cost</p>
                   <p className="text-xs font-bold text-rose-600">₹{o.total_cost.toLocaleString('en-IN')}</p>
                 </div>
-                <div className="p-1.5 rounded-lg bg-blue-50/50 border border-blue-100/60">
-                  <p className="text-[8px] uppercase font-bold text-[#0B3A82]">Profit</p>
-                  <p className="text-xs font-black text-[#D4AF37]">₹{o.profit.toLocaleString('en-IN')}</p>
+                <div className="p-1.5 rounded-lg bg-amber-50/60 border border-[#D4AF37]/40">
+                  <p className="text-[8px] uppercase font-bold text-amber-900">Profit</p>
+                  <p className="text-xs font-black text-[#9A7B1C]">₹{o.profit.toLocaleString('en-IN')}</p>
                 </div>
               </div>
             </div>
@@ -392,7 +392,7 @@ export const TShirtsPage: React.FC = () => {
         {/* Desktop Table (Hidden on phones < md) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#F7F9FC] text-slate-400 uppercase text-[10px] tracking-wider font-semibold border-b border-slate-100">
+            <thead className="bg-slate-100 text-slate-700 uppercase text-[11px] tracking-wider font-bold border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Order #</th>
                 <th className="py-3 px-4">Customer</th>
@@ -415,32 +415,32 @@ export const TShirtsPage: React.FC = () => {
                   <td className="py-3 px-4 font-bold text-[#0B3A82]">
                     {o.order_number}
                   </td>
-                  <td className="py-3 px-4 font-semibold text-slate-800">
+                  <td className="py-3 px-4 font-semibold text-slate-900">
                     {o.customer_name}
                   </td>
                   <td className="py-3 px-4">
                     <span className="font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#0B3A82]">
                       {o.tshirt_size}
                     </span>
-                    <span className="ml-2 text-slate-600">{o.tshirt_color}</span>
-                    <span className="text-slate-400 ml-1">x{o.quantity}</span>
+                    <span className="ml-2 text-slate-700 font-medium">{o.tshirt_color}</span>
+                    <span className="text-slate-600 font-medium ml-1">x{o.quantity}</span>
                   </td>
-                  <td className="py-3 px-4 text-slate-600">
+                  <td className="py-3 px-4 text-slate-700 font-medium">
                     {o.tshirt_print_type}
                   </td>
-                  <td className="py-3 px-4 text-right font-bold text-slate-800">
+                  <td className="py-3 px-4 text-right font-bold text-slate-900">
                     ₹{o.selling_price.toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3 px-4 text-right text-rose-600">
+                  <td className="py-3 px-4 text-right text-rose-600 font-bold">
                     ₹{o.total_cost.toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3 px-4 text-right font-black text-[#D4AF37]">
+                  <td className="py-3 px-4 text-right font-black text-[#9A7B1C]">
                     ₹{o.profit.toLocaleString('en-IN')}
                   </td>
                   <td className="py-3 px-4 text-right font-bold text-emerald-600">
                     {o.profit_margin}%
                   </td>
-                  <td className="py-3 px-4 text-slate-600">
+                  <td className="py-3 px-4 text-slate-700 font-medium">
                     {o.created_by_name}
                   </td>
                 </tr>
