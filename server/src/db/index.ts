@@ -77,17 +77,44 @@ export async function getDb(): Promise<Database> {
     }
   }
 
-  // Backfill is_partner_shared classification based on partnership agreement
+  // Ensure quotations tables exist
   try {
     dbInstance.exec(`
-      UPDATE orders SET is_partner_shared = CASE
-        WHEN is_tshirt = 1 THEN 1
-        WHEN has_id_cards = 1 THEN 1
-        WHEN LOWER(product_name) LIKE '%t-shirt%' OR LOWER(product_name) LIKE '%t shirt%' OR LOWER(product_name) LIKE '%tshirt%' THEN 1
-        WHEN LOWER(product_name) LIKE '%id card%' OR LOWER(product_name) LIKE '%idcard%' OR LOWER(product_name) LIKE '%lanyard%' THEN 1
-        WHEN LOWER(product_name) LIKE '%cap%' THEN 1
-        ELSE 0
-      END
+      CREATE TABLE IF NOT EXISTS quotations (
+        id TEXT PRIMARY KEY,
+        business_id TEXT NOT NULL,
+        quotation_number TEXT NOT NULL,
+        customer_id TEXT,
+        customer_name TEXT NOT NULL,
+        customer_phone TEXT NOT NULL,
+        customer_email TEXT,
+        customer_address TEXT,
+        valid_until TEXT NOT NULL,
+        subtotal INTEGER NOT NULL DEFAULT 0,
+        discount INTEGER NOT NULL DEFAULT 0,
+        tax_rate REAL DEFAULT 0,
+        tax_amount INTEGER NOT NULL DEFAULT 0,
+        grand_total INTEGER NOT NULL DEFAULT 0,
+        status TEXT NOT NULL DEFAULT 'SENT',
+        notes TEXT,
+        terms TEXT,
+        converted_order_id TEXT,
+        converted_invoice_id TEXT,
+        created_by TEXT NOT NULL,
+        created_by_name TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      );
+      CREATE TABLE IF NOT EXISTS quotation_items (
+        id TEXT PRIMARY KEY,
+        quotation_id TEXT NOT NULL,
+        description TEXT NOT NULL,
+        quantity REAL NOT NULL DEFAULT 1,
+        rate INTEGER NOT NULL DEFAULT 0,
+        discount REAL DEFAULT 0,
+        tax_rate REAL DEFAULT 0,
+        amount INTEGER NOT NULL DEFAULT 0
+      );
     `);
   } catch (e) {
     // ignore

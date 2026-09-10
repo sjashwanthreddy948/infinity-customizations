@@ -16,7 +16,8 @@ import {
   TrendingUp,
   FileText,
   User,
-  Calendar
+  Calendar,
+  Edit3
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
@@ -40,6 +41,7 @@ export const QuotationsPage: React.FC = () => {
 
   // Modals
   const [showNewModal, setShowNewModal] = useState(false);
+  const [editingQuotation, setEditingQuotation] = useState<Quotation | null>(null);
   const [viewQuotation, setViewQuotation] = useState<Quotation | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Quotation | null>(null);
 
@@ -311,6 +313,17 @@ export const QuotationsPage: React.FC = () => {
                     <Eye className="w-3.5 h-3.5" />
                   </button>
 
+                  <button
+                    onClick={() => {
+                      setEditingQuotation(q);
+                      setShowNewModal(true);
+                    }}
+                    className="p-1.5 rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-[#D4AF37] border border-amber-200 dark:border-amber-800"
+                    title="Edit Quotation"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+
                   {q.status !== 'CONVERTED' && (
                     <button
                       onClick={() => handleConvertQuotation(q)}
@@ -321,15 +334,13 @@ export const QuotationsPage: React.FC = () => {
                     </button>
                   )}
 
-                  {isAdmin && (
-                    <button
-                      onClick={() => setDeleteTarget(q)}
-                      className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50"
-                      title="Delete Quotation"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setDeleteTarget(q)}
+                    className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50"
+                    title="Delete Quotation"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -417,6 +428,17 @@ export const QuotationsPage: React.FC = () => {
                           <Eye className="w-4 h-4" />
                         </button>
 
+                        <button
+                          onClick={() => {
+                            setEditingQuotation(q);
+                            setShowNewModal(true);
+                          }}
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-[#0B3A82] dark:text-slate-300 dark:hover:text-[#D4AF37] hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors"
+                          title="Edit Quotation"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+
                         {q.status !== 'CONVERTED' && (
                           <button
                             onClick={() => handleConvertQuotation(q)}
@@ -428,15 +450,13 @@ export const QuotationsPage: React.FC = () => {
                           </button>
                         )}
 
-                        {isAdmin && (
-                          <button
-                            onClick={() => setDeleteTarget(q)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                            title="Delete Quotation (Admin)"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => setDeleteTarget(q)}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                          title="Delete Quotation"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -447,10 +467,14 @@ export const QuotationsPage: React.FC = () => {
         )}
       </div>
 
-      {/* New Quotation Modal */}
+      {/* Quotation Modal (Create / Edit) */}
       <NewQuotationModal
         isOpen={showNewModal}
-        onClose={() => setShowNewModal(false)}
+        onClose={() => {
+          setShowNewModal(false);
+          setEditingQuotation(null);
+        }}
+        initialData={editingQuotation}
         onSuccess={() => fetchQuotations()}
       />
 
@@ -459,6 +483,15 @@ export const QuotationsPage: React.FC = () => {
         isOpen={!!viewQuotation}
         quotation={viewQuotation}
         onClose={() => setViewQuotation(null)}
+        onEdit={(quote) => {
+          setViewQuotation(null);
+          setEditingQuotation(quote);
+          setShowNewModal(true);
+        }}
+        onDelete={(quote) => {
+          setViewQuotation(null);
+          setDeleteTarget(quote);
+        }}
         onConverted={() => {
           setViewQuotation(null);
           fetchQuotations();

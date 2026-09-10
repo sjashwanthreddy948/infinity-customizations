@@ -82,6 +82,9 @@ interface MockInvoice {
   invoice_number: string;
   customer_id: string;
   customer_name: string;
+  customer_phone?: string;
+  customer_email?: string;
+  customer_address?: string;
   issue_date: string;
   due_date: string;
   subtotal: number;
@@ -95,6 +98,8 @@ interface MockInvoice {
   created_by_name: string;
   created_by: string;
   items: any[];
+  notes?: string;
+  terms?: string;
 }
 
 interface MockExpense {
@@ -1089,6 +1094,68 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         }
         mockDb.save();
         return jsonResponse({ success: true, message: 'Invoice deleted successfully' });
+      }
+      return jsonResponse({ error: 'Invoice not found' }, 404);
+    }
+
+    if (method === 'PUT' || method === 'PATCH') {
+      const idx = mockDb.invoices.findIndex(i => i.id === invId || i.invoice_number === invId);
+      if (idx !== -1) {
+        const existing = mockDb.invoices[idx];
+        const items = body.items ? body.items.map((it: any) => {
+          const qty = Number(it.quantity) || 1;
+          const rate = Number(it.rate || it.unit_price) || 0;
+          return {
+            description: it.description || 'Custom Item',
+            quantity: qty,
+            unit_price: rate,
+            rate: rate,
+            discount: Number(it.discount) || 0,
+            tax_rate: Number(it.tax_rate) || 0,
+            amount: Number(it.amount) || (qty * rate)
+          };
+        }) : existing.items;
+
+        const subtotal = body.subtotal !== undefined ? Number(body.subtotal) : (items ? items.reduce((s: number, it: any) => s + (Number(it.amount) || 0), 0) : existing.subtotal);
+        const discount = body.discount !== undefined ? Number(body.discount) : existing.discount;
+        const taxAmount = body.tax_amount !== undefined ? Number(body.tax_amount) : existing.tax_amount;
+        const grandTotal = body.grand_total !== undefined ? Number(body.grand_total) : Math.max(0, subtotal - discount + taxAmount);
+        const amountPaid = body.amount_paid !== undefined ? Number(body.amount_paid) : existing.amount_paid;
+        const balanceDue = Math.max(0, grandTotal - amountPaid);
+        const status = amountPaid >= grandTotal ? 'PAID' : (amountPaid > 0 ? 'PARTIAL' : (body.status || existing.status || 'SENT'));
+
+        const updated: MockInvoice = {
+          ...existing,
+          ...body,
+          customer_name: body.customer_name || body.customerName || existing.customer_name,
+          customer_phone: body.customer_phone || body.customerPhone || existing.customer_phone,
+          customer_email: body.customer_email || body.customerEmail || existing.customer_email,
+          customer_address: body.customer_address || body.customerAddress || existing.customer_address,
+          issue_date: body.issue_date || body.issueDate || existing.issue_date,
+          due_date: body.due_date || body.dueDate || existing.due_date,
+          items,
+          subtotal,
+          discount,
+          tax_amount: taxAmount,
+          grand_total: grandTotal,
+          amount_paid: amountPaid,
+          balance_due: balanceDue,
+          status
+        };
+
+        mockDb.invoices[idx] = updated;
+
+        // Also update matching order if exists
+        const matchedOrder = mockDb.orders.find(o => o.invoice_id === existing.id || o.invoice_number === existing.invoice_number);
+        if (matchedOrder) {
+          matchedOrder.customer_name = updated.customer_name;
+          matchedOrder.customer_phone = updated.customer_phone;
+          matchedOrder.selling_price = updated.grand_total;
+          matchedOrder.payment_pending = updated.balance_due;
+        }
+
+        mockDb.save();
+        return jsonResponse(updated);
       }
       return jsonResponse({ error: 'Invoice not found' }, 404);
     }

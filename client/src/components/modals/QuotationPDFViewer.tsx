@@ -15,7 +15,9 @@ import {
   Mail,
   MapPin,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Edit3,
+  Trash2
 } from 'lucide-react';
 import { LOGO_DATA_URI } from '../../assets/logoBase64.js';
 import { useNavigate } from 'react-router-dom';
@@ -26,13 +28,17 @@ interface QuotationPDFViewerProps {
   isOpen: boolean;
   onClose: () => void;
   onConverted?: (newOrder: any) => void;
+  onEdit?: (quotation: any) => void;
+  onDelete?: (quotation: any) => void;
 }
 
 export const QuotationPDFViewer: React.FC<QuotationPDFViewerProps> = ({
   quotation,
   isOpen,
   onClose,
-  onConverted
+  onConverted,
+  onEdit,
+  onDelete
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -148,6 +154,33 @@ export const QuotationPDFViewer: React.FC<QuotationPDFViewerProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
+              {onEdit && (
+                <button
+                  type="button"
+                  onClick={() => onEdit(quotation)}
+                  className="px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-[#D4AF37] border border-amber-200 dark:border-amber-900/50 shadow-xs flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                  title="Edit Quotation"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </button>
+              )}
+
+              {onDelete && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(`Are you sure you want to delete quotation ${quotation.quotation_number}?`)) {
+                      onDelete(quotation);
+                    }
+                  }}
+                  className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 transition-colors"
+                  title="Delete Quotation"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+
               {quotation.status !== 'CONVERTED' && (
                 <button
                   type="button"

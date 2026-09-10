@@ -29,6 +29,7 @@ import { useTheme } from '../../context/ThemeContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
 import { GlobalSearchModal } from '../modals/GlobalSearchModal.js';
 import { NewOrderModal } from '../modals/NewOrderModal.js';
+import { Footer } from './Footer.js';
 
 export const AppLayout: React.FC = () => {
   const { user, business, logout, switchDemoPartner, token } = useAuth();
@@ -366,8 +367,13 @@ export const AppLayout: React.FC = () => {
         )}
 
         {/* Content Outlet with Bottom Padding for Mobile Bar */}
-        <main className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full bg-[#F8FAFC] dark:bg-[#051E44] pb-24 lg:pb-8 relative z-0">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto max-w-full w-full bg-[#F8FAFC] dark:bg-[#051E44] flex flex-col relative z-0">
+          <div className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pb-8">
+            <Outlet />
+          </div>
+          <div className="pb-20 lg:pb-0">
+            <Footer />
+          </div>
         </main>
       </div>
 

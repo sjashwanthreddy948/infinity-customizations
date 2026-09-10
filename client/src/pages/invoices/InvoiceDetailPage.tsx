@@ -12,11 +12,13 @@ import {
   Calendar,
   DollarSign,
   Trash2,
-  TrendingUp
+  TrendingUp,
+  Edit3
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
 import { InvoicePDFViewer } from '../../components/invoices/InvoicePDFViewer.js';
+import { NewInvoiceModal } from '../../components/modals/NewInvoiceModal.js';
 import { RecordPaymentModal } from '../../components/modals/RecordPaymentModal.js';
 import { VoidModal } from '../../components/modals/VoidModal.js';
 import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
@@ -31,6 +33,7 @@ export const InvoiceDetailPage: React.FC = () => {
 
   const [invoice, setInvoice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showVoidModal, setShowVoidModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -97,7 +100,16 @@ export const InvoiceDetailPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => setShowEditModal(true)}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-[#D4AF37] border border-amber-200 dark:border-amber-900 font-semibold text-xs transition-colors active:scale-95 cursor-pointer"
+            title="Edit Invoice Details"
+          >
+            <Edit3 className="w-4 h-4" />
+            <span>Edit Invoice</span>
+          </button>
+
           {invoice.balance_due > 0 && invoice.status !== 'VOID' && (
             <button
               onClick={() => setShowPaymentModal(true)}
@@ -118,16 +130,14 @@ export const InvoiceDetailPage: React.FC = () => {
             </button>
           )}
 
-          {isAdmin && (
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900 font-bold text-xs transition-colors active:scale-95 cursor-pointer"
-              title="Delete Invoice (Admin only)"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>Delete Invoice</span>
-            </button>
-          )}
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900 font-bold text-xs transition-colors active:scale-95 cursor-pointer"
+            title="Delete Invoice"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>Delete Invoice</span>
+          </button>
         </div>
       </div>
 
@@ -274,6 +284,14 @@ export const InvoiceDetailPage: React.FC = () => {
             alert(err.error || 'Failed to delete invoice');
           }
         }}
+      />
+
+      {/* Edit Invoice Modal */}
+      <NewInvoiceModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        initialData={invoice}
+        onSuccess={() => fetchInvoice()}
       />
     </div>
   );

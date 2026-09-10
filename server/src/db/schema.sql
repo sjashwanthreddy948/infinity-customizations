@@ -239,6 +239,45 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   FOREIGN KEY (business_id) REFERENCES businesses(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS quotations (
+  id TEXT PRIMARY KEY,
+  business_id TEXT NOT NULL,
+  quotation_number TEXT NOT NULL,
+  customer_id TEXT,
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  customer_email TEXT,
+  customer_address TEXT,
+  valid_until TEXT NOT NULL,
+  subtotal INTEGER NOT NULL DEFAULT 0,
+  discount INTEGER NOT NULL DEFAULT 0,
+  tax_rate REAL DEFAULT 0,
+  tax_amount INTEGER NOT NULL DEFAULT 0,
+  grand_total INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'SENT', -- 'SENT', 'ACCEPTED', 'EXPIRED', 'CONVERTED', 'REJECTED'
+  notes TEXT,
+  terms TEXT,
+  converted_order_id TEXT,
+  converted_invoice_id TEXT,
+  created_by TEXT NOT NULL,
+  created_by_name TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (business_id) REFERENCES businesses(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS quotation_items (
+  id TEXT PRIMARY KEY,
+  quotation_id TEXT NOT NULL,
+  description TEXT NOT NULL,
+  quantity REAL NOT NULL DEFAULT 1,
+  rate INTEGER NOT NULL DEFAULT 0,
+  discount REAL DEFAULT 0,
+  tax_rate REAL DEFAULT 0,
+  amount INTEGER NOT NULL DEFAULT 0,
+  FOREIGN KEY (quotation_id) REFERENCES quotations(id) ON DELETE CASCADE
+);
+
 -- INDEXES for fast lookup
 CREATE INDEX IF NOT EXISTS idx_orders_business ON orders(business_id);
 CREATE INDEX IF NOT EXISTS idx_orders_date ON orders(order_date);
@@ -246,3 +285,4 @@ CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
 CREATE INDEX IF NOT EXISTS idx_invoices_business ON invoices(business_id);
 CREATE INDEX IF NOT EXISTS idx_expenses_business ON expenses(business_id);
 CREATE INDEX IF NOT EXISTS idx_audit_business ON audit_logs(business_id);
+CREATE INDEX IF NOT EXISTS idx_quotations_business ON quotations(business_id);

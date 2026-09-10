@@ -265,20 +265,135 @@ router.post('/:id/void', async (req: AuthenticatedRequest, res: Response): Promi
 });
 
 /**
- * DELETE /api/invoices/:id - Admin delete invoice
+ * PUT /api/invoices/:id - Update existing invoice
+ */
+router.put('/:id', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const businessId = req.businessId!;
+    const invoiceId = req.params.id as string;
+    const partnerId = req.user!.userId;
+    const partnerName = req.user!.fullName;
+
+    const inv = await get<any>(`SELECT * FROM invoices WHERE id = ? AND business_id = ?`, [invoiceId, businessId]);
+    if (!inv) {
+      res.status(404).json({ error: 'Invoice not found' });
+      return;
+    }
+
+    const {
+      customer_id,
+      customer_name,
+      customer_phone,
+      customer_email,
+      customer_address,
+      issue_date,
+      due_date,
+      items = [],
+      discount = 0,
+      tax_amount = 0,
+      payment_method = 'UPI',
+      amount_paid = 0,
+      notes = '',
+      terms = ''
+    } = req.body;
+
+    const cName = customer_name ? String(customer_name).trim() : inv.customer_name;
+    const cPhone = customer_phone ? String(customer_phone).trim() : inv.customer_phone;
+    const cEmail = customer_email !== undefined ? customer_email : inv.customer_email;
+    const cAddress = customer_address !== undefined ? customer_address : inv.customer_address;
+    const iDate = issue_date || inv.issue_date;
+    const dDate = due_date || inv.due_date;
+    const iNotes = notes !== undefined ? notes : inv.notes;
+    const iTerms = terms !== undefined ? terms : inv.terms;
+
+    let subtotal = 0;
+    if (items.length > 0) {
+      for (const item of items) {
+        subtotal += Math.round(Number(item.quantity || 1) * Number(item.rate || item.unit_price || 0));
+      }
+    } else {
+      subtotal = inv.subtotal;
+    }
+
+    const disc = discount !== undefined ? Math.max(0, Math.round(Number(discount) || 0)) : inv.discount;
+    const tax = tax_amount !== undefined ? Math.max(0, Math.round(Number(tax_amount) || 0)) : inv.tax_amount;
+    const grand_total = Math.max(0, subtotal - disc + tax);
+    const paid = amount_paid !== undefined ? Math.max(0, Math.round(Number(amount_paid) || 0)) : inv.amount_paid;
+    const balance_due = Math.max(0, grand_total - paid);
+
+    let status = inv.status;
+    if (status !== 'CANCELLED') {
+      if (paid >= grand_total && grand_total > 0) {
+        status = 'PAID';
+      } else if (paid > 0) {
+        status = 'PARTIALLY_PAID';
+      } else {
+        status = 'PENDING';
+      }
+    }
+
+    const nowIso = new Date().toISOString();
+
+    await run(
+      `UPDATE invoices SET
+        customer_id = ?, customer_name = ?, customer_phone = ?, customer_email = ?, customer_address = ?,
+        issue_date = ?, due_date = ?, subtotal = ?, discount = ?, tax_amount = ?, grand_total = ?,
+        amount_paid = ?, balance_due = ?, status = ?, notes = ?, terms = ?, updated_at = ?
+       WHERE id = ? AND business_id = ?`,
+      [
+        customer_id || inv.customer_id, cName, cPhone, cEmail, cAddress,
+        iDate, dDate, subtotal, disc, tax, grand_total,
+        paid, balance_due, status, iNotes, iTerms, nowIso,
+        invoiceId, businessId
+      ]
+    );
+
+    if (items.length > 0) {
+      await run(`DELETE FROM invoice_items WHERE invoice_id = ?`, [invoiceId]);
+      for (const item of items) {
+        const itemAmt = Math.round(Number(item.quantity || 1) * Number(item.rate || item.unit_price || 0));
+        await run(
+          `INSERT INTO invoice_items (id, invoice_id, description, quantity, rate, amount)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [uuidv4(), invoiceId, item.description || 'Customized Item', Number(item.quantity || 1), Number(item.rate || item.unit_price || 0), itemAmt]
+        );
+      }
+    }
+
+    await logAudit({
+      businessId,
+      actorId: partnerId,
+      actorName: partnerName,
+      action: 'UPDATE',
+      entityType: 'INVOICE',
+      entityId: invoiceId,
+      entityReference: inv.invoice_number,
+      newValue: { invoiceNumber: inv.invoice_number, customerName: cName, grandTotal: grand_total, status },
+      reason: 'Invoice details updated'
+    });
+
+    broadcastToBusiness(businessId, {
+      type: 'INVOICE_UPDATED',
+      payload: { invoiceId, invoiceNumber: inv.invoice_number, customerName: cName, grandTotal: grand_total, updatedBy: partnerName }
+    });
+
+    const updated = await get(`SELECT * FROM invoices WHERE id = ?`, [invoiceId]);
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating invoice:', error);
+    res.status(500).json({ error: 'Failed to update invoice' });
+  }
+});
+
+/**
+ * DELETE /api/invoices/:id - Delete invoice (Accessible to both co-partners)
  */
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const businessId = req.businessId!;
     const invoiceId = req.params.id as string;
-    const userRole = req.user?.role;
     const partnerId = req.user!.userId;
     const partnerName = req.user!.fullName;
-
-    if (userRole !== 'OWNER' && userRole !== 'ADMIN') {
-      res.status(403).json({ error: 'Permission denied. Only administrators can delete invoices.' });
-      return;
-    }
 
     const inv = await get<any>(`SELECT * FROM invoices WHERE id = ? AND business_id = ?`, [invoiceId, businessId]);
     if (!inv) {
@@ -301,7 +416,12 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response): Promise<
       entityType: 'INVOICE',
       entityId: invoiceId,
       entityReference: inv.invoice_number,
-      reason: 'Admin deleted invoice'
+      reason: `Invoice deleted by ${partnerName}`
+    });
+
+    broadcastToBusiness(businessId, {
+      type: 'INVOICE_DELETED',
+      payload: { invoiceId, invoiceNumber: inv.invoice_number, deletedBy: partnerName }
     });
 
     res.json({ success: true, message: 'Invoice permanently deleted' });

@@ -10,6 +10,8 @@ interface NewInvoiceModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultCustomerId?: string;
+  initialData?: any;
+  onSuccess?: (data?: any) => void;
 }
 
 const PRESET_PRODUCTS = [
@@ -32,7 +34,13 @@ const PRESET_EXPENSES = [
   { name: 'Express Rush Processing Fee', rate: 300, tax_rate: 0 }
 ];
 
-export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClose, defaultCustomerId }) => {
+export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({
+  isOpen,
+  onClose,
+  defaultCustomerId,
+  initialData,
+  onSuccess
+}) => {
   const { token } = useAuth();
   const { success, error } = useToast();
   const { refreshTrigger } = useWebSocket();
@@ -57,12 +65,47 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
   ]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    if (initialData) {
+      setCustomerId(initialData.customer_id || defaultCustomerId || '');
+      setCustomerName(initialData.customer_name || '');
+      setCustomerPhone(initialData.customer_phone || '');
+      setIssueDate(initialData.issue_date || new Date().toISOString().split('T')[0]);
+      setDueDate(initialData.due_date || new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]);
+      setNotes(initialData.notes !== undefined ? initialData.notes : 'Thank you for choosing Infinity Customizations!');
+      setTerms(initialData.terms !== undefined ? initialData.terms : 'Payment is due upon receipt. Customized orders are non-refundable once printed.');
+      if (initialData.items && initialData.items.length > 0) {
+        setItems(initialData.items.map((it: any) => ({
+          description: it.description || '',
+          quantity: Number(it.quantity) || 1,
+          rate: Number(it.rate !== undefined ? it.rate : it.unit_price) || 0,
+          discount: Number(it.discount) || 0,
+          tax_rate: Number(it.tax_rate) || 0
+        })));
+      }
+    } else {
+      setCustomerId(defaultCustomerId || '');
+      setCustomerName('');
+      setCustomerPhone('');
+      setIssueDate(new Date().toISOString().split('T')[0]);
+      const d = new Date();
+      d.setDate(d.getDate() + 7);
+      setDueDate(d.toISOString().split('T')[0]);
+      setNotes('Thank you for choosing Infinity Customizations!');
+      setTerms('Payment is due upon receipt. Customized orders are non-refundable once printed.');
+      setItems([
+        { description: 'Custom Printed T-Shirt (Bio-wash Cotton, Custom Print)', quantity: 1, rate: 450, discount: 0, tax_rate: 0 }
+      ]);
+    }
+  }, [isOpen, initialData, defaultCustomerId]);
+
+  useEffect(() => {
     if (!isOpen || !token) return;
     fetch('/api/customers', { headers: { Authorization: `Bearer ${token}` } })
       .then(res => res.json())
       .then(data => {
         setCustomers(data);
-        if (data.length > 0 && !customerId) {
+        if (data.length > 0 && !customerId && !initialData) {
           const first = data[0];
           setCustomerId(defaultCustomerId || first.id);
           setCustomerName(first.name);
@@ -70,7 +113,7 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
         }
       })
       .catch(console.error);
-  }, [isOpen, token, defaultCustomerId, refreshTrigger]);
+  }, [isOpen, token, defaultCustomerId, refreshTrigger, initialData]);
 
   const handleCustomerChange = (id: string) => {
     setCustomerId(id);
@@ -153,8 +196,12 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
         };
       });
 
-      const res = await fetch('/api/invoices', {
-        method: 'POST',
+      const isEditing = Boolean(initialData?.id);
+      const url = isEditing ? `/api/invoices/${initialData.id}` : '/api/invoices';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
@@ -175,8 +222,8 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
           discount: Math.round(totalDiscount),
           tax_amount: Math.round(totalTax),
           grand_total: Math.round(grandTotal),
-          amount_paid: 0,
-          balance_due: Math.round(grandTotal),
+          amount_paid: initialData?.amount_paid || 0,
+          balance_due: Math.max(0, Math.round(grandTotal) - (initialData?.amount_paid || 0)),
           notes,
           terms
         })
@@ -184,13 +231,18 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to create invoice');
+        throw new Error(data.error || `Failed to ${isEditing ? 'update' : 'create'} invoice`);
       }
 
-      success(`Invoice ${data.invoice_number} created successfully!`, `Total: ₹${(Number(data.grand_total) || 0).toLocaleString('en-IN')}`);
+      if (isEditing) {
+        success(`Invoice ${data.invoice_number || initialData.invoice_number} updated successfully!`, `Total: ₹${(Number(data.grand_total) || grandTotal).toLocaleString('en-IN')}`);
+      } else {
+        success(`Invoice ${data.invoice_number} created successfully!`, `Total: ₹${(Number(data.grand_total) || 0).toLocaleString('en-IN')}`);
+      }
+      onSuccess?.(data);
       onClose();
     } catch (err: any) {
-      error(err.message || 'Error creating invoice');
+      error(err.message || 'Error saving invoice');
     } finally {
       setIsSubmitting(false);
     }
@@ -215,12 +267,14 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
             </div>
             <div>
               <h2 className="text-xs sm:text-base font-black tracking-tight text-white flex items-center gap-2">
-                <span>CREATE NEW INVOICE</span>
+                <span>{initialData ? `EDIT INVOICE: ${initialData.invoice_number}` : 'CREATE NEW INVOICE'}</span>
                 <span className="hidden sm:inline text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#D4AF37] text-[#082A5E]">
                   Infinity Customizations
                 </span>
               </h2>
-              <p className="text-[10px] sm:text-[11px] text-slate-300">Add merchandise items, Rapido shipping & other expenses</p>
+              <p className="text-[10px] sm:text-[11px] text-slate-300">
+                {initialData ? 'Update merchandise items, customer details & pricing' : 'Add merchandise items, Rapido shipping & other expenses'}
+              </p>
             </div>
           </div>
           <button
@@ -417,7 +471,11 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 text-xs font-bold rounded-xl bg-[#0B3A82] hover:bg-[#082A5E] text-white shadow-md shadow-blue-900/20 border border-[#D4AF37]/50 transition-all active:scale-[0.98] disabled:opacity-50"
             >
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>{isSubmitting ? 'Generating Invoice...' : `Create Invoice (₹${grandTotal.toLocaleString('en-IN')})`}</span>
+              <span>
+                {isSubmitting
+                  ? (initialData ? 'Saving Changes...' : 'Generating Invoice...')
+                  : (initialData ? `Save Changes (₹${grandTotal.toLocaleString('en-IN')})` : `Create Invoice (₹${grandTotal.toLocaleString('en-IN')})`)}
+              </span>
             </button>
           </div>
         </form>

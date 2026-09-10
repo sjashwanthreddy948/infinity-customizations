@@ -7,7 +7,7 @@ export interface AuditEntryOptions {
   actorId: string;
   actorName: string;
   action: 'CREATE' | 'UPDATE' | 'DELETE' | 'VOID' | 'REVERSE' | 'PAYMENT' | 'LOGIN' | 'LOGOUT' | 'ROLE_CHANGE' | 'SETTINGS_CHANGE';
-  entityType: 'ORDER' | 'INVOICE' | 'EXPENSE' | 'PAYMENT' | 'SALE' | 'CUSTOMER' | 'BANK_ACCOUNT' | 'SETTINGS' | 'BUSINESS';
+  entityType: 'ORDER' | 'INVOICE' | 'QUOTATION' | 'EXPENSE' | 'PAYMENT' | 'SALE' | 'CUSTOMER' | 'BANK_ACCOUNT' | 'SETTINGS' | 'BUSINESS';
   entityId: string;
   entityReference?: string;
   oldValue?: any;

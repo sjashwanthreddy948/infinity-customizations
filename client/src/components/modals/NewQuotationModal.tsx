@@ -23,6 +23,7 @@ interface NewQuotationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (newQuote: any) => void;
+  initialData?: any;
 }
 
 interface QuoteItemInput {
@@ -47,7 +48,8 @@ export const QUOTATION_PRESETS = [
 export const NewQuotationModal: React.FC<NewQuotationModalProps> = ({
   isOpen,
   onClose,
-  onSuccess
+  onSuccess,
+  initialData
 }) => {
   const { token, user } = useAuth();
 
@@ -83,6 +85,49 @@ export const NewQuotationModal: React.FC<NewQuotationModalProps> = ({
   const [taxRate, setTaxRate] = useState<number>(0); // 0%, 5%, 12%, 18%
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    if (initialData) {
+      setCustomerName(initialData.customer_name || '');
+      setCustomerPhone(initialData.customer_phone || '');
+      setCustomerEmail(initialData.customer_email || '');
+      setCustomerAddress(initialData.customer_address || '');
+      setValidUntil(initialData.valid_until || defaultValidUntil);
+      setNotes(initialData.notes !== undefined ? initialData.notes : 'Payment Terms: 50% advance to confirm order and start production; balance 50% upon delivery.');
+      setTerms(initialData.terms !== undefined ? initialData.terms : 'Quotation valid for 15 days from issue date. Delivery within 5-7 business days from sample approval.');
+      setDiscount(Number(initialData.discount) || 0);
+      setTaxRate(Number(initialData.tax_rate) || 0);
+      if (initialData.items && initialData.items.length > 0) {
+        setItems(initialData.items.map((it: any, idx: number) => ({
+          id: it.id || String(Date.now() + idx),
+          description: it.description || '',
+          quantity: Number(it.quantity) || 1,
+          rate: Number(it.rate !== undefined ? it.rate : it.unit_price) || 0,
+          amount: (Number(it.quantity) || 1) * (Number(it.rate !== undefined ? it.rate : it.unit_price) || 0)
+        })));
+      }
+    } else {
+      setCustomerName('');
+      setCustomerPhone('');
+      setCustomerEmail('');
+      setCustomerAddress('');
+      setValidUntil(defaultValidUntil);
+      setNotes('Payment Terms: 50% advance to confirm order and start production; balance 50% upon delivery.');
+      setTerms('Quotation valid for 15 days from issue date. Delivery within 5-7 business days from sample approval.');
+      setDiscount(0);
+      setTaxRate(0);
+      setItems([
+        {
+          id: '1',
+          description: 'Custom Round Neck T-Shirt (100% Cotton, DTF Print)',
+          quantity: 50,
+          rate: 350,
+          amount: 17500
+        }
+      ]);
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -200,8 +245,12 @@ export const NewQuotationModal: React.FC<NewQuotationModalProps> = ({
         grand_total: grandTotal
       };
 
-      const res = await fetch('/api/quotations', {
-        method: 'POST',
+      const isEditing = Boolean(initialData?.id);
+      const url = isEditing ? `/api/quotations/${initialData.id}` : '/api/quotations';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token || 'demo-jwt-usr-jashwanth-1-default'}`
@@ -211,11 +260,11 @@ export const NewQuotationModal: React.FC<NewQuotationModalProps> = ({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Failed to create quotation');
+        throw new Error(data.error || `Failed to ${isEditing ? 'update' : 'create'} quotation`);
       }
 
-      const created = await res.json();
-      onSuccess(created);
+      const result = await res.json();
+      onSuccess(result);
       onClose();
     } catch (err: any) {
       setError(err?.message || 'Failed to save quotation.');
@@ -241,13 +290,13 @@ export const NewQuotationModal: React.FC<NewQuotationModalProps> = ({
               </div>
               <div>
                 <h2 className="text-base sm:text-lg font-black text-[#0B3A82] dark:text-white flex items-center gap-2">
-                  <span>CREATE FORMAL QUOTATION</span>
+                  <span>{initialData ? `EDIT QUOTATION: ${initialData.quotation_number}` : 'CREATE FORMAL QUOTATION'}</span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D4AF37] text-[#082A5E]">
                     Infinity Customizations
                   </span>
                 </h2>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Itemized estimates for colleges, corporations, and client orders
+                  {initialData ? 'Update item quantities, pricing rates, and quotation validity' : 'Itemized estimates for colleges, corporations, and client orders'}
                 </p>
               </div>
             </div>
@@ -598,7 +647,11 @@ export const NewQuotationModal: React.FC<NewQuotationModalProps> = ({
                   className="px-5 py-2 rounded-xl text-xs font-bold bg-[#0B3A82] hover:bg-[#082A5E] text-white shadow-md border border-[#D4AF37]/50 flex items-center gap-2 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
                 >
                   <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />
-                  <span>{isSubmitting ? 'Saving Quotation...' : 'Create Quotation (₹' + grandTotal.toLocaleString('en-IN') + ')'}</span>
+                  <span>
+                    {isSubmitting
+                      ? (initialData ? 'Saving Changes...' : 'Saving Quotation...')
+                      : (initialData ? `Save Changes (₹${grandTotal.toLocaleString('en-IN')})` : `Create Quotation (₹${grandTotal.toLocaleString('en-IN')})`)}
+                  </span>
                 </button>
               </div>
             </div>

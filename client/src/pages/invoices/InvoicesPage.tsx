@@ -13,7 +13,8 @@ import {
   CreditCard,
   Ban,
   Download,
-  Trash2
+  Trash2,
+  Edit3
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
@@ -39,6 +40,7 @@ export const InvoicesPage: React.FC = () => {
 
   // Modals
   const [showNewModal, setShowNewModal] = useState(false);
+  const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
   const [paymentInvoiceId, setPaymentInvoiceId] = useState<string | null>(null);
   const [voidInvoice, setVoidInvoice] = useState<Invoice | null>(null);
   const [quickViewInvoice, setQuickViewInvoice] = useState<Invoice | null>(null);
@@ -225,6 +227,16 @@ export const InvoicesPage: React.FC = () => {
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>
+                  <button
+                    onClick={() => {
+                      setEditingInvoice(inv);
+                      setShowNewModal(true);
+                    }}
+                    className="p-1.5 rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-[#D4AF37] border border-amber-200 dark:border-amber-800 active:scale-95"
+                    title="Edit Invoice"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
                   {inv.balance_due > 0 && inv.status !== 'VOID' && (
                     <button
                       onClick={() => setPaymentInvoiceId(inv.id)}
@@ -239,15 +251,13 @@ export const InvoicesPage: React.FC = () => {
                   >
                     View
                   </button>
-                  {isAdmin && (
-                    <button
-                      onClick={() => setDeleteInvoiceTarget(inv)}
-                      className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50"
-                      title="Delete Invoice (Admin)"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setDeleteInvoiceTarget(inv)}
+                    className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50"
+                    title="Delete Invoice"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -319,6 +329,16 @@ export const InvoicesPage: React.FC = () => {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
+                        <button
+                          onClick={() => {
+                            setEditingInvoice(inv);
+                            setShowNewModal(true);
+                          }}
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-[#0B3A82] dark:text-slate-300 dark:hover:text-[#D4AF37] hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors"
+                          title="Edit Invoice"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
                         {inv.balance_due > 0 && inv.status !== 'VOID' && (
                           <button
                             onClick={() => setPaymentInvoiceId(inv.id)}
@@ -337,15 +357,13 @@ export const InvoicesPage: React.FC = () => {
                             <Ban className="w-4 h-4" />
                           </button>
                         )}
-                        {isAdmin && (
-                          <button
-                            onClick={() => setDeleteInvoiceTarget(inv)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                            title="Delete Invoice (Admin)"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => setDeleteInvoiceTarget(inv)}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                          title="Delete Invoice"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -357,7 +375,15 @@ export const InvoicesPage: React.FC = () => {
       </div>
 
       {/* Modals */}
-      <NewInvoiceModal isOpen={showNewModal} onClose={() => setShowNewModal(false)} />
+      <NewInvoiceModal
+        isOpen={showNewModal}
+        onClose={() => {
+          setShowNewModal(false);
+          setEditingInvoice(null);
+        }}
+        initialData={editingInvoice}
+        onSuccess={() => fetchInvoices()}
+      />
       {paymentInvoiceId && (
         <RecordPaymentModal
           isOpen={true}

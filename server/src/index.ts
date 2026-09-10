@@ -29,6 +29,7 @@ import ledgerRoutes from './routes/ledger.js';
 import notificationsRoutes from './routes/notifications.js';
 import documentsRoutes from './routes/documents.js';
 import salesRoutes from './routes/sales.js';
+import quotationsRoutes from './routes/quotations.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -76,6 +77,7 @@ app.use('/api/ledger', ledgerRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/sales', salesRoutes);
+app.use('/api/quotations', quotationsRoutes);
 
 // Demo seed / reset endpoint
 app.post('/api/demo/seed', async (req, res) => {
