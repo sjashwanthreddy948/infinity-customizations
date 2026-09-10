@@ -6,6 +6,7 @@ import {
 import { motion } from 'framer-motion';
 import { calculateOrderPartnerShare } from '../../utils/partnerShare';
 import { calculateOrderFinancials } from '../../utils/financialCalculations';
+import { BackButton } from '../common/BackButton';
 
 interface NewOrderModalProps {
   isOpen: boolean;
@@ -447,12 +448,15 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               <p className="text-[10px] sm:text-[11px] text-slate-300">Round Neck & Collar styles, fabrics, separate costs & ID cards</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <BackButton onClick={onClose} label="Back" className="!bg-white/10 !text-white !border-white/20 hover:!bg-white/20" />
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -526,7 +530,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Ramesh Kumar"
+                  placeholder="Enter customer name"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0B3A82] focus:ring-1 focus:ring-[#0B3A82]"
@@ -537,7 +541,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 <input
                   type="tel"
                   required
-                  placeholder="e.g. 9876543210"
+                  placeholder="Enter phone number"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0B3A82] focus:ring-1 focus:ring-[#0B3A82]"
@@ -547,7 +551,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Email (Optional)</label>
                 <input
                   type="email"
-                  placeholder="customer@example.com"
+                  placeholder="Enter email address"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0B3A82] focus:ring-1 focus:ring-[#0B3A82]"
@@ -1230,7 +1234,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1">Order Notes / Custom Instructions</label>
             <textarea
               rows={2}
-              placeholder="e.g. High density print, urgent delivery required before Friday"
+              placeholder="Enter order notes / custom instructions"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0B3A82]"

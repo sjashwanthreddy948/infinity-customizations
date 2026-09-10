@@ -4,6 +4,7 @@ import { X, Plus, Trash2, FileText, Check, Truck, Package, Sparkles } from 'luci
 import { useAuth } from '../../context/AuthContext.js';
 import { useToast } from '../../context/ToastContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
+import { BackButton } from '../common/BackButton.js';
 
 interface NewInvoiceModalProps {
   isOpen: boolean;
@@ -213,6 +214,7 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
         {/* Header - Royal Navy Bar with Gold Details */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 bg-[#082A5E] text-white border-b border-[#D4AF37]/40 shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3">
+            <BackButton onClick={onClose} label="Back" />
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/10 border border-[#D4AF37]/50 flex items-center justify-center text-[#D4AF37] shrink-0">
               <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
@@ -334,7 +336,7 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Custom Printed T-Shirt / Delivery Rapido"
+                        placeholder="Enter item description"
                         value={item.description}
                         onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
                         className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 font-semibold text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0B3A82]"

@@ -20,6 +20,7 @@ import { InvoicePDFViewer } from '../../components/invoices/InvoicePDFViewer.js'
 import { RecordPaymentModal } from '../../components/modals/RecordPaymentModal.js';
 import { VoidModal } from '../../components/modals/VoidModal.js';
 import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { Invoice } from '../../types/index.js';
 
 export const InvoiceDetailPage: React.FC = () => {
@@ -80,12 +81,7 @@ export const InvoiceDetailPage: React.FC = () => {
       {/* Top Bar with Navigation & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/invoices')}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-navy-850 hover:bg-slate-200 dark:hover:bg-navy-800 text-slate-600 dark:text-slate-300"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
+          <BackButton to="/invoices" label="Back to Invoices" />
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold font-mono text-slate-900 dark:text-white">

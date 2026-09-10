@@ -3,6 +3,7 @@ import { FolderLock, UploadCloud, FileText, Download, Paperclip, Check, Eye } fr
 import { useAuth } from '../../context/AuthContext.js';
 import { useToast } from '../../context/ToastContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 
 export const DocumentsPage: React.FC = () => {
   const { token, user, business } = useAuth();
@@ -71,6 +72,10 @@ export const DocumentsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">

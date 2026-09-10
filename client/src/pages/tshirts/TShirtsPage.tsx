@@ -9,6 +9,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
+import { BackButton } from '../../components/common/BackButton.js';
 
 const SIZE_COLORS: Record<string, string> = {
   S: '#0B3A82',
@@ -65,6 +66,10 @@ export const TShirtsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-12">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

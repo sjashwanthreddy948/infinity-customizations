@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserCheck, ShieldCheck, Plus, Mail, Phone, Calendar, Percent, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useToast } from '../../context/ToastContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 
 export const PartnersPage: React.FC = () => {
   const { partners, user, token, refreshProfile } = useAuth();
@@ -57,6 +58,10 @@ export const PartnersPage: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-4xl">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -228,7 +233,7 @@ export const PartnersPage: React.FC = () => {
                   type="text"
                   value={inviteName}
                   onChange={(e) => setInviteName(e.target.value)}
-                  placeholder="e.g. Maya Patel"
+                  placeholder="Enter full name"
                   className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700"
                   required
                 />
@@ -240,7 +245,7 @@ export const PartnersPage: React.FC = () => {
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="maya@business.com"
+                  placeholder="Enter email address"
                   className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700"
                   required
                 />
@@ -265,6 +270,7 @@ export const PartnersPage: React.FC = () => {
                     type="number"
                     value={inviteShare}
                     onChange={(e) => setInviteShare(e.target.value)}
+                    placeholder="Enter percentage"
                     className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 text-center"
                   />
                 </div>
@@ -276,7 +282,7 @@ export const PartnersPage: React.FC = () => {
                   type="text"
                   value={invitePhone}
                   onChange={(e) => setInvitePhone(e.target.value)}
-                  placeholder="+91 98765..."
+                  placeholder="Enter phone number"
                   className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700"
                 />
               </div>

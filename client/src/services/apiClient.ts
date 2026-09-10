@@ -318,38 +318,7 @@ const INITIAL_INVOICES: MockInvoice[] = [
   }
 ];
 
-const INITIAL_EXPENSES: MockExpense[] = [
-  {
-    id: 'exp-1',
-    expense_number: 'EXP-0001',
-    date: '2026-09-01',
-    category: 'Rent',
-    description: 'Design Studio & Workshop Space Monthly Rent',
-    amount: 15000,
-    payment_method: 'Bank Transfer',
-    created_by_name: 'Jashwanth Reddy'
-  },
-  {
-    id: 'exp-2',
-    expense_number: 'EXP-0002',
-    date: '2026-09-03',
-    category: 'Materials',
-    description: 'Bulk Blank Premium Cotton T-Shirts Roll & Screen Mesh',
-    amount: 8500,
-    payment_method: 'UPI',
-    created_by_name: 'Rajshekar Reddy'
-  },
-  {
-    id: 'exp-3',
-    expense_number: 'EXP-0003',
-    date: '2026-09-04',
-    category: 'Packaging',
-    description: 'Branded Shipping Cartons & Hologram Security Seal Bags',
-    amount: 2400,
-    payment_method: 'Cash',
-    created_by_name: 'Jashwanth Reddy'
-  }
-];
+const INITIAL_EXPENSES: MockExpense[] = [];
 
 const INITIAL_PAYMENTS: MockPayment[] = [
   {
@@ -430,33 +399,33 @@ class MockDatabase {
   }
 
   load() {
-    const DB_KEY = 'infinity_mock_db_v4';
+    const DB_KEY = 'infinity_mock_db_v5';
     try {
       localStorage.removeItem('infinity_mock_db_v1');
       localStorage.removeItem('infinity_mock_db_v2');
+      localStorage.removeItem('infinity_mock_db_v3');
+      localStorage.removeItem('infinity_mock_db_v4');
 
       const isBvrit = (item: any) => {
         const text = `${item?.customer_name || ''} ${item?.name || ''} ${item?.invoice_number || ''} ${item?.order_number || ''} ${item?.notes || ''} ${item?.description || ''} ${JSON.stringify(item?.items || [])}`.toLowerCase();
         return text.includes('bvrit');
       };
 
-      const storedV3 = localStorage.getItem('infinity_mock_db_v3');
-      const storedV4 = localStorage.getItem(DB_KEY);
-      const rawStored = storedV4 || storedV3;
+      const rawStored = localStorage.getItem(DB_KEY);
 
       if (rawStored) {
         const parsed = JSON.parse(rawStored);
         
-        // Remove ALL invoices except BVRIT!
+        // Strictly retain ONLY BVRIT data
         const existingBvritInvoices = (parsed.invoices || []).filter(isBvrit);
         this.invoices = existingBvritInvoices.length > 0 ? existingBvritInvoices : [...INITIAL_INVOICES];
 
-        // Format orders and ensure accurate calculations
         const storedOrders = (parsed.orders || []).filter((o: any) => isBvrit(o) || o.id === 'ord-bvrit-1');
         this.orders = (storedOrders.length > 0 ? storedOrders : INITIAL_ORDERS).map((o: any) => {
+          const idCardCost = o.has_id_cards ? Number(o.id_card_total_cost || (o.id_card_quantity * o.id_card_unit_cost) || 0) : 0;
           const fin = calculateOrderFinancials({
             sellingPrice: Number(o.selling_price) || 0,
-            productCost: Number(o.product_cost) || 0,
+            productCost: (Number(o.product_cost) || 0) + idCardCost,
             printingCost: Number(o.printing_cost) || 0,
             tshirtRapidoCost: Number(o.tshirt_rapido_cost) || 0,
             printRapidoCost: Number(o.print_rapido_cost) || 0,
@@ -478,11 +447,10 @@ class MockDatabase {
 
         const storedCustomers = (parsed.customers || []).filter((c: any) => isBvrit(c) || c.id === 'cust-bvrit');
         this.customers = storedCustomers.length > 0 ? storedCustomers : [...INITIAL_CUSTOMERS];
-        this.expenses = parsed.expenses || INITIAL_EXPENSES;
+        this.expenses = [];
         this.payments = (parsed.payments && parsed.payments.length > 0) ? parsed.payments.filter((p: any) => isBvrit(p) || p.id === 'pay-bvrit-1') : [...INITIAL_PAYMENTS];
-        this.quotations = (parsed.quotations && parsed.quotations.length > 0) ? parsed.quotations : [...INITIAL_QUOTATIONS];
+        this.quotations = (parsed.quotations && parsed.quotations.length > 0) ? parsed.quotations.filter((q: any) => isBvrit(q) || q.id === 'qt-bvrit-1') : [...INITIAL_QUOTATIONS];
 
-        localStorage.removeItem('infinity_mock_db_v3');
         this.save();
         return;
       }
@@ -492,7 +460,7 @@ class MockDatabase {
     this.customers = [...INITIAL_CUSTOMERS];
     this.orders = INITIAL_ORDERS.map(o => ({ ...o }));
     this.invoices = [...INITIAL_INVOICES];
-    this.expenses = INITIAL_EXPENSES.map(e => ({ ...e }));
+    this.expenses = [];
     this.payments = [...INITIAL_PAYMENTS];
     this.quotations = [...INITIAL_QUOTATIONS];
     this.save();
@@ -500,7 +468,7 @@ class MockDatabase {
 
   save() {
     try {
-      localStorage.setItem('infinity_mock_db_v4', JSON.stringify({
+      localStorage.setItem('infinity_mock_db_v5', JSON.stringify({
         customers: this.customers,
         orders: this.orders,
         invoices: this.invoices,
@@ -569,10 +537,9 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
   // 2. Auth Profile
   if (pathname === '/api/auth/me') {
     const token = localStorage.getItem('partnerledger_token') || '';
-    let selectedUser = PARTNER_1;
-    if (token.includes('rajshekar') || mockDb.currentUser?.id === PARTNER_2.id) {
-      selectedUser = PARTNER_2;
-    }
+    const isAdminAuth = localStorage.getItem('infinity_admin_authenticated') === 'true' || token.includes('master-admin') || token.includes('jashwanth');
+    const selectedUser = isAdminAuth ? PARTNER_1 : PARTNER_2;
+    mockDb.currentUser = selectedUser;
     return jsonResponse({
       user: selectedUser,
       partners: [PARTNER_1, PARTNER_2]
@@ -770,7 +737,9 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
       const isPartnerShared = isTshirt || (body.product_name && (body.product_name.includes('Cap') || body.product_name.includes('ID Card'))) || body.has_id_cards === 1;
 
       const selling = Number(body.selling_price || 0);
-      const prodCost = Number(body.product_cost || 0);
+      const idCardCost = body.has_id_cards ? Number(body.id_card_total_cost || (Number(body.id_card_quantity || 0) * Number(body.id_card_unit_cost || 0)) || 0) : 0;
+      const idCardPrice = body.has_id_cards ? Number(body.id_card_total_price || (Number(body.id_card_quantity || 0) * Number(body.id_card_unit_price || 0)) || 0) : 0;
+      const prodCost = Number(body.product_cost || 0) + idCardCost;
       const printCost = Number(body.printing_cost || 0);
       const tshirtRapido = Number(body.tshirt_rapido_cost || 0);
       const printRapido = Number(body.print_rapido_cost || 0);
@@ -803,7 +772,7 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         product_name: body.product_name || 'Custom Printed T-Shirt',
         quantity: Number(body.quantity || 1),
         selling_price: fin.sellingPrice,
-        product_cost: fin.productCost,
+        product_cost: Number(body.product_cost || 0),
         printing_cost: fin.printingCost,
         tshirt_rapido_cost: fin.tshirtRapidoCost,
         print_rapido_cost: fin.printRapidoCost,
@@ -833,9 +802,12 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         id_card_quantity: Number(body.id_card_quantity || 0),
         id_card_unit_price: Number(body.id_card_unit_price || 70),
         id_card_unit_cost: Number(body.id_card_unit_cost || 35),
-        id_card_selling_price: Number(body.id_card_selling_price || 0),
-        id_card_cost: Number(body.id_card_cost || 0),
-        id_card_profit: Number(body.id_card_profit || 0),
+        id_card_selling_price: idCardPrice,
+        id_card_cost: idCardCost,
+        id_card_total_cost: idCardCost,
+        id_card_total_price: idCardPrice,
+        id_card_profit: idCardPrice - idCardCost,
+        id_card_type: body.id_card_type || 'PVC Card + Printed Lanyard',
         order_date: body.order_date || new Date().toISOString().split('T')[0],
         created_at: new Date().toISOString(),
         created_by_name: mockDb.currentUser.full_name,
@@ -846,7 +818,27 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
       newOrder.partner_share_allocation = calculateOrderPartnerShare(newOrder);
       mockDb.orders.unshift(newOrder);
 
-      // Create linked invoice automatically
+      // Create linked invoice items (separating main product & ID cards)
+      const invItems: any[] = [];
+      const mainSelling = Math.max(0, fin.sellingPrice - idCardPrice);
+      invItems.push({
+        description: `${newOrder.product_name} (${newOrder.tshirt_neck_type || ''} ${newOrder.tshirt_fabric || ''})`.trim(),
+        quantity: newOrder.quantity,
+        unit_price: newOrder.quantity > 0 ? Math.round(mainSelling / newOrder.quantity) : mainSelling,
+        rate: newOrder.quantity > 0 ? Math.round(mainSelling / newOrder.quantity) : mainSelling,
+        amount: mainSelling
+      });
+
+      if (newOrder.has_id_cards === 1 && (newOrder.id_card_quantity || 0) > 0) {
+        invItems.push({
+          description: `Custom ID Cards - ${newOrder.id_card_type || 'PVC Card + Printed Lanyard'}`,
+          quantity: newOrder.id_card_quantity,
+          unit_price: newOrder.id_card_unit_price || 70,
+          rate: newOrder.id_card_unit_price || 70,
+          amount: idCardPrice
+        });
+      }
+
       const newInvoice: MockInvoice = {
         id: `inv-${Date.now()}`,
         invoice_number: `INV-2026-${String(mockDb.invoices.length + 1).padStart(4, '0')}`,
@@ -863,15 +855,7 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         status: fin.paymentStatus === 'PAID' ? 'PAID' : (fin.paymentReceived > 0 ? 'PARTIAL' : 'SENT'),
         created_by_name: mockDb.currentUser.full_name,
         created_by: mockDb.currentUser.id,
-        items: [
-          {
-            description: `${newOrder.product_name} (${newOrder.tshirt_neck_type || ''} ${newOrder.tshirt_fabric || ''})`.trim(),
-            quantity: newOrder.quantity,
-            unit_price: newOrder.quantity > 0 ? Math.round(fin.sellingPrice / newOrder.quantity) : fin.sellingPrice,
-            rate: newOrder.quantity > 0 ? Math.round(fin.sellingPrice / newOrder.quantity) : fin.sellingPrice,
-            amount: fin.sellingPrice
-          }
-        ]
+        items: invItems
       };
       newOrder.invoice_id = newInvoice.id;
       newOrder.invoice_number = newInvoice.invoice_number;

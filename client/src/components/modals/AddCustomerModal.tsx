@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { X, Users, Building, Phone, Mail, FileText, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useToast } from '../../context/ToastContext.js';
+import { BackButton } from '../common/BackButton.js';
 
 interface AddCustomerModalProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ isOpen, onCl
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      error('Customer or Company name is required');
+      error('Customer or company name is required');
       return;
     }
 
@@ -36,13 +37,19 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ isOpen, onCl
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ name, phone, email, address, gstin })
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phone.trim() || null,
+          email: email.trim() || null,
+          address: address.trim() || null,
+          gstin: gstin.trim() || null
+        })
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to add customer');
 
-      success(`Customer "${name}" added!`, `Assigned Code: ${data.customer_code}`);
+      success(`Added ${name}!`);
       setName('');
       setPhone('');
       setEmail('');
@@ -66,10 +73,8 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ isOpen, onCl
 
         <motion.div initial={{ opacity: 0, scale: 0.95, y: 15 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 15 }} className="relative w-full max-w-md max-h-[92vh] overflow-y-auto my-auto bg-white dark:bg-navy-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-10">
           <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0B3A82] dark:text-[#D4AF37]">
-                <Users className="w-5 h-5" />
-              </div>
+            <div className="flex items-center gap-3">
+              <BackButton onClick={onClose} label="Back" />
               <div>
                 <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Add Customer</h2>
                 <p className="text-xs text-slate-500">Create client profile for billing & ledger</p>
@@ -83,28 +88,28 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({ isOpen, onCl
           <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Company / Customer Name *</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Apex Visuals Media" className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" required />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter customer name" className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" required />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Phone</label>
-                <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765..." className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
+                <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter phone number" className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="billing@client.com" className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email address" className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">GSTIN (Optional)</label>
-              <input type="text" value={gstin} onChange={(e) => setGstin(e.target.value)} placeholder="36AABCU9603R1ZM" className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 font-mono focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
+              <input type="text" value={gstin} onChange={(e) => setGstin(e.target.value)} placeholder="Enter GSTIN number" className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 font-mono focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
             </div>
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Billing Address</label>
-              <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Office address, City, State, PIN" className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
+              <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter address details" className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]" />
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">

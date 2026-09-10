@@ -4,6 +4,7 @@ import {
   IndianRupee, Package, AlertCircle, RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 
 export const SettingsPage: React.FC = () => {
   const { token, user, business } = useAuth();
@@ -81,6 +82,10 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-16">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-[#172033] dark:text-white flex items-center gap-2.5">

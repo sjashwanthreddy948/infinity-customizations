@@ -64,35 +64,24 @@ export const LoginPage: React.FC = () => {
           {/* Quick Demo Partner Login Buttons */}
           <div className="space-y-2.5">
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 text-center">
-              1-Click Partner Login (Shared Business)
+              Quick Partner Login (T-Shirts & ID Cards)
             </p>
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('jashwanth@infinitycustomizations.com')}
-                disabled={loading}
-                className="p-3 rounded-2xl border-2 border-[#0B3A82]/30 hover:border-[#0B3A82] bg-blue-50/40 dark:bg-blue-950/40 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-left transition-all group"
-              >
-                <span className="block text-[10px] uppercase font-black text-[#0B3A82] dark:text-[#D4AF37]">
-                  Partner 1 (Owner)
-                </span>
-                <span className="block text-xs font-black text-slate-900 dark:text-white mt-0.5">
-                  Jashwanth Reddy
-                </span>
-              </button>
-
+            <div>
               <button
                 type="button"
                 onClick={() => handleQuickLogin('rajshekar@infinitycustomizations.com')}
                 disabled={loading}
-                className="p-3 rounded-2xl border-2 border-[#0B3A82]/30 hover:border-[#0B3A82] bg-blue-50/40 dark:bg-blue-950/40 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-left transition-all group"
+                className="w-full p-3 rounded-2xl border-2 border-[#0B3A82]/30 hover:border-[#0B3A82] bg-blue-50/40 dark:bg-blue-950/40 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-left transition-all group flex items-center justify-between"
               >
-                <span className="block text-[10px] uppercase font-black text-[#0B3A82] dark:text-[#D4AF37]">
-                  Partner 2 (Partner)
-                </span>
-                <span className="block text-xs font-black text-slate-900 dark:text-white mt-0.5">
-                  Rajshekar Reddy
-                </span>
+                <div>
+                  <span className="block text-[10px] uppercase font-black text-[#0B3A82] dark:text-[#D4AF37]">
+                    Active Partner Session
+                  </span>
+                  <span className="block text-xs font-black text-slate-900 dark:text-white mt-0.5">
+                    Rajshekar Reddy (Partner - T-Shirts & ID Cards)
+                  </span>
+                </div>
+                <span className="text-xs text-[#0B3A82] dark:text-[#D4AF37] font-bold">Log in →</span>
               </button>
             </div>
           </div>

@@ -5,6 +5,7 @@ import {
   Package, Printer, Truck, IndianRupee, TrendingUp, RefreshCw, Lightbulb
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BackButton } from '../../components/common/BackButton.js';
 import { calculateOrderFinancials } from '../../utils/financialCalculations.js';
 
 const SAMPLE_PROMPTS = [
@@ -169,6 +170,10 @@ export const AIInvoicePage: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-16">
+      <div>
+        <BackButton to="/orders" label="Back to Orders" />
+      </div>
+
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B3A82]/10 dark:bg-amber-500/10 text-[#0B3A82] dark:text-[#D4AF37] text-xs font-bold border border-[#D4AF37]/30">

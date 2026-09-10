@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Printer, Download, Calendar, DollarSign, ArrowUpRight, ArrowDownRight, FileSpreadsheet } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 
 export const ProfitLossPage: React.FC = () => {
   const { token, user, business } = useAuth();
@@ -101,6 +102,10 @@ export const ProfitLossPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <div className="print:hidden">
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Header and Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>

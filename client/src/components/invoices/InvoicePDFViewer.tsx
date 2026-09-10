@@ -258,18 +258,20 @@ export const InvoicePDFViewer: React.FC<InvoicePDFViewerProps> = ({ invoice, bus
           </div>
         </div>
 
-        {/* Footer & Partner Signatures */}
+        {/* Footer & Company Branding */}
         <div className="border-t-2 border-slate-200 pt-8 flex justify-between items-end text-xs text-slate-500">
           <div>
             <p className="font-bold text-slate-800">Infinity Customizations</p>
             <p className="text-[10px]">Hyderabad, Telangana · Digital Billing & Order Ledger</p>
           </div>
 
-          <div className="text-center">
-            <div className="w-36 border-b border-slate-400 pb-1 mb-1 font-signature text-sm font-serif italic text-slate-700">
-              {invoice.created_by_name || 'Authorized Partner'}
-            </div>
-            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Authorized Partner Signature</p>
+          <div className="text-right">
+            <p className="font-serif font-black text-sm tracking-wider text-[#0B3A82] uppercase">
+              Infinity Customizations
+            </p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
+              Infinity Customizations
+            </p>
           </div>
         </div>
       </div>

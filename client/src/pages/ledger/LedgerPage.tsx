@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BookOpen, Search, Filter, Download } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { Transaction } from '../../types/index.js';
 
 export const LedgerPage: React.FC = () => {
@@ -44,15 +45,21 @@ export const LedgerPage: React.FC = () => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = url;
-    link.download = `General_Ledger_${Date.now()}.csv`;
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ledger-export-${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   const currencySymbol = user?.currency_symbol || '₹';
 
   return (
     <div className="space-y-6 pb-24 sm:pb-8">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

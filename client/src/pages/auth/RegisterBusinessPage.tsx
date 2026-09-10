@@ -169,7 +169,7 @@ export const RegisterBusinessPage: React.FC = () => {
                       type="text"
                       value={formData.phone}
                       onChange={(e) => updateBusiness('phone', e.target.value)}
-                      placeholder="+91 98765 43210"
+                      placeholder="Enter phone number"
                       className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700"
                     />
                   </div>
@@ -191,7 +191,7 @@ export const RegisterBusinessPage: React.FC = () => {
                       type="text"
                       value={formData.gstin}
                       onChange={(e) => updateBusiness('gstin', e.target.value)}
-                      placeholder="36AABCU9603R1ZM"
+                      placeholder="Enter GSTIN (optional)"
                       className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 font-mono"
                     />
                   </div>
@@ -263,7 +263,7 @@ export const RegisterBusinessPage: React.FC = () => {
                       type="text"
                       value={formData.partner1.phone}
                       onChange={(e) => updatePartner('partner1', 'phone', e.target.value)}
-                      placeholder="+91 98765..."
+                      placeholder="Enter phone number"
                       className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700"
                     />
                   </div>
@@ -358,7 +358,7 @@ export const RegisterBusinessPage: React.FC = () => {
                       type="text"
                       value={formData.partner2.phone}
                       onChange={(e) => updatePartner('partner2', 'phone', e.target.value)}
-                      placeholder="+91 98765..."
+                      placeholder="Enter phone number"
                       className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700"
                     />
                   </div>

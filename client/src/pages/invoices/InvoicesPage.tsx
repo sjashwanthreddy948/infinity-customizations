@@ -22,6 +22,7 @@ import { RecordPaymentModal } from '../../components/modals/RecordPaymentModal.j
 import { VoidModal } from '../../components/modals/VoidModal.js';
 import { InvoiceQuickViewModal } from '../../components/modals/InvoiceQuickViewModal.js';
 import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { Invoice } from '../../types/index.js';
 import { TableSkeleton } from '../../components/common/SkeletonLoader.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
@@ -110,10 +111,13 @@ export const InvoicesPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Invoices
-          </h1>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <BackButton to="/dashboard" label="Back to Dashboard" />
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              Invoices
+            </h1>
+          </div>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             Create, track, and reconcile professional GST invoices across co-owners
           </p>

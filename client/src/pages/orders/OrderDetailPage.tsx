@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
 import { calculateOrderPartnerShare } from '../../utils/partnerShare.js';
 
@@ -43,7 +44,7 @@ export const OrderDetailPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth');
+  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth') || localStorage.getItem('infinity_admin_authenticated') === 'true';
 
   // Payment Modal State
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
@@ -147,12 +148,25 @@ export const OrderDetailPage: React.FC = () => {
       <div className="py-12 text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
         <h2 className="text-lg font-bold text-slate-800 dark:text-white">{error || 'Order not found'}</h2>
-        <button
-          onClick={() => navigate('/orders')}
-          className="px-4 py-2 text-xs font-semibold text-white bg-[#0B3A82] rounded-xl"
-        >
-          Back to Orders
-        </button>
+        <BackButton to="/orders" label="Back to Orders" />
+      </div>
+    );
+  }
+
+  const isPartnershipOrder = order?.is_tshirt === 1 || order?.has_id_cards === 1 || order?.is_partner_shared === 1;
+  if (!isLoading && order && !isAdmin && !isPartnershipOrder) {
+    return (
+      <div className="max-w-md mx-auto p-8 bg-white dark:bg-[#082A5E] rounded-2xl border border-slate-200 dark:border-blue-900/60 text-center space-y-4 my-12 shadow-card">
+        <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center mx-auto">
+          <AlertCircle className="w-6 h-6" />
+        </div>
+        <h3 className="text-lg font-bold text-slate-800 dark:text-white">Admin-Only Product Order</h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          This order belongs to the admin's personal merchandise inventory. Only T-Shirts & ID Cards are shared between partners.
+        </p>
+        <div className="pt-2 flex justify-center">
+          <BackButton to="/orders" label="Back to Orders" />
+        </div>
       </div>
     );
   }
@@ -161,15 +175,14 @@ export const OrderDetailPage: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-16 sm:pb-8">
+      {/* Back to Orders Navigation */}
+      <div>
+        <BackButton to="/orders" label="Back to Orders" />
+      </div>
+
       {/* Top Header & Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/orders')}
-            className="p-2 rounded-xl border border-slate-200 dark:border-blue-900/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-blue-950 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-black text-[#172033] dark:text-white">
@@ -767,7 +780,7 @@ export const OrderDetailPage: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. UPI Ref #89324021..."
+                  placeholder="Enter transaction reference"
                   value={paymentNotes}
                   onChange={(e) => setPaymentNotes(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-blue-900/60 bg-white dark:bg-[#051E44] text-[#172033] dark:text-white"

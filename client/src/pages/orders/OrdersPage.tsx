@@ -5,6 +5,7 @@ import {
   IndianRupee, TrendingUp, AlertCircle, CheckCircle2, Clock, Sparkles, Trash2
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { NewOrderModal } from '../../components/modals/NewOrderModal.js';
 import { OrderQuickViewModal } from '../../components/modals/OrderQuickViewModal.js';
 import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
@@ -23,7 +24,15 @@ export const OrdersPage: React.FC = () => {
   const [quickViewOrder, setQuickViewOrder] = useState<any | null>(null);
   const [deleteOrderTarget, setDeleteOrderTarget] = useState<any | null>(null);
 
-  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth');
+  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth') || localStorage.getItem('infinity_admin_authenticated') === 'true';
+
+  const isPartnershipOrder = (o: any) => {
+    if (o.is_tshirt === 1 || o.has_id_cards === 1 || o.is_partner_shared === 1) return true;
+    const prod = (o.product_type || o.product_name || '').toLowerCase();
+    return prod.includes('t-shirt') || prod.includes('tshirt') || prod.includes('id card') || prod.includes('idcard') || prod.includes('cap');
+  };
+
+  const visibleOrders = isAdmin ? orders : orders.filter(isPartnershipOrder);
 
   const fetchOrders = async () => {
     try {
@@ -72,14 +81,19 @@ export const OrdersPage: React.FC = () => {
     fetchOrders();
   }, [search, productFilter, paymentFilter]);
 
-  // Aggregate stats of current listed orders
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.selling_price || 0), 0);
-  const totalCost = orders.reduce((sum, o) => sum + (o.total_cost || 0), 0);
-  const totalProfit = orders.reduce((sum, o) => sum + (o.profit || 0), 0);
-  const totalAvailable = orders.reduce((sum, o) => sum + (o.available_amount || 0), 0);
+  // Aggregate stats of visible orders
+  const totalRevenue = visibleOrders.reduce((sum, o) => sum + (o.selling_price || 0), 0);
+  const totalCost = visibleOrders.reduce((sum, o) => sum + (o.total_cost || 0), 0);
+  const totalProfit = visibleOrders.reduce((sum, o) => sum + (o.profit || 0), 0);
+  const totalAvailable = visibleOrders.reduce((sum, o) => sum + (o.available_amount || 0), 0);
 
   return (
     <div className="space-y-6">
+      {/* Back to Dashboard Navigation */}
+      <div className="flex items-center justify-between">
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Top Header & Metrics Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -151,16 +165,21 @@ export const OrdersPage: React.FC = () => {
             onChange={(e) => setProductFilter(e.target.value)}
             className="w-full sm:w-auto px-2.5 sm:px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-blue-900/60 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-semibold"
           >
-            <option value="">All Products</option>
+            <option value="">{isAdmin ? 'All Products' : 'All Shared Products'}</option>
             <option value="Custom Printed T-Shirt">T-Shirts</option>
-            <option value="Photo Frame">Photo Frames</option>
-            <option value="Bouquet">Bouquets</option>
-            <option value="Custom Mug">Mugs</option>
+            <option value="ID Card">ID Cards & Lanyards</option>
             <option value="Custom Cap">Caps</option>
-            <option value="Personalized Album">Albums</option>
-            <option value="Polaroid Prints (Pack of 20)">Polaroids</option>
-            <option value="Customized Calendar">Calendars</option>
-            <option value="Fridge Magnets (Set of 4)">Fridge Magnets</option>
+            {isAdmin && (
+              <>
+                <option value="Photo Frame">Photo Frames</option>
+                <option value="Bouquet">Bouquets</option>
+                <option value="Custom Mug">Mugs</option>
+                <option value="Personalized Album">Albums</option>
+                <option value="Polaroid Prints (Pack of 20)">Polaroids</option>
+                <option value="Customized Calendar">Calendars</option>
+                <option value="Fridge Magnets (Set of 4)">Fridge Magnets</option>
+              </>
+            )}
           </select>
 
           <select
@@ -180,7 +199,7 @@ export const OrdersPage: React.FC = () => {
       <div className="md:hidden space-y-3">
         {isLoading ? (
           <TableSkeleton rows={3} columns={2} />
-        ) : orders.length === 0 ? (
+        ) : visibleOrders.length === 0 ? (
           <EmptyState
             icon={Package}
             title="No orders found"
@@ -189,7 +208,7 @@ export const OrdersPage: React.FC = () => {
             onAction={() => setIsNewOrderOpen(true)}
           />
         ) : (
-          orders.map((o) => (
+          visibleOrders.map((o) => (
             <div
               key={o.id}
               onClick={() => navigate(`/orders/${o.id}`)}
@@ -306,7 +325,7 @@ export const OrdersPage: React.FC = () => {
       <div className="hidden md:block bg-white dark:bg-[#082A5E] rounded-2xl border border-slate-200 dark:border-blue-900/50 shadow-card overflow-hidden">
         {isLoading ? (
           <TableSkeleton rows={6} columns={8} />
-        ) : orders.length === 0 ? (
+        ) : visibleOrders.length === 0 ? (
           <EmptyState
             icon={Package}
             title="No orders found"
@@ -332,7 +351,7 @@ export const OrdersPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-blue-900/30">
-                {orders.map((o) => (
+                {visibleOrders.map((o) => (
                   <tr
                     key={o.id}
                     onClick={() => navigate(`/orders/${o.id}`)}

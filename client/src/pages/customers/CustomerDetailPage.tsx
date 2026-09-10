@@ -5,6 +5,7 @@ import {
   Package, TrendingUp, IndianRupee, Eye, CheckCircle2, Clock, AlertCircle
 } from 'lucide-react';
 import { NewOrderModal } from '../../components/modals/NewOrderModal.js';
+import { BackButton } from '../../components/common/BackButton.js';
 
 export const CustomerDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,9 +45,7 @@ export const CustomerDetailPage: React.FC = () => {
     return (
       <div className="p-12 text-center space-y-4">
         <h2 className="text-lg font-bold text-slate-700 dark:text-white">Customer not found</h2>
-        <button onClick={() => navigate('/customers')} className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#0B3A82] text-white">
-          Back to Customers
-        </button>
+        <BackButton to="/customers" label="Back to Customers" />
       </div>
     );
   }
@@ -56,6 +55,10 @@ export const CustomerDetailPage: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
+      <div>
+        <BackButton to="/customers" label="Back to Customers" />
+      </div>
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">

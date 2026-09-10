@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Activity, ShieldCheck, Search, Filter, ArrowRight, Clock, User, AlertCircle, FileText, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { AuditLog } from '../../types/index.js';
 
 export const ActivityPage: React.FC = () => {
@@ -55,6 +56,10 @@ export const ActivityPage: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-24 sm:pb-8">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

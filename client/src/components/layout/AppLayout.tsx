@@ -89,21 +89,18 @@ export const AppLayout: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <span className="text-[10px] sm:text-[11px] text-slate-300">
-              <span className="hidden sm:inline">Active: </span>
-              <strong className="text-white font-bold">{isPartner1 ? 'Jashwanth' : 'Rajshekar'}</strong>
+              <span className="hidden sm:inline">Partner: </span>
+              <strong className="text-white font-bold">{user?.full_name || (isPartner1 ? 'Jashwanth Reddy' : 'Rajshekar Reddy')}</strong>
             </span>
-
-            <button
-              onClick={() => switchDemoPartner(isPartner1 ? 2 : 1)}
-              className="ml-1 sm:ml-2 px-2 sm:px-2.5 py-0.5 rounded-full bg-[#D4AF37] hover:bg-[#F5E7B2] text-[#082A5E] font-bold text-[10px] flex items-center gap-1 transition-all shadow-xs active:scale-95 cursor-pointer"
-              title="Switch partner to test dual collaboration"
-            >
-              <RefreshCw className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
-              <span className="hidden md:inline">Switch to </span>
-              <span>{isPartner1 ? 'Rajshekar' : 'Jashwanth'}</span>
-            </button>
+            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+              isPartner1
+                ? 'bg-[#D4AF37] text-[#082A5E]'
+                : 'bg-blue-200 text-[#082A5E]'
+            }`}>
+              {isPartner1 ? 'Owner' : 'Partner'}
+            </span>
           </div>
         </div>
 

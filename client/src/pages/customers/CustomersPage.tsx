@@ -4,6 +4,7 @@ import { Users, Plus, Search, Eye, Phone, Mail, MapPin, TrendingUp, IndianRupee 
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
 import { AddCustomerModal } from '../../components/modals/AddCustomerModal.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { TableSkeleton } from '../../components/common/SkeletonLoader.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
 
@@ -40,6 +41,10 @@ export const CustomersPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#172033] dark:text-white flex items-center gap-2.5">

@@ -278,50 +278,7 @@ export async function seedDemoData(): Promise<{ businessId: string; partner1Emai
     );
   }
 
-  // 7. Create General Business Expenses
-  const generalExpenses = [
-    { desc: 'DTF Bulk Textile Inks (CMYK + White 1L bottles)', category: 'Materials', amount: 12500, daysAgo: 5, partner: 'Jashwanth Reddy', pId: actualP1Id },
-    { desc: '100% Bio-Wash Combed Cotton Blank T-Shirts (50 pcs)', category: 'Materials', amount: 14000, daysAgo: 10, partner: 'Rajshekar Reddy', pId: actualP2Id },
-    { desc: 'Infinity Branded Corrugated Boxes & Tape (200 units)', category: 'Packaging', amount: 4200, daysAgo: 14, partner: 'Jashwanth Reddy', pId: actualP1Id },
-    { desc: 'Workshop Studio Electric Bill (Heat press & curing oven)', category: 'Electricity', amount: 3850, daysAgo: 18, partner: 'Rajshekar Reddy', pId: actualP2Id },
-    { desc: 'Studio & Workshop Monthly Commercial Rent', category: 'Rent', amount: 18000, daysAgo: 22, partner: 'Jashwanth Reddy', pId: actualP1Id },
-    { desc: 'Rapido Business Delivery Partner Monthly Pass', category: 'Rapido', amount: 2500, daysAgo: 26, partner: 'Rajshekar Reddy', pId: actualP2Id },
-    { desc: 'Meta & Instagram Sponsored Post Campaigns for T-Shirts', category: 'Marketing', amount: 4500, daysAgo: 30, partner: 'Jashwanth Reddy', pId: actualP1Id },
-    { desc: 'Epson PET Heat Transfer Film Rolls (100 meters)', category: 'Printing', amount: 3600, daysAgo: 34, partner: 'Rajshekar Reddy', pId: actualP2Id }
-  ];
-
-  for (let j = 0; j < generalExpenses.length; j++) {
-    const e = generalExpenses[j];
-    const expId = uuidv4();
-    const expDate = new Date(now.getTime() - e.daysAgo * 86400000).toISOString().split('T')[0];
-    const createdAt = new Date(now.getTime() - e.daysAgo * 86400000 + 7200000).toISOString();
-
-    await run(
-      `INSERT INTO expenses (
-        id, business_id, expense_number, category, description, amount, payment_method,
-        date, notes, created_by, created_by_name, status, created_at
-      ) VALUES (
-        ?, ?, ?, ?, ?, ?, 'UPI',
-        ?, 'Operating expense verified by partners', ?, ?, 'ACTIVE', ?
-      )`,
-      [
-        expId, businessId, `EXP-${(1001 + j).toString()}`, e.category, e.desc, e.amount,
-        expDate, e.pId, e.partner, createdAt
-      ]
-    );
-
-    await run(
-      `INSERT INTO audit_logs (id, business_id, actor_id, actor_name, action, entity_type, entity_id, new_value, reason, created_at)
-       VALUES (?, ?, ?, ?, 'CREATE', 'expense', ?, ?, 'Business expense logged', ?)`,
-      [
-        uuidv4(), businessId, e.pId, e.partner, expId,
-        JSON.stringify({ category: e.category, description: e.desc, amount: e.amount }),
-        createdAt
-      ]
-    );
-  }
-
-  console.log('✅ Infinity Customizations demo data successfully seeded!');
+  console.log('✅ Infinity Customizations demo data successfully seeded (BVRIT only)!');
   return {
     businessId,
     partner1Email: 'jashwanth@infinitycustomizations.com',

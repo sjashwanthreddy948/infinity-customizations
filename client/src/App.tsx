@@ -11,6 +11,7 @@ import { ErrorBoundary } from './components/common/ErrorBoundary.js';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage.js';
+import { AdminAccessPage } from './pages/auth/AdminAccessPage.js';
 
 // Functional Pages
 import { DashboardPage } from './pages/dashboard/DashboardPage.js';
@@ -78,6 +79,7 @@ export const App: React.FC = () => {
                       </PublicOnlyRoute>
                     }
                   />
+                  <Route path="/admin-access" element={<AdminAccessPage />} />
 
                   {/* Protected Business App Routes */}
                   <Route

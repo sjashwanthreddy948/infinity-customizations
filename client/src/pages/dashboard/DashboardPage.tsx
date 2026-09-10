@@ -3,22 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import {
   IndianRupee, TrendingUp, Package, Clock, AlertCircle, Shirt,
   Calendar, ArrowUpRight, Sparkles, Plus, Eye, CheckCircle2,
-  Printer, Truck
+  Printer, Truck, Lock
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar
 } from 'recharts';
+import { useAuth } from '../../context/AuthContext.js';
 import { NewOrderModal } from '../../components/modals/NewOrderModal.js';
 import { CardGridSkeleton, TableSkeleton } from '../../components/common/SkeletonLoader';
 import { EmptyState } from '../../components/common/EmptyState';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [range, setRange] = useState('all');
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
+
+  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth') || localStorage.getItem('infinity_admin_authenticated') === 'true';
 
   const fetchDashboardData = async () => {
     try {
@@ -58,13 +62,31 @@ export const DashboardPage: React.FC = () => {
     );
   }
 
-  const cards = stats?.cards || {};
+  const rawCards = stats?.cards || {};
   const tshirt = stats?.tshirtOverview || {};
   const partnerShares = stats?.partnerShares || null;
   const jashwanth = partnerShares?.jashwanth || null;
   const rajshekar = partnerShares?.rajshekar || null;
   const chartTrend = stats?.chartTrend || [];
-  const recentOrders = stats?.recentOrders || [];
+  
+  // Scope cards and orders based on partnership rules:
+  // Admin sees full business turnover + sole merch profits; Partner sees shared pool (T-Shirts, ID cards, Caps)
+  const cards = isAdmin ? rawCards : {
+    ...rawCards,
+    totalRevenue: partnerShares?.sharedRevenue ?? rawCards.totalRevenue,
+    totalCost: partnerShares?.sharedCost ?? rawCards.totalCost,
+    totalProfit: partnerShares?.sharedProfit ?? rawCards.totalProfit,
+  };
+
+  const isPartnershipOrder = (o: any) => {
+    if (o.is_tshirt === 1 || o.has_id_cards === 1 || o.is_partner_shared === 1) return true;
+    const prod = (o.product_type || o.product_name || '').toLowerCase();
+    return prod.includes('t-shirt') || prod.includes('tshirt') || prod.includes('id card') || prod.includes('idcard') || prod.includes('cap');
+  };
+
+  const recentOrders = isAdmin 
+    ? (stats?.recentOrders || []) 
+    : (stats?.recentOrders || []).filter(isPartnershipOrder);
 
   return (
     <div className="space-y-6 pb-12">
@@ -199,9 +221,16 @@ export const DashboardPage: React.FC = () => {
               <span className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0B3A82] dark:text-[#D4AF37] border border-blue-100 dark:border-blue-900">
                 Shared Pool: ₹{partnerShares.sharedProfit.toLocaleString('en-IN')}
               </span>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-navy-800 text-slate-700 dark:text-slate-300">
-                Sole Merch: ₹{partnerShares.soleProfit.toLocaleString('en-IN')}
-              </span>
+              {isAdmin ? (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-navy-800 text-slate-700 dark:text-slate-300">
+                  Sole Merch: ₹{partnerShares.soleProfit.toLocaleString('en-IN')}
+                </span>
+              ) : (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-[#D4AF37] border border-amber-200 dark:border-amber-900/40 flex items-center gap-1">
+                  <Lock className="w-3 h-3" />
+                  Personal Merch (Admin Only)
+                </span>
+              )}
             </div>
           </div>
 
@@ -218,16 +247,22 @@ export const DashboardPage: React.FC = () => {
                       <span>Jashwanth Reddy</span>
                       <span className="text-[10px] px-1.5 py-0.2 rounded font-bold bg-[#0B3A82] text-white">Owner</span>
                     </h4>
-                    <p className="text-[11px] text-slate-400">50% Shared Merch + 100% Sole Merch</p>
+                    <p className="text-[11px] text-slate-400">
+                      {isAdmin ? '50% Shared Merch + 100% Sole Merch' : '50% Shared Merch (T-Shirts & ID)'}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Profit</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    {isAdmin ? 'Total Profit' : 'Shared Profit'}
+                  </span>
                   <p className="text-xl sm:text-2xl font-black text-[#0B3A82] dark:text-white font-mono">
-                    ₹{jashwanth.totalProfit.toLocaleString('en-IN')}
+                    {isAdmin 
+                      ? `₹${jashwanth.totalProfit.toLocaleString('en-IN')}` 
+                      : `₹${jashwanth.sharedProfit.toLocaleString('en-IN')}`}
                   </p>
                   <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                    {jashwanth.sharePercentage}% of total profit
+                    {isAdmin ? `${jashwanth.sharePercentage}% of total profit` : '50% of shared pool'}
                   </span>
                 </div>
               </div>
@@ -239,7 +274,9 @@ export const DashboardPage: React.FC = () => {
                 </div>
                 <div className="p-2.5 rounded-xl bg-white dark:bg-navy-800 border border-slate-100 dark:border-slate-700">
                   <span className="text-[10px] text-slate-400 block font-semibold">Bouquets/Frames (100%)</span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-mono text-sm">₹{jashwanth.soleProfit.toLocaleString('en-IN')}</strong>
+                  <strong className="text-slate-800 dark:text-slate-200 font-mono text-sm">
+                    {isAdmin ? `₹${jashwanth.soleProfit.toLocaleString('en-IN')}` : '🔒 Admin Only'}
+                  </strong>
                 </div>
               </div>
             </div>

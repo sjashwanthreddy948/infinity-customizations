@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useToast } from '../../context/ToastContext.js';
+import { BackButton } from '../common/BackButton.js';
 
 interface RecordPaymentModalProps {
   isOpen: boolean;
@@ -123,10 +124,8 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, 
           className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto my-auto bg-white dark:bg-navy-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-10"
         >
           <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0B3A82] dark:text-[#D4AF37]">
-                <CreditCard className="w-5 h-5" />
-              </div>
+            <div className="flex items-center gap-3">
+              <BackButton onClick={onClose} label="Back" />
               <div>
                 <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Record Payment</h2>
                 <p className="text-xs text-slate-500">Reconciles invoices & updates bank/cash balances</p>
@@ -215,7 +214,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, 
                   type="text"
                   value={referenceNumber}
                   onChange={(e) => setReferenceNumber(e.target.value)}
-                  placeholder="e.g. UTR1982739182"
+                  placeholder="Enter transaction reference"
                   className="w-full px-3 py-2 text-sm rounded-xl bg-slate-50 dark:bg-navy-850 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0B3A82]"
                 />
               </div>

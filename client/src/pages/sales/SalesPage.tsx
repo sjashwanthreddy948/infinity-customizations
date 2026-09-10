@@ -3,6 +3,7 @@ import { ShoppingCart, Plus, Search, Eye } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
 import { NewSaleModal } from '../../components/modals/NewSaleModal.js';
+import { BackButton } from '../../components/common/BackButton.js';
 
 export const SalesPage: React.FC = () => {
   const { token, user } = useAuth();
@@ -39,6 +40,10 @@ export const SalesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <div>
+        <BackButton to="/dashboard" label="Back to Dashboard" />
+      </div>
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">

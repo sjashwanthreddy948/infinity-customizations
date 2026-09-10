@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.js';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal.js';
 import { calculateOrderPartnerShare } from '../../utils/partnerShare.js';
+import { BackButton } from '../common/BackButton.js';
 
 interface OrderQuickViewModalProps {
   order: any | null;
@@ -113,13 +114,16 @@ export const OrderQuickViewModal: React.FC<OrderQuickViewModalProps> = ({
                 </div>
               </div>
 
-              <button
-                onClick={onClose}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-blue-900/40 transition-colors"
-                title="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <BackButton onClick={onClose} label="Back" />
+                <button
+                  onClick={onClose}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-blue-900/40 transition-colors"
+                  title="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Scrollable Content */}

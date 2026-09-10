@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { LOGO_DATA_URI } from '../../assets/logoBase64.js';
 import { useNavigate } from 'react-router-dom';
+import { BackButton } from '../common/BackButton.js';
 
 interface QuotationPDFViewerProps {
   quotation: any;
@@ -132,7 +133,8 @@ export const QuotationPDFViewer: React.FC<QuotationPDFViewerProps> = ({
         >
           {/* Top Action Toolbar */}
           <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-blue-900/60 bg-slate-50 dark:bg-[#051E44] flex flex-wrap items-center justify-between gap-2 shrink-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
+              <BackButton onClick={onClose} label="Back to Quotations" />
               <span className="font-mono font-black text-sm text-[#0B3A82] dark:text-[#D4AF37]">
                 {quotation.quotation_number}
               </span>
@@ -366,11 +368,13 @@ export const QuotationPDFViewer: React.FC<QuotationPDFViewerProps> = ({
                   <p className="text-[10px]">Digital Billing & Business Management System</p>
                 </div>
 
-                <div className="text-center">
-                  <div className="w-36 border-b border-slate-400 pb-1 mb-1 font-signature text-sm font-serif italic text-slate-700">
-                    {quotation.created_by_name || 'Authorized Partner'}
-                  </div>
-                  <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Authorized Signature</p>
+                <div className="text-right">
+                  <p className="font-serif font-black text-sm tracking-wider text-[#0B3A82] uppercase">
+                    Infinity Customizations
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
+                    Infinity Customizations
+                  </p>
                 </div>
               </div>
             </div>

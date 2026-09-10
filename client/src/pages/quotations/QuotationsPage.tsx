@@ -24,6 +24,7 @@ import { Quotation } from '../../types/index.js';
 import { NewQuotationModal } from '../../components/modals/NewQuotationModal.js';
 import { QuotationPDFViewer } from '../../components/modals/QuotationPDFViewer.js';
 import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
+import { BackButton } from '../../components/common/BackButton.js';
 import { TableSkeleton } from '../../components/common/SkeletonLoader.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
 
@@ -163,11 +164,14 @@ export const QuotationsPage: React.FC = () => {
     <div className="space-y-6 pb-24 lg:pb-8">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#0B3A82] dark:text-white uppercase flex items-center gap-2">
-            <FileSpreadsheet className="w-6 h-6 text-[#D4AF37]" />
-            <span>Quotations & Estimates</span>
-          </h1>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <BackButton to="/dashboard" label="Back to Dashboard" />
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#0B3A82] dark:text-white uppercase flex items-center gap-2">
+              <FileSpreadsheet className="w-6 h-6 text-[#D4AF37]" />
+              <span>Quotations & Estimates</span>
+            </h1>
+          </div>
           <p className="text-xs text-slate-600 dark:text-slate-300 font-medium mt-0.5">
             Generate and send official price quotes to clients, then convert directly into orders.
           </p>
