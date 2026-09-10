@@ -21,6 +21,7 @@ import { CustomersPage } from './pages/customers/CustomersPage.js';
 import { CustomerDetailPage } from './pages/customers/CustomerDetailPage.js';
 import { InvoicesPage } from './pages/invoices/InvoicesPage.js';
 import { InvoiceDetailPage } from './pages/invoices/InvoiceDetailPage.js';
+import { QuotationsPage } from './pages/quotations/QuotationsPage.js';
 import { ExpensesPage } from './pages/expenses/ExpensesPage.js';
 import { ReportsPage } from './pages/reports/ReportsPage.js';
 import { AIInvoicePage } from './pages/ai-invoice/AIInvoicePage.js';
@@ -95,6 +96,7 @@ export const App: React.FC = () => {
                     <Route path="/customers/:id" element={<CustomerDetailPage />} />
                     <Route path="/invoices" element={<InvoicesPage />} />
                     <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+                    <Route path="/quotations" element={<QuotationsPage />} />
                     <Route path="/expenses" element={<ExpensesPage />} />
                     <Route path="/reports" element={<ReportsPage />} />
                     <Route path="/ai-invoice" element={<AIInvoicePage />} />

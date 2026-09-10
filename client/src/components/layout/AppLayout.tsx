@@ -21,7 +21,8 @@ import {
   Plus,
   RefreshCw,
   TrendingUp,
-  UserCheck
+  UserCheck,
+  ClipboardList
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useTheme } from '../../context/ThemeContext.js';
@@ -55,6 +56,7 @@ export const AppLayout: React.FC = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Quotations', path: '/quotations', icon: ClipboardList },
     { label: 'Orders', path: '/orders', icon: Package },
     { label: 'T-Shirts', path: '/t-shirts', icon: Shirt, highlight: true },
     { label: 'Customers', path: '/customers', icon: Users },
@@ -69,43 +71,45 @@ export const AppLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#051E44] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors">
-      {/* 1. TOP PARTNER COLLABORATION & SWITCHER BAR */}
-      <div className="bg-gradient-to-r from-[#082A5E] via-[#0B3A82] to-[#082A5E] text-white px-3 sm:px-4 py-1.5 text-xs flex items-center justify-between border-b border-[#D4AF37]/30 shadow-xs z-30">
-        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-          <span className="hidden sm:inline text-slate-200 text-[11px] truncate">
-            Shared Business: <strong className="text-white font-bold">Infinity Customizations</strong>
-          </span>
-          <span className="sm:hidden text-[#D4AF37] font-black text-[11px] tracking-tight shrink-0">
-            INFINITY
-          </span>
-          <span className="text-white/30 hidden sm:inline">|</span>
-          <span className="text-[10px] sm:text-[11px] text-[#F5E7B2] whitespace-nowrap">
-            {isConnected ? '⚡ Live Sync' : '● Connected'}
-          </span>
+      {/* UNIFIED STICKY NAVIGATION SHELL - z-40 ensures scrolling content never overlaps */}
+      <div className="sticky top-0 z-40 w-full shadow-xs bg-white dark:bg-[#082A5E]">
+        {/* 1. TOP PARTNER COLLABORATION & SWITCHER BAR */}
+        <div className="bg-gradient-to-r from-[#082A5E] via-[#0B3A82] to-[#082A5E] text-white px-3 sm:px-4 py-1.5 text-xs flex items-center justify-between border-b border-[#D4AF37]/30 shadow-xs">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="hidden sm:inline text-slate-200 text-[11px] truncate">
+              Shared Business: <strong className="text-white font-bold">Infinity Customizations</strong>
+            </span>
+            <span className="sm:hidden text-[#D4AF37] font-black text-[11px] tracking-tight shrink-0">
+              INFINITY
+            </span>
+            <span className="text-white/30 hidden sm:inline">|</span>
+            <span className="text-[10px] sm:text-[11px] text-[#F5E7B2] whitespace-nowrap">
+              {isConnected ? '⚡ Live Sync' : '● Connected'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <span className="text-[10px] sm:text-[11px] text-slate-300">
+              <span className="hidden sm:inline">Active: </span>
+              <strong className="text-white font-bold">{isPartner1 ? 'Jashwanth' : 'Rajshekar'}</strong>
+            </span>
+
+            <button
+              onClick={() => switchDemoPartner(isPartner1 ? 2 : 1)}
+              className="ml-1 sm:ml-2 px-2 sm:px-2.5 py-0.5 rounded-full bg-[#D4AF37] hover:bg-[#F5E7B2] text-[#082A5E] font-bold text-[10px] flex items-center gap-1 transition-all shadow-xs active:scale-95 cursor-pointer"
+              title="Switch partner to test dual collaboration"
+            >
+              <RefreshCw className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
+              <span className="hidden md:inline">Switch to </span>
+              <span>{isPartner1 ? 'Rajshekar' : 'Jashwanth'}</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          <span className="text-[10px] sm:text-[11px] text-slate-300">
-            <span className="hidden sm:inline">Active: </span>
-            <strong className="text-white font-bold">{isPartner1 ? 'Jashwanth' : 'Rajshekar'}</strong>
-          </span>
-
-          <button
-            onClick={() => switchDemoPartner(isPartner1 ? 2 : 1)}
-            className="ml-1 sm:ml-2 px-2 sm:px-2.5 py-0.5 rounded-full bg-[#D4AF37] hover:bg-[#F5E7B2] text-[#082A5E] font-bold text-[10px] flex items-center gap-1 transition-all shadow-xs active:scale-95 cursor-pointer"
-            title="Switch partner to test dual collaboration"
-          >
-            <RefreshCw className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
-            <span className="hidden md:inline">Switch to </span>
-            <span>{isPartner1 ? 'Rajshekar' : 'Jashwanth'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. MAIN HEADER NAVIGATION BAR */}
-      <header className="sticky top-0 z-20 bg-white dark:bg-[#082A5E] border-b border-slate-200 dark:border-blue-900/60 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between shadow-2xs">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        {/* 2. MAIN HEADER NAVIGATION BAR */}
+        <header className="bg-white/95 dark:bg-[#082A5E]/95 backdrop-blur-md border-b border-slate-200 dark:border-blue-900/60 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between shadow-2xs">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setSidebarOpen(prev => !prev)}
@@ -237,12 +241,13 @@ export const AppLayout: React.FC = () => {
           </div>
         </div>
       </header>
+      </div>
 
       {/* 3. MAIN BODY WITH SIDEBAR & CONTENT */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar / Slide-Over Mobile Drawer */}
         <aside
-          className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-30 w-72 sm:w-80 lg:w-60 bg-white dark:bg-[#082A5E] border-r border-slate-200 dark:border-blue-900/60 flex flex-col shadow-2xl lg:shadow-none transition-transform duration-300 ease-in-out ${
+          className={`fixed lg:static inset-y-0 left-0 z-60 lg:z-30 w-72 sm:w-80 lg:w-60 bg-white dark:bg-[#082A5E] border-r border-slate-200 dark:border-blue-900/60 flex flex-col shadow-2xl lg:shadow-none transition-transform duration-300 ease-in-out ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
         >
@@ -359,12 +364,12 @@ export const AppLayout: React.FC = () => {
         {sidebarOpen && (
           <div
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden transition-opacity"
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs lg:hidden transition-opacity"
           />
         )}
 
         {/* Content Outlet with Bottom Padding for Mobile Bar */}
-        <main className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full bg-[#F8FAFC] dark:bg-[#051E44] pb-24 lg:pb-8">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full bg-[#F8FAFC] dark:bg-[#051E44] pb-24 lg:pb-8 relative z-0">
           <Outlet />
         </main>
       </div>

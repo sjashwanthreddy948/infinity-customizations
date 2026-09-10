@@ -264,4 +264,51 @@ router.post('/:id/void', async (req: AuthenticatedRequest, res: Response): Promi
   }
 });
 
+/**
+ * DELETE /api/invoices/:id - Admin delete invoice
+ */
+router.delete('/:id', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const businessId = req.businessId!;
+    const invoiceId = req.params.id as string;
+    const userRole = req.user?.role;
+    const partnerId = req.user!.userId;
+    const partnerName = req.user!.fullName;
+
+    if (userRole !== 'OWNER' && userRole !== 'ADMIN') {
+      res.status(403).json({ error: 'Permission denied. Only administrators can delete invoices.' });
+      return;
+    }
+
+    const inv = await get<any>(`SELECT * FROM invoices WHERE id = ? AND business_id = ?`, [invoiceId, businessId]);
+    if (!inv) {
+      res.status(404).json({ error: 'Invoice not found' });
+      return;
+    }
+
+    // Unlink any orders referencing this invoice
+    await run(`UPDATE orders SET invoice_id = NULL WHERE invoice_id = ? AND business_id = ?`, [invoiceId, businessId]);
+    // Delete invoice items
+    await run(`DELETE FROM invoice_items WHERE invoice_id = ?`, [invoiceId]);
+    // Delete the invoice itself
+    await run(`DELETE FROM invoices WHERE id = ? AND business_id = ?`, [invoiceId, businessId]);
+
+    await logAudit({
+      businessId,
+      actorId: partnerId,
+      actorName: partnerName,
+      action: 'DELETE',
+      entityType: 'INVOICE',
+      entityId: invoiceId,
+      entityReference: inv.invoice_number,
+      reason: 'Admin deleted invoice'
+    });
+
+    res.json({ success: true, message: 'Invoice permanently deleted' });
+  } catch (error) {
+    console.error('Error deleting invoice:', error);
+    res.status(500).json({ error: 'Failed to delete invoice' });
+  }
+});
+
 export default router;

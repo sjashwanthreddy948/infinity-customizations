@@ -15,7 +15,7 @@ export interface BusinessMember {
   id: string;
   business_id: string;
   user_id: string;
-  role: 'OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF';
+  role: 'OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF' | 'ADMIN';
   partner_share_percentage: number;
   joined_at: string;
   status: string;
@@ -42,7 +42,7 @@ export interface AuthenticatedUser {
   email: string;
   full_name: string;
   fullName: string;
-  role: 'OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF';
+  role: 'OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF' | 'ADMIN';
   business_id: string;
   business_name?: string;
 }

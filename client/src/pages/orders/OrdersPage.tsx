@@ -2,20 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus, Search, Filter, ArrowUpDown, Shirt, Package, Eye,
-  IndianRupee, TrendingUp, AlertCircle, CheckCircle2, Clock, Sparkles
+  IndianRupee, TrendingUp, AlertCircle, CheckCircle2, Clock, Sparkles, Trash2
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.js';
 import { NewOrderModal } from '../../components/modals/NewOrderModal.js';
+import { OrderQuickViewModal } from '../../components/modals/OrderQuickViewModal.js';
+import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
 import { TableSkeleton } from '../../components/common/SkeletonLoader.js';
 import { EmptyState } from '../../components/common/EmptyState.js';
 
 export const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [productFilter, setProductFilter] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
+  const [quickViewOrder, setQuickViewOrder] = useState<any | null>(null);
+  const [deleteOrderTarget, setDeleteOrderTarget] = useState<any | null>(null);
+
+  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth');
 
   const fetchOrders = async () => {
     try {
@@ -37,6 +45,26 @@ export const OrdersPage: React.FC = () => {
       console.error('Failed to fetch orders:', err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteOrder = async () => {
+    if (!deleteOrderTarget) return;
+    try {
+      const token = localStorage.getItem('partnerledger_token') || 'demo-jwt-usr-jashwanth-1-default';
+      const res = await fetch(`/api/orders/${deleteOrderTarget.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setDeleteOrderTarget(null);
+        fetchOrders();
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to delete order');
+      }
+    } catch (e) {
+      console.error('Delete order error:', e);
     }
   };
 
@@ -235,7 +263,7 @@ export const OrdersPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Footer: Creator attribution and view arrow */}
+              {/* Footer: Creator attribution, quick view, and admin delete */}
               <div className="border-t border-slate-100 dark:border-blue-900/40 pt-2 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 font-medium">
                 <div className="flex items-center gap-1.5">
                   <span className="w-4 h-4 rounded-full bg-[#0B3A82] text-[#D4AF37] flex items-center justify-center text-[9px] font-bold">
@@ -243,9 +271,31 @@ export const OrdersPage: React.FC = () => {
                   </span>
                   <span className="text-slate-700 dark:text-slate-300">{o.created_by_name}</span>
                 </div>
-                <span className="text-[#0B3A82] dark:text-[#D4AF37] font-bold flex items-center gap-0.5">
-                  View Details →
-                </span>
+
+                <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={() => setQuickViewOrder(o)}
+                    className="p-1 rounded-lg bg-blue-50 text-[#0B3A82] dark:bg-blue-900/40 dark:text-[#D4AF37] border border-blue-200 dark:border-blue-800 active:scale-95"
+                    title="Quick Calculation View"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setDeleteOrderTarget(o)}
+                      className="p-1 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50"
+                      title="Delete Order (Admin)"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => navigate(`/orders/${o.id}`)}
+                    className="text-[#0B3A82] dark:text-[#D4AF37] font-bold flex items-center gap-0.5 ml-1"
+                  >
+                    Details →
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -398,16 +448,25 @@ export const OrdersPage: React.FC = () => {
                       </div>
                     </td>
 
-                    <td className="py-3 px-4 text-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/orders/${o.id}`);
-                        }}
-                        className="p-1.5 rounded-lg text-slate-600 hover:text-[#0B3A82] dark:text-slate-300 dark:hover:text-[#D4AF37] hover:bg-slate-100 dark:hover:bg-blue-900/50"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
+                    <td className="py-3 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => setQuickViewOrder(o)}
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-[#0B3A82] dark:text-slate-300 dark:hover:text-[#D4AF37] hover:bg-blue-50 dark:hover:bg-blue-900/40 transition-colors"
+                          title="Detailed Calculations (Eye View)"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => setDeleteOrderTarget(o)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                            title="Delete Order (Admin)"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -421,6 +480,24 @@ export const OrdersPage: React.FC = () => {
         isOpen={isNewOrderOpen}
         onClose={() => setIsNewOrderOpen(false)}
         onSuccess={() => fetchOrders()}
+      />
+
+      {/* Quick View & Delete Modals */}
+      <OrderQuickViewModal
+        isOpen={!!quickViewOrder}
+        order={quickViewOrder}
+        onClose={() => setQuickViewOrder(null)}
+        onDeleted={() => fetchOrders()}
+      />
+
+      <DeleteConfirmModal
+        isOpen={!!deleteOrderTarget}
+        title="Delete Order"
+        itemIdentifier={`#${deleteOrderTarget?.order_number}`}
+        itemDescription={`Customer: ${deleteOrderTarget?.customer_name} • Total: ₹${(Number(deleteOrderTarget?.selling_price) || 0).toLocaleString('en-IN')}`}
+        consequenceText="Deleting this order will permanently remove it and all related cost records from your ledger."
+        onClose={() => setDeleteOrderTarget(null)}
+        onConfirm={handleDeleteOrder}
       />
     </div>
   );

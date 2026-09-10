@@ -797,4 +797,65 @@ router.post('/:id/void', async (req: AuthenticatedRequest, res: Response): Promi
   }
 });
 
+/**
+ * DELETE /api/orders/:id - Admin delete order
+ */
+router.delete('/:id', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const businessId = req.businessId!;
+    const orderId = req.params.id as string;
+    const userRole = req.user?.role;
+    const partnerId = req.user!.userId;
+    const partnerName = req.user!.fullName;
+
+    if (userRole !== 'OWNER' && userRole !== 'ADMIN') {
+      res.status(403).json({ error: 'Permission denied. Only administrators can delete orders.' });
+      return;
+    }
+
+    const order = await get<any>(`SELECT * FROM orders WHERE id = ? AND business_id = ?`, [orderId, businessId]);
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    // Delete order items
+    await run(`DELETE FROM order_items WHERE order_id = ?`, [orderId]);
+    // Delete payments linked to this order
+    await run(`DELETE FROM payments WHERE order_id = ?`, [orderId]);
+    // Delete order itself
+    await run(`DELETE FROM orders WHERE id = ? AND business_id = ?`, [orderId, businessId]);
+
+    // Update customer stats if customer exists
+    if (order.customer_id) {
+      await run(
+        `UPDATE customers SET 
+          total_orders = MAX(0, total_orders - 1),
+          total_spent = MAX(0, total_spent - ?),
+          total_paid = MAX(0, total_paid - ?),
+          outstanding_balance = MAX(0, outstanding_balance - ?),
+          total_profit_generated = MAX(0, total_profit_generated - ?)
+         WHERE id = ?`,
+        [order.selling_price || 0, order.payment_received || 0, order.payment_pending || 0, order.profit || 0, order.customer_id]
+      );
+    }
+
+    await logAudit({
+      businessId,
+      actorId: partnerId,
+      actorName: partnerName,
+      action: 'DELETE',
+      entityType: 'ORDER',
+      entityId: orderId,
+      entityReference: order.order_number,
+      reason: 'Admin deleted order'
+    });
+
+    res.json({ success: true, message: 'Order permanently deleted' });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({ error: 'Failed to delete order' });
+  }
+});
+
 export default router;

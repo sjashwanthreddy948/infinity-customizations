@@ -22,7 +22,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     const member = await get<{
       id: string;
       business_id: string;
-      role: 'OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF';
+      role: 'OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF' | 'ADMIN';
       email: string;
       full_name: string;
       business_name: string;
@@ -58,7 +58,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   }
 }
 
-export function requireRole(allowedRoles: ('OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF')[]) {
+export function requireRole(allowedRoles: ('OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF' | 'ADMIN')[]) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
       res.status(401).json({ error: 'Unauthorized: Authentication required' });

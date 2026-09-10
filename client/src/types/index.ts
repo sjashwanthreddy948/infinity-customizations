@@ -5,7 +5,7 @@ export interface User {
   fullName?: string;
   phone?: string;
   avatar_url?: string;
-  role: 'OWNER' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF';
+  role: 'OWNER' | 'ADMIN' | 'PARTNER' | 'ACCOUNTANT' | 'STAFF';
   partner_share_percentage?: number;
   business_id: string;
   business_name?: string;
@@ -254,4 +254,39 @@ export interface Order {
   updated_at?: string;
   items?: any[];
   payments?: any[];
+}
+
+export interface QuotationItem {
+  id?: string;
+  description: string;
+  quantity: number;
+  rate: number;
+  discount?: number;
+  tax_rate?: number;
+  amount: number;
+}
+
+export interface Quotation {
+  id: string;
+  quotation_number: string;
+  customer_id?: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  customer_address?: string;
+  items: QuotationItem[];
+  subtotal: number;
+  discount?: number;
+  tax_rate?: number;
+  tax_amount?: number;
+  grand_total: number;
+  valid_until: string;
+  status: 'DRAFT' | 'SENT' | 'ACCEPTED' | 'EXPIRED' | 'CONVERTED';
+  notes?: string;
+  terms?: string;
+  created_by: string;
+  created_by_name: string;
+  created_at: string;
+  converted_order_id?: string;
+  converted_invoice_id?: string;
 }

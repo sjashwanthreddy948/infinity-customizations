@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Shirt, Printer, Download, CreditCard, History,
   FileText, CheckCircle2, Clock, AlertCircle, TrendingUp,
-  User, Phone, Mail, MapPin, Calendar, Check, X, Layers, Tag, Sparkles
+  User, Phone, Mail, MapPin, Calendar, Check, X, Layers, Tag, Sparkles, Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { calculateOrderPartnerShare } from '../../utils/partnerShare';
+import { useAuth } from '../../context/AuthContext.js';
+import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
+import { calculateOrderPartnerShare } from '../../utils/partnerShare.js';
 
 const fmt = (val: any) => (Number(val) || 0).toLocaleString('en-IN');
 
@@ -35,9 +37,13 @@ const formatTime = (dateStr: any) => {
 export const OrderDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth');
 
   // Payment Modal State
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
@@ -225,6 +231,17 @@ export const OrderDetailPage: React.FC = () => {
             <History className="w-4 h-4" />
             <span>View History</span>
           </button>
+
+          {isAdmin && (
+            <button
+              onClick={() => setIsDeleteOpen(true)}
+              className="px-3 py-2 text-xs font-bold rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-900/50 flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Delete Order (Admin only)"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Delete Order</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -810,6 +827,29 @@ export const OrderDetailPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Admin Delete Order Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteOpen}
+        title="Delete Order"
+        itemIdentifier={`#${order.order_number}`}
+        itemDescription={`Customer: ${order.customer_name} • Total: ₹${fmt(order.selling_price)}`}
+        consequenceText="Deleting this order will permanently remove it and all related cost records from your ledger. This action cannot be undone."
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={async () => {
+          const token = localStorage.getItem('partnerledger_token') || 'demo-jwt-usr-jashwanth-1-default';
+          const res = await fetch(`/api/orders/${order.id}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            navigate('/orders');
+          } else {
+            const err = await res.json();
+            alert(err.error || 'Failed to delete order');
+          }
+        }}
+      />
     </div>
   );
 };

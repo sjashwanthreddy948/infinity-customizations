@@ -128,6 +128,39 @@ interface MockPayment {
   created_at: string;
 }
 
+interface MockQuotation {
+  id: string;
+  quotation_number: string;
+  customer_id?: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  customer_address?: string;
+  items: Array<{
+    id?: string;
+    description: string;
+    quantity: number;
+    rate: number;
+    discount?: number;
+    tax_rate?: number;
+    amount: number;
+  }>;
+  subtotal: number;
+  discount?: number;
+  tax_rate?: number;
+  tax_amount?: number;
+  grand_total: number;
+  valid_until: string;
+  status: 'DRAFT' | 'SENT' | 'ACCEPTED' | 'EXPIRED' | 'CONVERTED';
+  notes?: string;
+  terms?: string;
+  created_by: string;
+  created_by_name: string;
+  created_at: string;
+  converted_order_id?: string;
+  converted_invoice_id?: string;
+}
+
 const PARTNER_1 = {
   id: 'usr-jashwanth-1',
   email: 'jashwanth@infinitycustomizations.com',
@@ -339,12 +372,57 @@ const INITIAL_PAYMENTS: MockPayment[] = [
   }
 ];
 
+const INITIAL_QUOTATIONS: MockQuotation[] = [
+  {
+    id: 'qt-bvrit-1',
+    quotation_number: 'QT-2026-0001',
+    customer_id: 'cust-bvrit',
+    customer_name: 'BVRIT Hyderabad (B.V. Raju Institute of Technology)',
+    customer_phone: '+91 98490 55667',
+    customer_email: 'fests@bvrit.ac.in',
+    customer_address: 'BVRIT Campus, Bachupally, Hyderabad, Telangana 502313',
+    items: [
+      {
+        id: 'qti-1',
+        description: 'Round Neck 100% Pure Cotton T-Shirts with Dual Side HD DTF Print',
+        quantity: 100,
+        rate: 350,
+        discount: 0,
+        tax_rate: 0,
+        amount: 35000
+      },
+      {
+        id: 'qti-2',
+        description: 'Custom Satin Lanyards + 350 GSM Double-Side Printed ID Cards',
+        quantity: 100,
+        rate: 100,
+        discount: 0,
+        tax_rate: 0,
+        amount: 10000
+      }
+    ],
+    subtotal: 45000,
+    discount: 0,
+    tax_rate: 0,
+    tax_amount: 0,
+    grand_total: 45000,
+    valid_until: '2026-03-31',
+    status: 'SENT',
+    notes: 'Price includes fabric, premium printing, finishing, and door-step delivery in Hyderabad. Payment Terms: 50% advance upon confirmation, balance 50% upon delivery.',
+    terms: 'Valid for 15 days from issue date. Delivery timeline: 5-7 business days upon sample approval.',
+    created_by: 'usr-jashwanth-1',
+    created_by_name: 'Jashwanth Reddy',
+    created_at: '2026-09-07T10:00:00.000Z'
+  }
+];
+
 class MockDatabase {
   customers: MockCustomer[] = [];
   orders: MockOrder[] = [];
   invoices: MockInvoice[] = [];
   expenses: MockExpense[] = [];
   payments: MockPayment[] = [];
+  quotations: MockQuotation[] = [];
   currentUser: any = PARTNER_1;
 
   constructor() {
@@ -402,6 +480,7 @@ class MockDatabase {
         this.customers = storedCustomers.length > 0 ? storedCustomers : [...INITIAL_CUSTOMERS];
         this.expenses = parsed.expenses || INITIAL_EXPENSES;
         this.payments = (parsed.payments && parsed.payments.length > 0) ? parsed.payments.filter((p: any) => isBvrit(p) || p.id === 'pay-bvrit-1') : [...INITIAL_PAYMENTS];
+        this.quotations = (parsed.quotations && parsed.quotations.length > 0) ? parsed.quotations : [...INITIAL_QUOTATIONS];
 
         localStorage.removeItem('infinity_mock_db_v3');
         this.save();
@@ -415,6 +494,7 @@ class MockDatabase {
     this.invoices = [...INITIAL_INVOICES];
     this.expenses = INITIAL_EXPENSES.map(e => ({ ...e }));
     this.payments = [...INITIAL_PAYMENTS];
+    this.quotations = [...INITIAL_QUOTATIONS];
     this.save();
   }
 
@@ -425,7 +505,8 @@ class MockDatabase {
         orders: this.orders,
         invoices: this.invoices,
         expenses: this.expenses,
-        payments: this.payments
+        payments: this.payments,
+        quotations: this.quotations
       }));
     } catch {
       // ignore
@@ -438,6 +519,7 @@ class MockDatabase {
     this.invoices = [...INITIAL_INVOICES];
     this.expenses = INITIAL_EXPENSES.map(e => ({ ...e }));
     this.payments = [...INITIAL_PAYMENTS];
+    this.quotations = [...INITIAL_QUOTATIONS];
     this.save();
   }
 }
@@ -851,6 +933,16 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     const orderId = parts[3];
     const isPayments = parts[4] === 'payments';
 
+    if (method === 'DELETE') {
+      const idx = mockDb.orders.findIndex(o => o.id === orderId || o.order_number === orderId);
+      if (idx !== -1) {
+        mockDb.orders.splice(idx, 1);
+        mockDb.save();
+        return jsonResponse({ success: true, message: 'Order deleted successfully' });
+      }
+      return jsonResponse({ error: 'Order not found' }, 404);
+    }
+
     let order = mockDb.orders.find(o => o.id === orderId || o.order_number === orderId);
     if (!order) {
       order = mockDb.orders[0];
@@ -999,6 +1091,23 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     const invId = parts[3];
     const isPayment = parts[4] === 'payments';
 
+    if (method === 'DELETE') {
+      const idx = mockDb.invoices.findIndex(i => i.id === invId || i.invoice_number === invId);
+      if (idx !== -1) {
+        const deleted = mockDb.invoices[idx];
+        mockDb.invoices.splice(idx, 1);
+        // Unlink from any matching order
+        const matchedOrder = mockDb.orders.find(o => o.invoice_id === deleted.id);
+        if (matchedOrder) {
+          matchedOrder.invoice_id = null;
+          matchedOrder.invoice_number = null;
+        }
+        mockDb.save();
+        return jsonResponse({ success: true, message: 'Invoice deleted successfully' });
+      }
+      return jsonResponse({ error: 'Invoice not found' }, 404);
+    }
+
     const inv = mockDb.invoices.find(i => i.id === invId || i.invoice_number === invId) || mockDb.invoices[0];
 
     if (isPayment && method === 'POST') {
@@ -1094,6 +1203,199 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
       );
     }
     return jsonResponse(filtered);
+  }
+
+  // 7.8 Quotations
+  if (pathname === '/api/quotations') {
+    if (method === 'POST') {
+      const items = (body.items || []).map((it: any, idx: number) => {
+        const qty = Number(it.quantity) || 1;
+        const rate = Number(it.rate || it.unit_price) || 0;
+        const amt = Number(it.amount) || (qty * rate);
+        return {
+          id: it.id || `qti-${Date.now()}-${idx}`,
+          description: it.description || 'Custom Merchandise Item',
+          quantity: qty,
+          rate: rate,
+          discount: Number(it.discount) || 0,
+          tax_rate: Number(it.tax_rate) || 0,
+          amount: amt
+        };
+      });
+
+      const computedSubtotal = items.reduce((s: number, it: any) => s + (Number(it.amount) || 0), 0);
+      const subtotal = Number(body.subtotal) || computedSubtotal;
+      const discount = Number(body.discount) || 0;
+      const taxRate = Number(body.tax_rate) || 0;
+      const taxAmount = Number(body.tax_amount) || Math.round((subtotal - discount) * (taxRate / 100));
+      const grandTotal = Number(body.grand_total) || Math.max(0, subtotal - discount + taxAmount);
+
+      const newQuote: MockQuotation = {
+        id: `qt-${Date.now()}`,
+        quotation_number: `QT-2026-${String(mockDb.quotations.length + 1).padStart(4, '0')}`,
+        customer_id: body.customer_id || undefined,
+        customer_name: body.customer_name || 'Prospective Customer',
+        customer_phone: body.customer_phone || '',
+        customer_email: body.customer_email || '',
+        customer_address: body.customer_address || '',
+        items,
+        subtotal,
+        discount,
+        tax_rate: taxRate,
+        tax_amount: taxAmount,
+        grand_total: grandTotal,
+        valid_until: body.valid_until || new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0],
+        status: body.status || 'SENT',
+        notes: body.notes || 'Payment Terms: 50% advance to confirm order and start production; balance 50% upon delivery.',
+        terms: body.terms || 'Quote valid for 15 days. GST extra as applicable. Delivery in 5-7 working days.',
+        created_by: mockDb.currentUser.id,
+        created_by_name: mockDb.currentUser.full_name,
+        created_at: new Date().toISOString()
+      };
+
+      mockDb.quotations.unshift(newQuote);
+      mockDb.save();
+      return jsonResponse(newQuote, 201);
+    }
+
+    let filtered = [...mockDb.quotations];
+    const status = searchParams.get('status');
+    const search = searchParams.get('search');
+    if (status && status !== 'ALL') {
+      filtered = filtered.filter(q => q.status === status);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.quotation_number.toLowerCase().includes(q) ||
+        item.customer_name.toLowerCase().includes(q) ||
+        item.customer_phone.includes(q)
+      );
+    }
+    return jsonResponse(filtered);
+  }
+
+  if (pathname.startsWith('/api/quotations/')) {
+    const parts = pathname.split('/');
+    const quoteId = parts[3];
+    const isConvert = parts[4] === 'convert';
+
+    const index = mockDb.quotations.findIndex(q => q.id === quoteId || q.quotation_number === quoteId);
+    if (index === -1) {
+      return jsonResponse({ error: 'Quotation not found' }, 404);
+    }
+    const quote = mockDb.quotations[index];
+
+    if (method === 'DELETE') {
+      mockDb.quotations.splice(index, 1);
+      mockDb.save();
+      return jsonResponse({ success: true, message: 'Quotation deleted successfully' });
+    }
+
+    if (method === 'PUT' || method === 'PATCH') {
+      const updated = { ...quote, ...body };
+      mockDb.quotations[index] = updated;
+      mockDb.save();
+      return jsonResponse(updated);
+    }
+
+    if (isConvert && method === 'POST') {
+      const totalUnits = quote.items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
+      const estBlankCost = Math.round(quote.grand_total * 0.45);
+      const estPrintCost = Math.round(quote.grand_total * 0.20);
+      const estLogistics = 500;
+      const fin = calculateOrderFinancials({
+        sellingPrice: quote.grand_total,
+        productCost: estBlankCost,
+        printingCost: estPrintCost,
+        tshirtRapidoCost: 200,
+        printRapidoCost: 150,
+        deliveryCost: estLogistics,
+        otherCost: 0,
+        paymentReceived: 0
+      });
+
+      const newOrderNum = `ORD-2026-${String(mockDb.orders.length + 1).padStart(4, '0')}`;
+      const newOrderId = `ord-${Date.now()}`;
+      const newInvNum = `INV-2026-${String(mockDb.invoices.length + 1).padStart(4, '0')}`;
+      const newInvId = `inv-${Date.now()}`;
+
+      const newOrder: MockOrder = {
+        id: newOrderId,
+        order_number: newOrderNum,
+        customer_id: quote.customer_id || `cust-${Date.now()}`,
+        customer_name: quote.customer_name,
+        customer_phone: quote.customer_phone,
+        customer_email: quote.customer_email,
+        customer_address: quote.customer_address,
+        product_name: quote.items[0]?.description || 'Customized Merchandise',
+        quantity: totalUnits,
+        selling_price: quote.grand_total,
+        product_cost: estBlankCost,
+        printing_cost: estPrintCost,
+        tshirt_rapido_cost: 200,
+        print_rapido_cost: 150,
+        delivery_cost: estLogistics,
+        other_cost: 0,
+        total_cost: fin.totalCost,
+        profit: fin.profit,
+        profit_margin: fin.profitMargin,
+        payment_status: 'PENDING',
+        payment_received: 0,
+        payment_pending: quote.grand_total,
+        available_amount: -fin.totalCost,
+        is_tshirt: 1,
+        is_partner_shared: 1,
+        tshirt_neck_type: 'Round Neck',
+        tshirt_fabric: 'Pure Cotton',
+        tshirt_size: 'Standard Assorted',
+        tshirt_color: 'Standard',
+        order_date: new Date().toISOString().split('T')[0],
+        created_at: new Date().toISOString(),
+        created_by_name: mockDb.currentUser.full_name,
+        created_by: mockDb.currentUser.id,
+        invoice_id: newInvId,
+        invoice_number: newInvNum,
+        notes: `Converted from Quotation ${quote.quotation_number}. ${quote.notes || ''}`
+      };
+
+      const newInvoice: MockInvoice = {
+        id: newInvId,
+        invoice_number: newInvNum,
+        customer_id: newOrder.customer_id,
+        customer_name: quote.customer_name,
+        issue_date: new Date().toISOString().split('T')[0],
+        due_date: new Date(Date.now() + 10 * 86400000).toISOString().split('T')[0],
+        subtotal: quote.subtotal,
+        discount: quote.discount || 0,
+        tax_rate: quote.tax_rate || 0,
+        tax_amount: quote.tax_amount || 0,
+        grand_total: quote.grand_total,
+        amount_paid: 0,
+        balance_due: quote.grand_total,
+        status: 'SENT',
+        created_by_name: mockDb.currentUser.full_name,
+        created_by: mockDb.currentUser.id,
+        items: quote.items
+      };
+
+      quote.status = 'CONVERTED';
+      quote.converted_order_id = newOrderId;
+      quote.converted_invoice_id = newInvId;
+
+      mockDb.orders.unshift(newOrder);
+      mockDb.invoices.unshift(newInvoice);
+      mockDb.save();
+
+      return jsonResponse({
+        success: true,
+        quotation: quote,
+        order: newOrder,
+        invoice: newInvoice
+      });
+    }
+
+    return jsonResponse(quote);
   }
 
   // 8. Customers

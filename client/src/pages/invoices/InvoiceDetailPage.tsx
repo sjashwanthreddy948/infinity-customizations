@@ -10,13 +10,16 @@ import {
   ShieldCheck,
   CheckCircle2,
   Calendar,
-  DollarSign
+  DollarSign,
+  Trash2,
+  TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useWebSocket } from '../../context/WebSocketContext.js';
 import { InvoicePDFViewer } from '../../components/invoices/InvoicePDFViewer.js';
 import { RecordPaymentModal } from '../../components/modals/RecordPaymentModal.js';
 import { VoidModal } from '../../components/modals/VoidModal.js';
+import { DeleteConfirmModal } from '../../components/common/DeleteConfirmModal.js';
 import { Invoice } from '../../types/index.js';
 
 export const InvoiceDetailPage: React.FC = () => {
@@ -29,6 +32,9 @@ export const InvoiceDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showVoidModal, setShowVoidModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const isAdmin = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.email?.includes('jashwanth');
 
   const fetchInvoice = async () => {
     if (!token || !id) return;
@@ -115,6 +121,17 @@ export const InvoiceDetailPage: React.FC = () => {
               <span>Void Invoice</span>
             </button>
           )}
+
+          {isAdmin && (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900 font-bold text-xs transition-colors active:scale-95 cursor-pointer"
+              title="Delete Invoice (Admin only)"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Delete Invoice</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -127,6 +144,57 @@ export const InvoiceDetailPage: React.FC = () => {
           <p>Reason: "{invoice.void_reason || 'Reversed'}"</p>
         </div>
       )}
+
+      {/* High-Contrast Calculation Summary Banner */}
+      <div className="max-w-[800px] mx-auto p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-blue-900/40 pb-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#0B3A82] dark:text-[#D4AF37] flex items-center gap-1.5">
+            <TrendingUp className="w-4 h-4" />
+            <span>Calculation Breakdown & Payment Summary</span>
+          </span>
+          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
+            Number(invoice.balance_due) === 0 || invoice.status === 'PAID'
+              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+              : 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
+          }`}>
+            {Number(invoice.balance_due) === 0 || invoice.status === 'PAID' ? '✓ Fully Paid' : `Due: ₹${(Number(invoice.balance_due) || 0).toLocaleString('en-IN')}`}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40">
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">Subtotal</span>
+            <p className="text-base font-black text-slate-900 dark:text-white mt-0.5">
+              ₹{(Number(invoice.subtotal) || Number(invoice.grand_total) || 0).toLocaleString('en-IN')}
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#051E44] border border-slate-200 dark:border-blue-900/40">
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">GST / Tax</span>
+            <p className="text-base font-black text-slate-900 dark:text-white mt-0.5">
+              {Number(invoice.tax_amount) > 0 ? `+₹${Number(invoice.tax_amount).toLocaleString('en-IN')}` : '₹0 (0%)'}
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+            <span className="text-[10px] uppercase font-bold text-emerald-800 dark:text-emerald-300 block">Amount Paid</span>
+            <p className="text-base font-black text-emerald-700 dark:text-emerald-400 mt-0.5">
+              ₹{(Number(invoice.amount_paid) || 0).toLocaleString('en-IN')}
+            </p>
+          </div>
+
+          <div className={`p-3 rounded-xl border ${
+            Number(invoice.balance_due) > 0
+              ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300'
+              : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
+          }`}>
+            <span className="text-[10px] uppercase font-bold block">Balance Due</span>
+            <p className="text-base font-black mt-0.5">
+              {Number(invoice.balance_due) > 0 ? `₹${(Number(invoice.balance_due) || 0).toLocaleString('en-IN')}` : '₹0'}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Invoice A4 Sheet Preview */}
       <InvoicePDFViewer invoice={invoice} business={invoice.business} />
@@ -189,6 +257,28 @@ export const InvoiceDetailPage: React.FC = () => {
           onSuccess={() => fetchInvoice()}
         />
       )}
+
+      {/* Admin Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete Invoice"
+        itemIdentifier={invoice.invoice_number}
+        itemDescription={`Customer: ${invoice.customer_name} • Total: ₹${(Number(invoice.grand_total) || 0).toLocaleString('en-IN')}`}
+        consequenceText="Deleting this invoice will permanently remove it from all business financial ledgers and reports. This cannot be undone."
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={async () => {
+          const res = await fetch(`/api/invoices/${invoice.id}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            navigate('/invoices');
+          } else {
+            const err = await res.json();
+            alert(err.error || 'Failed to delete invoice');
+          }
+        }}
+      />
     </div>
   );
 };
