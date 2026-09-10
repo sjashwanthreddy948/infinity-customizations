@@ -399,12 +399,13 @@ class MockDatabase {
   }
 
   load() {
-    const DB_KEY = 'infinity_mock_db_v5';
+    const DB_KEY = 'infinity_mock_db_v6';
     try {
       localStorage.removeItem('infinity_mock_db_v1');
       localStorage.removeItem('infinity_mock_db_v2');
       localStorage.removeItem('infinity_mock_db_v3');
       localStorage.removeItem('infinity_mock_db_v4');
+      localStorage.removeItem('infinity_mock_db_v5');
 
       const isBvrit = (item: any) => {
         const text = `${item?.customer_name || ''} ${item?.name || ''} ${item?.invoice_number || ''} ${item?.order_number || ''} ${item?.notes || ''} ${item?.description || ''} ${JSON.stringify(item?.items || [])}`.toLowerCase();
@@ -468,7 +469,7 @@ class MockDatabase {
 
   save() {
     try {
-      localStorage.setItem('infinity_mock_db_v5', JSON.stringify({
+      localStorage.setItem('infinity_mock_db_v6', JSON.stringify({
         customers: this.customers,
         orders: this.orders,
         invoices: this.invoices,
@@ -608,21 +609,21 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     const tshirtProfit = tshirtRevenue - tshirtTotalCost;
     const tshirtsSold = tOrders.reduce((sum, o) => sum + (Number(o.quantity) || 0), 0);
 
-    // Partner rules: Rajshekar has share in T-Shirts, ID Cards, Caps (is_partner_shared === 1)
-    const sharedOrders = orders.filter(o => o.is_partner_shared === 1 || o.is_tshirt === 1 || (o.product_name && o.product_name.includes('Cap')) || o.has_id_cards === 1);
-    const soleOrders = orders.filter(o => !sharedOrders.includes(o));
+    // Partner rules: All orders (T-Shirts, ID Cards & Caps) are shared 50/50
+    const sharedOrders = orders;
+    const soleOrders: any[] = [];
 
-    const sharedRevenue = sharedOrders.reduce((sum, o) => sum + (Number(o.selling_price) || 0), 0);
-    const sharedCost = sharedOrders.reduce((sum, o) => sum + (Number(o.total_cost) || 0), 0);
-    const sharedProfit = sharedOrders.reduce((sum, o) => sum + (Number(o.profit) || 0), 0);
+    const sharedRevenue = totalRevenue;
+    const sharedCost = totalCost;
+    const sharedProfit = totalProfit;
 
-    const soleRevenue = soleOrders.reduce((sum, o) => sum + (Number(o.selling_price) || 0), 0);
-    const soleCost = soleOrders.reduce((sum, o) => sum + (Number(o.total_cost) || 0), 0);
-    const soleProfit = soleOrders.reduce((sum, o) => sum + (Number(o.profit) || 0), 0);
+    const soleRevenue = 0;
+    const soleCost = 0;
+    const soleProfit = 0;
 
     const jashwanthSharedPortion = Math.round(sharedProfit * 0.5);
     const rajshekarSharedPortion = sharedProfit - jashwanthSharedPortion;
-    const jashwanthTotalProfit = jashwanthSharedPortion + soleProfit;
+    const jashwanthTotalProfit = jashwanthSharedPortion;
     const rajshekarTotalProfit = rajshekarSharedPortion;
 
     // Daily chart trend
@@ -643,7 +644,7 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     orders.forEach(o => {
       const p = o.product_name || 'Custom Product';
       if (!prodMap[p]) {
-        prodMap[p] = { product_name: p, quantity_sold: 0, revenue: 0, cost: 0, profit: 0, is_partner_shared: o.is_partner_shared || 0 };
+        prodMap[p] = { product_name: p, quantity_sold: 0, revenue: 0, cost: 0, profit: 0, is_partner_shared: 1 };
       }
       prodMap[p].quantity_sold += (Number(o.quantity) || 0);
       prodMap[p].revenue += (Number(o.selling_price) || 0);
@@ -670,30 +671,30 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         generalExpenses
       },
       partnerShares: {
-        agreementRule: 'Partner (Rajshekar Reddy) has 50% profit share in T-Shirts, ID Cards & Caps only. Bouquets, Frames, Mugs & Gifts are 100% retained by Jashwanth Reddy.',
+        agreementRule: 'Equal 50/50 partnership profit share between Jashwanth Reddy and Rajshekar Reddy for all T-Shirts, ID Cards & Caps orders.',
         sharedOrdersCount: sharedOrders.length,
         sharedRevenue,
         sharedCost,
         sharedProfit,
-        soleOrdersCount: soleOrders.length,
-        soleRevenue,
-        soleCost,
-        soleProfit,
+        soleOrdersCount: 0,
+        soleRevenue: 0,
+        soleCost: 0,
+        soleProfit: 0,
         jashwanth: {
           name: 'Jashwanth Reddy',
-          role: 'Owner & Partner',
+          role: 'Co-Owner & Partner',
           sharedProfit: jashwanthSharedPortion,
-          soleProfit,
+          soleProfit: 0,
           totalProfit: jashwanthTotalProfit,
-          sharePercentage: totalProfit > 0 ? Math.round((jashwanthTotalProfit / totalProfit) * 100) : 100
+          sharePercentage: 50
         },
         rajshekar: {
           name: 'Rajshekar Reddy',
-          role: 'Partner (T-Shirts, ID Cards & Caps)',
+          role: 'Co-Owner & Partner',
           sharedProfit: rajshekarSharedPortion,
           soleProfit: 0,
           totalProfit: rajshekarTotalProfit,
-          sharePercentage: totalProfit > 0 ? Math.round((rajshekarTotalProfit / totalProfit) * 100) : 0
+          sharePercentage: 50
         }
       },
       tshirtOverview: {
@@ -1733,12 +1734,12 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
   // 14. Products Catalogue
   if (pathname === '/api/products') {
     return jsonResponse([
-      { id: 'prod-1', name: 'Custom Printed T-Shirt', category: 'Apparel', default_selling_price: 650, default_product_cost: 220, default_printing_cost: 140 },
-      { id: 'prod-2', name: 'Photo Frame', category: 'Frames & Decor', default_selling_price: 799, default_product_cost: 250, default_printing_cost: 150 },
-      { id: 'prod-3', name: 'Bouquet', category: 'Gifts & Flowers', default_selling_price: 1299, default_product_cost: 500, default_printing_cost: 100 },
-      { id: 'prod-4', name: 'Custom Mug', category: 'Drinkware', default_selling_price: 399, default_product_cost: 100, default_printing_cost: 80 },
-      { id: 'prod-5', name: 'Custom Cap', category: 'Apparel', default_selling_price: 499, default_product_cost: 150, default_printing_cost: 120 },
-      { id: 'prod-6', name: 'Personalized Album', category: 'Print & Albums', default_selling_price: 1899, default_product_cost: 600, default_printing_cost: 400 }
+      { id: 'prod-1', name: 'Custom Printed T-Shirt (Round Neck)', category: 'Apparel', default_selling_price: 450, default_product_cost: 160, default_printing_cost: 120 },
+      { id: 'prod-2', name: 'Custom Embroidered Collar Polo T-Shirt', category: 'Apparel', default_selling_price: 550, default_product_cost: 200, default_printing_cost: 150 },
+      { id: 'prod-3', name: 'Custom ID Card + Lanyard + Holder', category: 'ID Cards', default_selling_price: 75, default_product_cost: 25, default_printing_cost: 10 },
+      { id: 'prod-4', name: 'Custom Embroidered Cap', category: 'Caps', default_selling_price: 250, default_product_cost: 90, default_printing_cost: 60 },
+      { id: 'prod-5', name: 'Custom Heavyweight Hoodie / Sweatshirt', category: 'Apparel', default_selling_price: 850, default_product_cost: 380, default_printing_cost: 180 },
+      { id: 'prod-6', name: 'DTF Printing Film Roll (Per Meter)', category: 'Printing', default_selling_price: 300, default_product_cost: 140, default_printing_cost: 0 }
     ]);
   }
 
@@ -1755,7 +1756,7 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     else if (text.includes('cotton')) fabric = 'Cotton';
 
     // Quantity regex
-    const qtyMatch = text.match(/(\d+)\s*(pcs|pieces|t-shirt|tshirt|shirt|mugs|frames)/i) || text.match(/ordered\s*(\d+)/i);
+    const qtyMatch = text.match(/(\d+)\s*(pcs|pieces|t-shirt|tshirt|shirt|caps?|cards?)/i) || text.match(/ordered\s*(\d+)/i);
     const quantity = qtyMatch ? parseInt(qtyMatch[1], 10) : 2;
 
     // Price regex
@@ -1766,7 +1767,7 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
       extracted: {
         customer_name: 'Walk-in Client',
         customer_phone: '+91 98490 00000',
-        product_name: text.includes('frame') ? 'Photo Frame' : text.includes('mug') ? 'Custom Mug' : text.includes('bouquet') ? 'Bouquet' : 'Custom Printed T-Shirt',
+        product_name: text.includes('cap') ? 'Custom Embroidered Cap' : (text.includes('id') || text.includes('lanyard')) ? 'Custom ID Card + Lanyard' : 'Custom Printed T-Shirt',
         quantity,
         selling_price: sellingPrice,
         product_cost: Math.round(sellingPrice * 0.35),

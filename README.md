@@ -1,7 +1,7 @@
 # INFINITY CUSTOMIZATIONS
 > **"Business Management & Smart Invoice System"**
 
-**INFINITY CUSTOMIZATIONS** is a premium, production-ready full-stack web application purpose-built for customized products businesses. Built specifically for business partners who sell **Custom Printed T-Shirts**, **Photo Frames**, **Bouquets**, **Mugs**, **Caps**, **Albums**, **Polaroids**, **Calendars**, **Fridge Magnets**, **Customized Gifts**, and **Photo Restoration**.
+**INFINITY CUSTOMIZATIONS** is a premium, production-ready full-stack web application purpose-built for customized apparel & merchandise businesses. Built specifically for business partners who sell **Custom Printed T-Shirts**, **Custom ID Cards & Lanyards**, and **Custom Caps & Headwear**.
 
 It eliminates complex accounting bloat and focuses on the core financial engine of a customized merchandise business: **exact cost breakdown per order, transparent customer payments, automatic profit calculations, real-time dual-partner financial transparency, AI invoice assistance, and professional A4 invoice generation**.
 

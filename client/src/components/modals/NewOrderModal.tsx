@@ -28,19 +28,13 @@ export interface TShirtVariantState {
   unitSellingPrice: number;
 }
 
-const OTHER_PRODUCTS = [
-  { name: 'Photo Frame', defaultSelling: 799, defaultCost: 250, defaultPrint: 150 },
-  { name: 'Custom Mug', defaultSelling: 399, defaultCost: 100, defaultPrint: 80 },
-  { name: 'Bouquet', defaultSelling: 1299, defaultCost: 500, defaultPrint: 100 },
-  { name: 'Custom Cap', defaultSelling: 499, defaultCost: 150, defaultPrint: 120 },
-  { name: 'Personalized Album', defaultSelling: 1899, defaultCost: 600, defaultPrint: 400 },
-  { name: 'Polaroid Prints (Pack of 20)', defaultSelling: 499, defaultCost: 100, defaultPrint: 100 },
-  { name: 'Customized Calendar', defaultSelling: 699, defaultCost: 180, defaultPrint: 150 },
-  { name: 'Fridge Magnets (Set of 4)', defaultSelling: 299, defaultCost: 60, defaultPrint: 50 },
-  { name: 'Customized Gift Hamper', defaultSelling: 1499, defaultCost: 500, defaultPrint: 250 },
-  { name: 'Photo Restoration', defaultSelling: 899, defaultCost: 50, defaultPrint: 200 },
-  { name: 'Other Customized Products', defaultSelling: 999, defaultCost: 300, defaultPrint: 200 },
+const APPAREL_HEADWEAR_PRODUCTS = [
+  { name: 'Custom Embroidered Cap', defaultSelling: 250, defaultCost: 90, defaultPrint: 60 },
+  { name: 'Custom Printed Cap', defaultSelling: 200, defaultCost: 80, defaultPrint: 50 },
+  { name: 'Standalone ID Cards & Lanyards', defaultSelling: 75, defaultCost: 35, defaultPrint: 0 },
+  { name: 'Custom Heavyweight Hoodie / Sweatshirt', defaultSelling: 850, defaultCost: 380, defaultPrint: 180 },
 ];
+
 
 const ID_CARD_TYPES = [
   'PVC Card + Multicolor Printed Lanyard',
@@ -127,11 +121,11 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
   const [idCardUnitCost, setIdCardUnitCost] = useState(35);
   const [idCardUnitSelling, setIdCardUnitSelling] = useState(75);
 
-  // Other Product Specific
-  const [otherProductName, setOtherProductName] = useState('Photo Frame');
+  // Caps & Headwear Specific
+  const [otherProductName, setOtherProductName] = useState('Custom Embroidered Cap');
   const [otherQuantity, setOtherQuantity] = useState(1);
-  const [otherUnitCost, setOtherUnitCost] = useState(250);
-  const [otherUnitSelling, setOtherUnitSelling] = useState(799);
+  const [otherUnitCost, setOtherUnitCost] = useState(90);
+  const [otherUnitSelling, setOtherUnitSelling] = useState(250);
 
   // Printing Calculated in Meters (default: 1 meter @ ₹300/m)
   const [printMeters, setPrintMeters] = useState(1);
@@ -474,20 +468,12 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-xs font-bold text-[#0B3A82] uppercase tracking-wider">Product Category</p>
-                {isSharedOrder ? (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    🤝 Shared (50/50 Partner Split)
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
-                    🔒 Sole Product (100% Jashwanth)
-                  </span>
-                )}
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  🤝 Shared (50/50 Partner Split)
+                </span>
               </div>
               <p className="text-[11px] text-slate-500 mt-0.5">
-                {isSharedOrder
-                  ? 'T-Shirts, ID Cards & Caps profits are shared 50/50 with Rajshekar Reddy'
-                  : 'Bouquets, Frames, Mugs & Gifts profits are 100% retained by Jashwanth Reddy'}
+                T-Shirts, ID Cards & Caps profits are shared 50/50 equally between Jashwanth Reddy & Rajshekar Reddy
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full sm:w-auto">
@@ -513,7 +499,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                 }`}
               >
                 <Package className="w-4 h-4 text-[#D4AF37]" />
-                <span>+ Other Products</span>
+                <span>Caps & Headwear / ID</span>
               </button>
             </div>
           </div>
@@ -917,21 +903,21 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
               </div>
             </div>
           ) : (
-            /* OTHER MERCHANDISE FORM */
+            /* CAPS & HEADWEAR FORM */
             <div className="p-4 rounded-2xl bg-white border-2 border-slate-200 space-y-3">
               <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
                 <Package className="w-4 h-4 text-[#0B3A82]" />
-                <span className="text-xs font-black uppercase text-[#0B3A82]">Other Customized Product Details</span>
+                <span className="text-xs font-black uppercase text-[#0B3A82]">Custom Caps & Headwear Details</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Select / Enter Product Name</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Select Product</label>
                   <select
                     value={otherProductName}
                     onChange={(e) => {
                       const sel = e.target.value;
                       setOtherProductName(sel);
-                      const prod = OTHER_PRODUCTS.find(p => p.name === sel);
+                      const prod = APPAREL_HEADWEAR_PRODUCTS.find(p => p.name === sel);
                       if (prod) {
                         setOtherUnitCost(prod.defaultCost);
                         setOtherUnitSelling(prod.defaultSelling);
@@ -939,7 +925,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
                     }}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#0B3A82]"
                   >
-                    {OTHER_PRODUCTS.map(p => (
+                    {APPAREL_HEADWEAR_PRODUCTS.map(p => (
                       <option key={p.name} value={p.name}>{p.name} (Selling: ₹{p.defaultSelling})</option>
                     ))}
                   </select>

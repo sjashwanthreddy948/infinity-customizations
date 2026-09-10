@@ -14,7 +14,7 @@ function parseOrderFromText(text: string) {
 
   // 1. Quantity
   let quantity = 1;
-  const qtyMatch = text.match(/(\d+)\s*(?:pcs?|pieces?|nos?|units?|t-?shirts?|shirts?|mugs?|frames?|bouquets?|caps?)/i)
+  const qtyMatch = text.match(/(\d+)\s*(?:pcs?|pieces?|nos?|units?|t-?shirts?|shirts?|caps?|cards?|hoodies?)/i)
     || text.match(/(?:ordered|ordering|qty|quantity|for)\s*(\d+)/i)
     || text.match(/\b(\d+)\s+(?:black|white|navy|red|blue|grey|gray|maroon|s|m|l|xl|xxl)/i);
   if (qtyMatch) {
@@ -25,36 +25,18 @@ function parseOrderFromText(text: string) {
   let productName = 'Custom Printed T-Shirt';
   let isTshirt = 1;
 
-  if (lower.includes('mug')) {
-    productName = 'Custom Mug';
+  if (lower.includes('cap') || lower.includes('hat')) {
+    productName = 'Custom Embroidered Cap';
     isTshirt = 0;
-  } else if (lower.includes('frame')) {
-    productName = 'Photo Frame';
+  } else if (lower.includes('id card') || lower.includes('lanyard') || lower.includes('pvc card') || lower.includes('badge')) {
+    productName = 'Custom ID Card + Lanyard';
     isTshirt = 0;
-  } else if (lower.includes('bouquet') || lower.includes('flower')) {
-    productName = 'Bouquet';
-    isTshirt = 0;
-  } else if (lower.includes('cap') || lower.includes('hat')) {
-    productName = 'Custom Cap';
-    isTshirt = 0;
-  } else if (lower.includes('album') || lower.includes('photobook')) {
-    productName = 'Personalized Album';
-    isTshirt = 0;
-  } else if (lower.includes('polaroid')) {
-    productName = 'Polaroid Prints (Pack of 20)';
-    isTshirt = 0;
-  } else if (lower.includes('calendar')) {
-    productName = 'Customized Calendar';
-    isTshirt = 0;
-  } else if (lower.includes('magnet')) {
-    productName = 'Fridge Magnets (Set of 4)';
-    isTshirt = 0;
-  } else if (lower.includes('gift') || lower.includes('hamper')) {
-    productName = 'Customized Gift Hamper';
-    isTshirt = 0;
-  } else if (lower.includes('restoration') || lower.includes('restore')) {
-    productName = 'Photo Restoration';
-    isTshirt = 0;
+  } else if (lower.includes('hoodie') || lower.includes('sweatshirt')) {
+    productName = 'Custom Heavyweight Hoodie';
+    isTshirt = 1;
+  } else {
+    productName = 'Custom Printed T-Shirt';
+    isTshirt = 1;
   }
 
   // 3. Customer Name
@@ -239,12 +221,12 @@ router.post('/suggest-description', async (req: AuthenticatedRequest, res: Respo
     let suggestion = '';
     if (productName && productName.toLowerCase().includes('t-shirt')) {
       suggestion = `Premium 100% Bio-Wash Combed Cotton T-Shirt (${color || 'Custom'} - Size ${size || 'L'}). Customized with high-density ${printType || 'front'} print. Hand-finished for ${customerName || 'customer'}.`;
-    } else if (productName && productName.toLowerCase().includes('frame')) {
-      suggestion = `Custom gallery-grade wooden photo frame with anti-reflective glass and matte finish print on archival paper.`;
-    } else if (productName && productName.toLowerCase().includes('mug')) {
-      suggestion = `High-gloss ceramic sublimation mug with vibrant HD personalized photo and quote print. Microwave safe.`;
+    } else if (productName && (productName.toLowerCase().includes('id card') || productName.toLowerCase().includes('lanyard'))) {
+      suggestion = `Custom high-definition PVC ID card with multicolor sublimation heat-transfer lanyard and transparent protective holder.`;
+    } else if (productName && productName.toLowerCase().includes('cap')) {
+      suggestion = `Premium structured 6-panel cotton twill cap with 3D embroidery and adjustable metal buckle closure.`;
     } else {
-      suggestion = `Personalized ${productName || 'customized product'} crafted with premium materials and precision printing.`;
+      suggestion = `Custom ${productName || 'merchandise'} crafted with premium fabrics and precision printing.`;
     }
 
     res.json({ suggestion });

@@ -11,8 +11,8 @@ import { calculateOrderFinancials } from '../../utils/financialCalculations.js';
 const SAMPLE_PROMPTS = [
   "Rahul ordered 2 black XL t-shirts with front printing for ₹2500. T-shirt cost is ₹900, printing is ₹400 and Rapido is ₹120. Generate invoice.",
   "Priya ordered 4 white M t-shirts with front & back print for ₹4800. T-shirt cost is ₹1600, printing is ₹1000 and Rapido is ₹150.",
-  "Vikram ordered 1 wooden photo frame for ₹1800. Material cost is ₹550, printing is ₹350 and Rapido delivery is ₹100.",
-  "Ananya ordered 2 magic mugs for ₹850. Blank mug cost is ₹200, sublimation print is ₹160 and Rapido is ₹90."
+  "BVRIT Tech Fest ordered 100 round neck black t-shirts and 100 ID cards with lanyards for ₹38,000. T-shirt cost is ₹16,000, ID cards cost ₹3,500, DTF printing ₹6,000 and delivery is ₹350.",
+  "Kavya ordered 30 embroidered custom caps for ₹7,500. Cap blank cost is ₹2,700, embroidery is ₹1,200 and delivery is ₹120."
 ];
 
 export const AIInvoicePage: React.FC = () => {

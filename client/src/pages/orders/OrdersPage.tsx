@@ -165,21 +165,10 @@ export const OrdersPage: React.FC = () => {
             onChange={(e) => setProductFilter(e.target.value)}
             className="w-full sm:w-auto px-2.5 sm:px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-blue-900/60 bg-white dark:bg-[#051E44] text-slate-900 dark:text-white font-semibold"
           >
-            <option value="">{isAdmin ? 'All Products' : 'All Shared Products'}</option>
-            <option value="Custom Printed T-Shirt">T-Shirts</option>
+            <option value="">All Products</option>
+            <option value="Custom Printed T-Shirt">T-Shirts & Apparel</option>
             <option value="ID Card">ID Cards & Lanyards</option>
-            <option value="Custom Cap">Caps</option>
-            {isAdmin && (
-              <>
-                <option value="Photo Frame">Photo Frames</option>
-                <option value="Bouquet">Bouquets</option>
-                <option value="Custom Mug">Mugs</option>
-                <option value="Personalized Album">Albums</option>
-                <option value="Polaroid Prints (Pack of 20)">Polaroids</option>
-                <option value="Customized Calendar">Calendars</option>
-                <option value="Fridge Magnets (Set of 4)">Fridge Magnets</option>
-              </>
-            )}
+            <option value="Custom Cap">Caps & Headwear</option>
           </select>
 
           <select

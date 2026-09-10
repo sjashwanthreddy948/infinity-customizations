@@ -100,9 +100,7 @@ router.get('/stats', async (req: AuthenticatedRequest, res: Response): Promise<v
     `;
     const tshirtSummary = await get<any>(tshirtSql, params);
 
-    // 3. Category-Specific Partner Profit Sharing Calculations
-    // Partner (Rajshekar Reddy) has 50% share ONLY in T-Shirts, ID Cards & Caps (is_partner_shared = 1)
-    // Jashwanth Reddy retains 100% of Bouquets, Photo Frames, Mugs, Albums, Polaroids, Calendars, Magnets, Gifts (is_partner_shared = 0)
+    // 3. Partner Profit Sharing Calculations (50/50 Shared on T-Shirts, ID Cards & Caps)
     const sharedSql = `
       SELECT
         COUNT(*) as shared_orders,
@@ -200,30 +198,30 @@ router.get('/stats', async (req: AuthenticatedRequest, res: Response): Promise<v
         generalExpenses
       },
       partnerShares: {
-        agreementRule: 'Partner (Rajshekar Reddy) has 50% profit share in T-Shirts, ID Cards & Caps only. Bouquets, Frames, Mugs & Gifts are 100% retained by Jashwanth Reddy.',
+        agreementRule: 'Equal 50/50 partnership profit share between Jashwanth Reddy and Rajshekar Reddy for all T-Shirts, ID Cards & Caps orders.',
         sharedOrdersCount: sharedSummary?.shared_orders || 0,
         sharedRevenue: sharedSummary?.shared_revenue || 0,
         sharedCost: sharedSummary?.shared_cost || 0,
         sharedProfit,
-        soleOrdersCount: soleSummary?.sole_orders || 0,
-        soleRevenue: soleSummary?.sole_revenue || 0,
-        soleCost: soleSummary?.sole_cost || 0,
-        soleProfit,
+        soleOrdersCount: 0,
+        soleRevenue: 0,
+        soleCost: 0,
+        soleProfit: 0,
         jashwanth: {
           name: 'Jashwanth Reddy',
-          role: 'Owner & Partner',
+          role: 'Co-Owner & Partner',
           sharedProfit: jashwanthSharedPortion,
-          soleProfit: soleProfit,
+          soleProfit: 0,
           totalProfit: jashwanthTotalProfit,
-          sharePercentage: summary?.total_profit > 0 ? Math.round((jashwanthTotalProfit / summary.total_profit) * 100) : 100
+          sharePercentage: 50
         },
         rajshekar: {
           name: 'Rajshekar Reddy',
-          role: 'Partner (T-Shirts, ID Cards & Caps)',
+          role: 'Co-Owner & Partner',
           sharedProfit: rajshekarSharedPortion,
           soleProfit: 0,
           totalProfit: rajshekarTotalProfit,
-          sharePercentage: summary?.total_profit > 0 ? Math.round((rajshekarTotalProfit / summary.total_profit) * 100) : 0
+          sharePercentage: 50
         }
       },
       tshirtOverview: {

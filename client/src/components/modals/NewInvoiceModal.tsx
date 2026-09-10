@@ -17,24 +17,19 @@ const PRESET_PRODUCTS = [
   { name: 'Round Neck T-Shirt (Pure Cotton, Custom Print)', rate: 450, tax_rate: 0 },
   { name: 'Collar Polo T-Shirt (Poly Cotton)', rate: 450, tax_rate: 0 },
   { name: 'Round Neck T-Shirt (Poly Cotton)', rate: 380, tax_rate: 0 },
+  { name: 'Custom Oversized Streetwear T-Shirt (240 GSM)', rate: 480, tax_rate: 0 },
   { name: 'Custom Printed ID Card with Sublimation Lanyard', rate: 75, tax_rate: 0 },
-  { name: 'Custom Photo Frame (Matte Archival Glass)', rate: 799, tax_rate: 0 },
-  { name: 'Personalized Ceramic Mug (HD Print)', rate: 399, tax_rate: 0 },
-  { name: 'Artisan Floral Bouquet', rate: 1299, tax_rate: 0 },
-  { name: 'Custom Embroidered / Printed Cap', rate: 499, tax_rate: 0 },
-  { name: 'Personalized Photo Album (Hardbound)', rate: 1899, tax_rate: 0 },
-  { name: 'Polaroid Prints Collection (Pack of 20)', rate: 499, tax_rate: 0 },
-  { name: 'Customized Desktop Calendar', rate: 699, tax_rate: 0 },
-  { name: 'Fridge Magnets (Set of 4)', rate: 299, tax_rate: 0 },
-  { name: 'Customized Gift Hamper', rate: 1499, tax_rate: 0 },
-  { name: 'Digital Photo Restoration & Print', rate: 899, tax_rate: 0 }
+  { name: 'PVC ID Card with Badge Clip / Yoyo Retractor', rate: 65, tax_rate: 0 },
+  { name: 'Custom Embroidered / Printed Cap', rate: 250, tax_rate: 0 },
+  { name: 'Custom Heavyweight Hoodie / Sweatshirt', rate: 850, tax_rate: 0 },
+  { name: 'DTF Printing Film Roll (Per Meter)', rate: 300, tax_rate: 0 }
 ];
 
 const PRESET_EXPENSES = [
   { name: 'Delivery / Rapido Logistics Charge', rate: 100, tax_rate: 0 },
-  { name: 'Special Gift Packaging & Box', rate: 150, tax_rate: 0 },
-  { name: 'Custom Graphic Design / Artwork Fee', rate: 200, tax_rate: 0 },
-  { name: 'Express Rush Processing Fee', rate: 250, tax_rate: 0 }
+  { name: 'Screen / DTF Printing Setup Fee', rate: 200, tax_rate: 0 },
+  { name: 'Custom Graphic Design / Artwork Fee', rate: 250, tax_rate: 0 },
+  { name: 'Express Rush Processing Fee', rate: 300, tax_rate: 0 }
 ];
 
 export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClose, defaultCustomerId }) => {

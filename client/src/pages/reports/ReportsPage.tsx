@@ -78,10 +78,7 @@ export const ReportsPage: React.FC = () => {
   const tshirt = report?.tshirtProfit || {};
   const other = report?.otherProductProfit || {};
   const overall = report?.overall || {};
-  const allItemized = report?.itemized || [];
-  const itemized = isAdmin
-    ? allItemized
-    : allItemized.filter((item: any) => item.is_tshirt || item.product_name?.toLowerCase().includes('t-shirt') || item.product_name?.toLowerCase().includes('id card') || item.product_name?.toLowerCase().includes('cap'));
+  const itemized = report?.itemized || [];
 
   return (
     <div className="space-y-6 pb-12">
@@ -189,7 +186,7 @@ export const ReportsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Pillar 2: Other Product Profit */}
+        {/* Pillar 2: ID Cards & Caps Profit */}
         <div className="p-5 rounded-3xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-blue-900/40 pb-3">
             <div className="flex items-center gap-2">
@@ -197,55 +194,41 @@ export const ReportsPage: React.FC = () => {
                 <Package className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-white">Other Products Profit</h3>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Frames, Mugs, Bouquets, Polaroids...</p>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-white">ID Cards & Caps Profit</h3>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Lanyards, badges & custom caps</p>
               </div>
             </div>
-            {isAdmin ? (
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-blue-950 px-2 py-0.5 rounded-full">
-                {other.margin}% margin
-              </span>
-            ) : (
-              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-200 dark:border-amber-900/40">
-                <Lock className="w-3 h-3" /> Admin Only
-              </span>
-            )}
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-blue-950 px-2 py-0.5 rounded-full">
+              {other.margin || 0}% margin
+            </span>
           </div>
 
-          {isAdmin ? (
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between text-slate-700 dark:text-slate-300 font-medium">
-                <span>Merchandise Revenue:</span>
-                <span className="font-bold text-slate-900 dark:text-white">₹{(other.revenue || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400 font-medium">
-                <span>Materials / Blank Cost:</span>
-                <span>₹{(other.productCost || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400 font-medium">
-                <span>Customization Cost:</span>
-                <span>₹{(other.printingCost || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400 font-medium">
-                <span>Delivery Cost:</span>
-                <span>₹{(other.deliveryCost || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-rose-600 dark:text-rose-400 border-t border-slate-100 dark:border-blue-900/40 pt-1.5 font-bold">
-                <span>Total Other Cost:</span>
-                <span>₹{(other.totalCost || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-base font-black text-emerald-600 dark:text-emerald-400 border-t-2 border-slate-100 dark:border-blue-900/40 pt-2">
-                <span>Net Other Profit:</span>
-                <span>₹{(other.profit || 0).toLocaleString('en-IN')}</span>
-              </div>
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between text-slate-700 dark:text-slate-300 font-medium">
+              <span>Merchandise Revenue:</span>
+              <span className="font-bold text-slate-900 dark:text-white">₹{(other.revenue || 0).toLocaleString('en-IN')}</span>
             </div>
-          ) : (
-            <div className="py-8 text-center space-y-2">
-              <Lock className="w-8 h-8 text-amber-500 mx-auto" />
-              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">Sole Business Category</p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Personal merchandise profits belong to admin owner.</p>
+            <div className="flex justify-between text-slate-600 dark:text-slate-400 font-medium">
+              <span>Materials / Blank Cost:</span>
+              <span>₹{(other.productCost || 0).toLocaleString('en-IN')}</span>
             </div>
-          )}
+            <div className="flex justify-between text-slate-600 dark:text-slate-400 font-medium">
+              <span>Customization Cost:</span>
+              <span>₹{(other.printingCost || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-slate-600 dark:text-slate-400 font-medium">
+              <span>Delivery Cost:</span>
+              <span>₹{(other.deliveryCost || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-rose-600 dark:text-rose-400 border-t border-slate-100 dark:border-blue-900/40 pt-1.5 font-bold">
+              <span>Total Direct Cost:</span>
+              <span>₹{(other.totalCost || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-base font-black text-emerald-600 dark:text-emerald-400 border-t-2 border-slate-100 dark:border-blue-900/40 pt-2">
+              <span>Net Profit:</span>
+              <span>₹{(other.profit || 0).toLocaleString('en-IN')}</span>
+            </div>
+          </div>
         </div>
 
         {/* Pillar 3: Overall Business Profit */}
@@ -253,53 +236,39 @@ export const ReportsPage: React.FC = () => {
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-[#F5E7B2]">Overall Business Profit</h3>
-              <p className="text-[10px] text-slate-300 font-medium">Net after general business expenses</p>
+              <p className="text-[10px] text-slate-300 font-medium">Shared 50/50 after general expenses</p>
             </div>
-            {isAdmin ? (
-              <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-[#D4AF37] text-[#082A5E]">
-                {overall.netMargin}% net
-              </span>
-            ) : (
-              <span className="text-[10px] font-bold text-[#F5E7B2] bg-white/10 px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
-                <Lock className="w-3 h-3" /> Admin Only
-              </span>
-            )}
+            <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-[#D4AF37] text-[#082A5E]">
+              {overall.netMargin || 0}% net
+            </span>
           </div>
 
-          {isAdmin ? (
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between text-slate-300">
-                <span>Total Gross Sales:</span>
-                <span className="font-bold text-white">₹{(overall.totalRevenue || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-slate-400">
-                <span>Order Direct Costs:</span>
-                <span className="text-rose-300">₹{(overall.orderTotalCost || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-slate-300 border-t border-white/10 pt-1">
-                <span>Gross Orders Profit:</span>
-                <span className="font-bold text-[#F5E7B2]">₹{(overall.grossOrderProfit || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-slate-400">
-                <span>General Studio Expenses:</span>
-                <span className="text-rose-300">-₹{(overall.generalExpenses || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="border-t-2 border-[#D4AF37]/40 pt-2 flex justify-between items-center">
-                <div>
-                  <p className="text-[10px] uppercase font-bold text-[#F5E7B2]">Final Net Profit</p>
-                  <p className="text-2xl font-black text-[#D4AF37]">
-                    ₹{(overall.netBusinessProfit || 0).toLocaleString('en-IN')}
-                  </p>
-                </div>
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between text-slate-300">
+              <span>Total Gross Sales:</span>
+              <span className="font-bold text-white">₹{(overall.totalRevenue || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-slate-400">
+              <span>Order Direct Costs:</span>
+              <span className="text-rose-300">₹{(overall.orderTotalCost || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-slate-300 border-t border-white/10 pt-1">
+              <span>Gross Orders Profit:</span>
+              <span className="font-bold text-[#F5E7B2]">₹{(overall.grossOrderProfit || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-slate-400">
+              <span>General Studio Expenses:</span>
+              <span className="text-rose-300">-₹{(overall.generalExpenses || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="border-t-2 border-[#D4AF37]/40 pt-2 flex justify-between items-center">
+              <div>
+                <p className="text-[10px] uppercase font-bold text-[#F5E7B2]">Final Net Profit</p>
+                <p className="text-2xl font-black text-[#D4AF37]">
+                  ₹{(overall.netBusinessProfit || 0).toLocaleString('en-IN')}
+                </p>
               </div>
             </div>
-          ) : (
-            <div className="py-8 text-center space-y-2">
-              <Lock className="w-8 h-8 text-[#D4AF37] mx-auto" />
-              <p className="text-xs font-bold text-white">Full Business Ledger</p>
-              <p className="text-[11px] text-slate-300">Overall business financial reports are restricted to Admin.</p>
-            </div>
-          )}
+          </div>
         </div>
       </div>
 

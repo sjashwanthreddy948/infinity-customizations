@@ -88,36 +88,20 @@ export const PartnersPage: React.FC = () => {
           <span className="text-sm">Category-Specific Dual-Partner Agreement</span>
         </div>
         <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-          The partnership between <strong>Jashwanth Reddy</strong> and <strong>Rajshekar Reddy</strong> governs profit sharing based on product classification:
+          The partnership between <strong>Jashwanth Reddy</strong> and <strong>Rajshekar Reddy</strong> governs <strong>Infinity Customizations</strong>, dedicated exclusively to:
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1 text-[11px]">
-          <div className="p-3 bg-white dark:bg-navy-850 rounded-xl border border-emerald-200 dark:border-emerald-900/50">
-            <span className="font-bold text-emerald-800 dark:text-emerald-400 block mb-1">
-              🤝 Shared Merch (50/50 Profit Split):
-            </span>
-            <ul className="list-disc pl-4 space-y-0.5 text-slate-600 dark:text-slate-300">
-              <li>Custom Printed T-Shirts (Round Neck & Collar, all fabrics)</li>
-              <li>Custom ID Cards & Lanyards (PVC badges, ribbons)</li>
-              <li>Custom Caps & Headwear</li>
-            </ul>
-            <span className="text-[10px] text-emerald-700 font-semibold block mt-1.5">
-              Profits split 50% Jashwanth Reddy / 50% Rajshekar Reddy
-            </span>
-          </div>
-
-          <div className="p-3 bg-white dark:bg-navy-850 rounded-xl border border-amber-200 dark:border-amber-900/50">
-            <span className="font-bold text-amber-900 dark:text-amber-400 block mb-1">
-              🔒 Sole Owner Products (100% Jashwanth Reddy):
-            </span>
-            <ul className="list-disc pl-4 space-y-0.5 text-slate-600 dark:text-slate-300">
-              <li>Bouquets & Flowers</li>
-              <li>Photo Frames, Custom Mugs & Personalized Albums</li>
-              <li>Polaroids, Calendars, Fridge Magnets, Gift Hampers & Restoration</li>
-            </ul>
-            <span className="text-[10px] text-amber-800 font-semibold block mt-1.5">
-              100% retained by Jashwanth Reddy (0% partner deduction)
-            </span>
-          </div>
+        <div className="p-3.5 bg-white dark:bg-navy-850 rounded-xl border border-emerald-200 dark:border-emerald-900/50 text-xs">
+          <span className="font-bold text-emerald-800 dark:text-emerald-400 block mb-1">
+            🤝 Core Partnership Scope (50/50 Profit Split):
+          </span>
+          <ul className="list-disc pl-4 space-y-1 text-slate-600 dark:text-slate-300 text-[11px]">
+            <li>Custom Printed T-Shirts & Apparel (Round Neck, Collar Polo, Oversized, Hoodies)</li>
+            <li>Custom ID Cards & Lanyards (PVC badges, multicolor sublimation ribbons, card holders)</li>
+            <li>Custom Caps & Headwear (Embroidered, printed caps)</li>
+          </ul>
+          <span className="text-[10px] text-emerald-700 font-semibold block mt-2">
+            All business net operating profits are split 50% Jashwanth Reddy / 50% Rajshekar Reddy
+          </span>
         </div>
       </div>
 
@@ -175,25 +159,12 @@ export const PartnersPage: React.FC = () => {
 
                   {/* Category Scope Badge */}
                   <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-navy-800/80 border border-slate-200 dark:border-slate-700 text-[11px] mt-2">
-                    {p.full_name?.toLowerCase().includes('rajshekar') ? (
-                      <div>
-                        <span className="font-bold text-amber-800 dark:text-amber-300 block">
-                          Category Scope: T-Shirts, ID Cards & Caps Only
-                        </span>
-                        <span className="text-slate-500 dark:text-slate-400 text-[10px] block mt-0.5">
-                          50% profit share in shared merchandise. 0% share in Bouquets, Photo Frames, Mugs & Gift Hampers.
-                        </span>
-                      </div>
-                    ) : (
-                      <div>
-                        <span className="font-bold text-[#0B3A82] dark:text-blue-300 block">
-                          Category Scope: 50% Shared + 100% Sole Merchandise
-                        </span>
-                        <span className="text-slate-500 dark:text-slate-400 text-[10px] block mt-0.5">
-                          50% in T-Shirts/Cards/Caps + 100% in Bouquets, Frames, Mugs, Albums, Calendars & Hampers.
-                        </span>
-                      </div>
-                    )}
+                    <span className="font-bold text-[#0B3A82] dark:text-blue-300 block">
+                      Category Scope: T-Shirts, ID Cards & Caps
+                    </span>
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] block mt-0.5">
+                      50% co-ownership and profit sharing across all merchandise orders & client invoices.
+                    </span>
                   </div>
 
                   {p.joined_at && (

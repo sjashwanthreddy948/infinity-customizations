@@ -76,18 +76,12 @@ export async function seedDemoData(): Promise<{ businessId: string; partner1Emai
 
   // 4. Create Product Catalog with Defaults
   const productData = [
-    { name: 'Custom Printed T-Shirt', category: 'Apparel', selling: 999, productCost: 350, printingCost: 200 },
-    { name: 'Photo Frame', category: 'Frames & Decor', selling: 799, productCost: 250, printingCost: 150 },
-    { name: 'Bouquet', category: 'Gifts & Flowers', selling: 1299, productCost: 500, printingCost: 100 },
-    { name: 'Custom Mug', category: 'Drinkware', selling: 399, productCost: 100, printingCost: 80 },
-    { name: 'Custom Cap', category: 'Apparel', selling: 499, productCost: 150, printingCost: 120 },
-    { name: 'Personalized Album', category: 'Print & Albums', selling: 1899, productCost: 600, printingCost: 400 },
-    { name: 'Polaroid Prints (Pack of 20)', category: 'Print & Albums', selling: 499, productCost: 100, printingCost: 100 },
-    { name: 'Customized Calendar', category: 'Stationery', selling: 699, productCost: 180, printingCost: 150 },
-    { name: 'Fridge Magnets (Set of 4)', category: 'Decor', selling: 299, productCost: 60, printingCost: 50 },
-    { name: 'Customized Gift Hamper', category: 'Gifts & Flowers', selling: 1499, productCost: 500, printingCost: 250 },
-    { name: 'Photo Restoration', category: 'Digital Services', selling: 899, productCost: 50, printingCost: 200 },
-    { name: 'Other Customized Products', category: 'Custom', selling: 999, productCost: 300, printingCost: 200 }
+    { name: 'Custom Printed T-Shirt (Round Neck)', category: 'Apparel', selling: 450, productCost: 160, printingCost: 120 },
+    { name: 'Custom Embroidered Collar Polo T-Shirt', category: 'Apparel', selling: 550, productCost: 200, printingCost: 150 },
+    { name: 'Custom ID Card + Lanyard + Holder', category: 'ID Cards', selling: 75, productCost: 25, printingCost: 10 },
+    { name: 'Custom Embroidered Cap', category: 'Caps', selling: 250, productCost: 90, printingCost: 60 },
+    { name: 'Custom Heavyweight Hoodie / Sweatshirt', category: 'Apparel', selling: 850, productCost: 380, printingCost: 180 },
+    { name: 'DTF Printing Film Roll (Per Meter)', category: 'Printing', selling: 300, productCost: 140, printingCost: 0 }
   ];
 
   const productMap: Record<string, string> = {};

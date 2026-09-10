@@ -65,11 +65,10 @@ export const ProfitLossPage: React.FC = () => {
 
     csv += `NET OPERATING PROFIT,${data.netProfit}\n`;
     csv += `Profit Margin,${data.profitMargin}%\n\n`;
-    csv += `PARTNERSHIP ALLOCATION (CATEGORY-SPECIFIC RULES)\n`;
-    csv += `Shared Merch Net Profit (T-Shirts, ID Cards, Caps),${pa?.sharedCategoryProfit || 0}\n`;
-    csv += `Sole Merch Net Profit (Bouquets, Frames, Mugs, Gifts),${pa?.soleCategoryProfit || 0}\n`;
-    csv += `Jashwanth Reddy Net Share (50% Shared + 100% Sole),${jTotal}\n`;
-    csv += `Rajshekar Reddy Net Share (50% Shared Only),${rTotal}\n`;
+    csv += `PARTNERSHIP ALLOCATION (50/50 PROFIT SHARE)\n`;
+    csv += `Total Net Business Profit (T-Shirts, ID Cards, Caps),${data.netProfit}\n`;
+    csv += `Jashwanth Reddy Net Share (50%),${jTotal}\n`;
+    csv += `Rajshekar Reddy Net Share (50%),${rTotal}\n`;
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -263,26 +262,15 @@ export const ProfitLossPage: React.FC = () => {
           <div className="p-3.5 rounded-xl bg-blue-50/70 dark:bg-navy-900 border border-blue-200/80 dark:border-navy-700 text-xs text-slate-700 dark:text-slate-300 space-y-2">
             <div className="flex items-center justify-between font-bold text-[#0B3A82] dark:text-blue-400">
               <span className="flex items-center gap-1.5">
-                <span>🤝 Category-Specific Partner Allocation</span>
+                <span>🤝 Equal 50/50 Partner Allocation</span>
               </span>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-white dark:bg-navy-800 border border-blue-200 dark:border-navy-700 font-semibold">
                 Contractual Rules
               </span>
             </div>
             <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-              <strong>Rajshekar Reddy</strong> has a 50% profit share exclusively in <strong>T-Shirts, ID Cards & Caps</strong>.
-              All other products (<strong>Bouquets, Photo Frames, Custom Mugs, Personalized Albums, Calendars, Fridge Magnets, Gift Hampers & Restoration</strong>) are 100% retained by <strong>Jashwanth Reddy</strong> (0% partner share).
+              Infinity Customizations is dedicated exclusively to <strong>Custom Printed T-Shirts, ID Cards & Lanyards, and Caps</strong>. All business net operating profits are shared <strong>50/50 equally</strong> between <strong>Jashwanth Reddy</strong> and <strong>Rajshekar Reddy</strong>.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px]">
-              <div className="bg-white dark:bg-navy-800/80 p-2 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                <span className="text-slate-600 dark:text-slate-400 font-medium">Shared Merch (50/50 Split):</span>
-                <strong className="text-slate-900 dark:text-slate-100 font-mono">{currencySymbol}{sharedProfit.toLocaleString('en-IN')}</strong>
-              </div>
-              <div className="bg-white dark:bg-navy-800/80 p-2 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                <span className="text-slate-600 dark:text-slate-400 font-medium">Sole Owner Merch (100% Jashwanth):</span>
-                <strong className="text-[#0B3A82] dark:text-blue-400 font-mono">{currencySymbol}{soleProfit.toLocaleString('en-IN')}</strong>
-              </div>
-            </div>
           </div>
 
           <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -290,11 +278,11 @@ export const ProfitLossPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="text-[#0B3A82] dark:text-blue-400 font-black text-xs uppercase tracking-wider">Jashwanth Reddy</span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">
-                  Owner & Partner
+                  Co-Owner (50%)
                 </span>
               </div>
               <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
-                50% Shared ({currencySymbol}{jashwanthShared.toLocaleString('en-IN')}) + 100% Sole ({currencySymbol}{jashwanthSole.toLocaleString('en-IN')})
+                50% Partner Share (T-Shirts, ID Cards & Caps)
               </p>
               <div className="pt-2 text-xl font-mono font-black text-slate-900 dark:text-white">
                 {currencySymbol}{jashwanthTotal.toLocaleString('en-IN')}
@@ -305,11 +293,11 @@ export const ProfitLossPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="text-[#9A7B1C] dark:text-[#D4AF37] font-black text-xs uppercase tracking-wider">Rajshekar Reddy</span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200">
-                  Partner (Shared Merch Only)
+                  Partner (50%)
                 </span>
               </div>
               <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
-                50% Shared T-Shirts, ID Cards & Caps ({currencySymbol}0 from Bouquets, Frames & Gifts)
+                50% Partner Share (T-Shirts, ID Cards & Caps)
               </p>
               <div className="pt-2 text-xl font-mono font-black text-[#0B3A82] dark:text-emerald-400">
                 {currencySymbol}{rajshekarTotal.toLocaleString('en-IN')}

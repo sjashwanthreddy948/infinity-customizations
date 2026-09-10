@@ -153,24 +153,6 @@ export const OrderDetailPage: React.FC = () => {
     );
   }
 
-  const isPartnershipOrder = order?.is_tshirt === 1 || order?.has_id_cards === 1 || order?.is_partner_shared === 1;
-  if (!isLoading && order && !isAdmin && !isPartnershipOrder) {
-    return (
-      <div className="max-w-md mx-auto p-8 bg-white dark:bg-[#082A5E] rounded-2xl border border-slate-200 dark:border-blue-900/60 text-center space-y-4 my-12 shadow-card">
-        <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center mx-auto">
-          <AlertCircle className="w-6 h-6" />
-        </div>
-        <h3 className="text-lg font-bold text-slate-800 dark:text-white">Admin-Only Product Order</h3>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          This order belongs to the admin's personal merchandise inventory. Only T-Shirts & ID Cards are shared between partners.
-        </p>
-        <div className="pt-2 flex justify-center">
-          <BackButton to="/orders" label="Back to Orders" />
-        </div>
-      </div>
-    );
-  }
-
   const partnerShare = order?.partner_share_allocation || (order ? calculateOrderPartnerShare(order) : null);
 
   return (

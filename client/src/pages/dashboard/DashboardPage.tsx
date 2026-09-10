@@ -206,31 +206,21 @@ export const DashboardPage: React.FC = () => {
         <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#082A5E] border border-slate-200 dark:border-blue-900/50 shadow-card space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-blue-900/40 pb-3">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-[#D4AF37] text-[11px] font-bold border border-amber-200 dark:border-amber-900/50 mb-1">
-                <span>Partnership Agreement Rules</span>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-400 text-[11px] font-bold border border-emerald-200 dark:border-emerald-900/50 mb-1">
+                <span>Partnership Agreement</span>
               </div>
               <h3 className="text-base font-black text-[#172033] dark:text-white flex items-center gap-2">
                 <span>Dual-Partner Profit Allocation</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Partner (Rajshekar) has 50% share in <strong className="text-[#0B3A82] dark:text-[#D4AF37]">T-Shirts, ID Cards & Caps</strong> only. Bouquets, Photo Frames, Mugs & Gifts are <strong className="text-slate-800 dark:text-slate-200">100% Jashwanth</strong>.
+                Infinity Customizations is dedicated exclusively to <strong className="text-[#0B3A82] dark:text-[#D4AF37]">T-Shirts, ID Cards & Caps</strong> with equal 50/50 profit sharing.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0B3A82] dark:text-[#D4AF37] border border-blue-100 dark:border-blue-900">
-                Shared Pool: ₹{partnerShares.sharedProfit.toLocaleString('en-IN')}
+              <span className="text-xs font-semibold px-3 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0B3A82] dark:text-[#D4AF37] border border-blue-100 dark:border-blue-900 font-mono">
+                Total Net Profit Pool: ₹{partnerShares.sharedProfit.toLocaleString('en-IN')}
               </span>
-              {isAdmin ? (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-navy-800 text-slate-700 dark:text-slate-300">
-                  Sole Merch: ₹{partnerShares.soleProfit.toLocaleString('en-IN')}
-                </span>
-              ) : (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-[#D4AF37] border border-amber-200 dark:border-amber-900/40 flex items-center gap-1">
-                  <Lock className="w-3 h-3" />
-                  Personal Merch (Admin Only)
-                </span>
-              )}
             </div>
           </div>
 
@@ -245,39 +235,29 @@ export const DashboardPage: React.FC = () => {
                   <div>
                     <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
                       <span>Jashwanth Reddy</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded font-bold bg-[#0B3A82] text-white">Owner</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded font-bold bg-[#0B3A82] text-white">Co-Owner</span>
                     </h4>
                     <p className="text-[11px] text-slate-400">
-                      {isAdmin ? '50% Shared Merch + 100% Sole Merch' : '50% Shared Merch (T-Shirts & ID)'}
+                      50% Partner Share (T-Shirts, ID Cards & Caps)
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    {isAdmin ? 'Total Profit' : 'Shared Profit'}
+                    50% Profit Share
                   </span>
                   <p className="text-xl sm:text-2xl font-black text-[#0B3A82] dark:text-white font-mono">
-                    {isAdmin 
-                      ? `₹${jashwanth.totalProfit.toLocaleString('en-IN')}` 
-                      : `₹${jashwanth.sharedProfit.toLocaleString('en-IN')}`}
+                    ₹{jashwanth.sharedProfit.toLocaleString('en-IN')}
                   </p>
                   <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                    {isAdmin ? `${jashwanth.sharePercentage}% of total profit` : '50% of shared pool'}
+                    50% of partnership pool
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800 text-xs">
-                <div className="p-2.5 rounded-xl bg-white dark:bg-navy-800 border border-slate-100 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-semibold">T-Shirts/ID/Caps (50%)</span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-mono text-sm">₹{jashwanth.sharedProfit.toLocaleString('en-IN')}</strong>
-                </div>
-                <div className="p-2.5 rounded-xl bg-white dark:bg-navy-800 border border-slate-100 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-semibold">Bouquets/Frames (100%)</span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-mono text-sm">
-                    {isAdmin ? `₹${jashwanth.soleProfit.toLocaleString('en-IN')}` : '🔒 Admin Only'}
-                  </strong>
-                </div>
+              <div className="p-2.5 rounded-xl bg-white dark:bg-navy-800 border border-slate-100 dark:border-slate-700 flex justify-between items-center text-xs">
+                <span className="text-[11px] text-slate-500 font-medium">Equal 50% Net Allocation:</span>
+                <strong className="text-[#0B3A82] dark:text-white font-mono text-sm">₹{jashwanth.sharedProfit.toLocaleString('en-IN')}</strong>
               </div>
             </div>
 
@@ -293,29 +273,23 @@ export const DashboardPage: React.FC = () => {
                       <span>Rajshekar Reddy</span>
                       <span className="text-[10px] px-1.5 py-0.2 rounded font-bold bg-[#D4AF37] text-[#082A5E]">Partner</span>
                     </h4>
-                    <p className="text-[11px] text-slate-400">50% T-Shirts, ID Cards & Caps only</p>
+                    <p className="text-[11px] text-slate-400">50% Partner Share (T-Shirts, ID Cards & Caps)</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Profit</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">50% Profit Share</span>
                   <p className="text-xl sm:text-2xl font-black text-[#D4AF37] font-mono">
-                    ₹{rajshekar.totalProfit.toLocaleString('en-IN')}
+                    ₹{rajshekar.sharedProfit.toLocaleString('en-IN')}
                   </p>
                   <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400">
-                    {rajshekar.sharePercentage}% of total profit
+                    50% of partnership pool
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800 text-xs">
-                <div className="p-2.5 rounded-xl bg-white dark:bg-navy-800 border border-slate-100 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-semibold">T-Shirts/ID/Caps (50%)</span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-mono text-sm">₹{rajshekar.sharedProfit.toLocaleString('en-IN')}</strong>
-                </div>
-                <div className="p-2.5 rounded-xl bg-white dark:bg-navy-800 border border-slate-100 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-semibold">Bouquets/Frames/Gifts</span>
-                  <span className="text-xs font-bold text-slate-400 block mt-0.5">Excluded (₹0)</span>
-                </div>
+              <div className="p-2.5 rounded-xl bg-white dark:bg-navy-800 border border-slate-100 dark:border-slate-700 flex justify-between items-center text-xs">
+                <span className="text-[11px] text-slate-500 font-medium">Equal 50% Net Allocation:</span>
+                <strong className="text-[#D4AF37] font-mono text-sm">₹{rajshekar.sharedProfit.toLocaleString('en-IN')}</strong>
               </div>
             </div>
           </div>

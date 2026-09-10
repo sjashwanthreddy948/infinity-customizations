@@ -141,24 +141,24 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
       netProfit,
       profitMargin: parseFloat(profitMargin.toFixed(1)),
       partnerAllocation: {
-        agreement: 'Partner (Rajshekar Reddy) has 50% profit share in T-Shirts, ID Cards & Caps only. Bouquets, Frames, Mugs & Gifts are 100% retained by Jashwanth Reddy.',
-        sharedCategoryProfit: sharedNet,
-        sharedCategoryRevenue: sharedOrderStats?.revenue || 0,
-        soleCategoryProfit: soleNet,
-        soleCategoryRevenue: soleOrderStats?.revenue || 0,
+        agreement: 'Equal 50/50 partnership profit share between Jashwanth Reddy and Rajshekar Reddy for all T-Shirts, ID Cards & Caps orders.',
+        sharedCategoryProfit: netProfit,
+        sharedCategoryRevenue: totalSalesRevenue,
+        soleCategoryProfit: 0,
+        soleCategoryRevenue: 0,
         jashwanth: {
           name: 'Jashwanth Reddy',
-          role: 'Owner & Partner',
-          sharedProfit: jashwanthShared,
-          soleProfit: soleNet,
-          totalProfit: jashwanthTotal
+          role: 'Co-Owner & Partner',
+          sharedProfit: Math.round(netProfit / 2),
+          soleProfit: 0,
+          totalProfit: Math.round(netProfit / 2)
         },
         rajshekar: {
           name: 'Rajshekar Reddy',
-          role: 'Partner (T-Shirts, ID Cards & Caps)',
-          sharedProfit: rajshekarShared,
+          role: 'Co-Owner & Partner',
+          sharedProfit: netProfit - Math.round(netProfit / 2),
           soleProfit: 0,
-          totalProfit: rajshekarTotal
+          totalProfit: netProfit - Math.round(netProfit / 2)
         }
       }
     });

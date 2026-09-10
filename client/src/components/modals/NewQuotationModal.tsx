@@ -36,12 +36,12 @@ interface QuoteItemInput {
 export const QUOTATION_PRESETS = [
   { name: 'Custom Round Neck T-Shirt (100% Cotton, DTF Print)', defaultQty: 50, rate: 350 },
   { name: 'Custom Collar / Polo T-Shirt (Poly Cotton, Screen Print)', defaultQty: 50, rate: 380 },
-  { name: 'Custom ID Cards + Multicolor Printed Lanyards', defaultQty: 100, rate: 70 },
+  { name: 'Custom Oversized Streetwear T-Shirt (240 GSM Pure Cotton)', defaultQty: 30, rate: 480 },
+  { name: 'Custom ID Cards + Multicolor Printed Lanyards + Holders', defaultQty: 100, rate: 70 },
+  { name: 'Standard PVC ID Cards + Ribbon Lanyards', defaultQty: 100, rate: 55 },
   { name: 'Custom Premium Hoodies & Sweatshirts (320 GSM)', defaultQty: 25, rate: 750 },
   { name: 'Custom Embroidered Caps', defaultQty: 50, rate: 150 },
-  { name: 'Custom Ceramic Coffee Mugs (Sublimation)', defaultQty: 50, rate: 180 },
-  { name: 'Custom DTF Printing Roll (per meter)', defaultQty: 10, rate: 280 },
-  { name: 'Custom Badges & Keychains (Pack of 50)', defaultQty: 50, rate: 40 }
+  { name: 'Custom DTF Printing Roll (per meter)', defaultQty: 10, rate: 280 }
 ];
 
 export const NewQuotationModal: React.FC<NewQuotationModalProps> = ({

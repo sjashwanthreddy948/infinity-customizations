@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS orders (
   id_card_unit_price INTEGER NOT NULL DEFAULT 0,
   id_card_total_cost INTEGER NOT NULL DEFAULT 0,
   id_card_total_price INTEGER NOT NULL DEFAULT 0,
-  is_partner_shared INTEGER NOT NULL DEFAULT 1, -- 1 for T-Shirts, ID Cards, Caps (Shared); 0 for Bouquets, Frames, Mugs, Gifts (Sole)
+  is_partner_shared INTEGER NOT NULL DEFAULT 1, -- 1 for T-Shirts, ID Cards, Caps (50/50 Shared)
   -- Invoice Linking
   invoice_id TEXT,
   invoice_number TEXT,
