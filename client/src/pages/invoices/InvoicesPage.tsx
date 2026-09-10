@@ -253,10 +253,10 @@ export const InvoicesPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">{inv.issue_date}</td>
                     <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">{inv.due_date}</td>
                     <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-white">
-                      {currencySymbol}{inv.grand_total.toLocaleString('en-IN')}
+                      {currencySymbol}{(Number(inv.grand_total) || 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-3.5 px-4 text-right font-mono font-bold text-rose-600 dark:text-rose-400">
-                      {inv.balance_due > 0 ? `${currencySymbol}${inv.balance_due.toLocaleString('en-IN')}` : '₹0'}
+                      {Number(inv.balance_due) > 0 ? `${currencySymbol}${(Number(inv.balance_due) || 0).toLocaleString('en-IN')}` : '₹0'}
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       {getStatusBadge(inv.status)}

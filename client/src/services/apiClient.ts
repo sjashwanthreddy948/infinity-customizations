@@ -1,5 +1,7 @@
 // client/src/services/apiClient.ts
 // Universal API Client with automatic Vercel static fallback and persistent demo database
+import { calculateOrderPartnerShare } from '../utils/partnerShare';
+import { calculateOrderFinancials } from '../utils/financialCalculations';
 
 interface MockCustomer {
   id: string;
@@ -42,6 +44,7 @@ interface MockOrder {
   payment_pending?: number;
   available_amount: number;
   is_tshirt: number;
+  is_partner_shared?: number;
   tshirt_neck_type?: string;
   tshirt_fabric?: string;
   tshirt_size?: string;
@@ -82,6 +85,7 @@ interface MockInvoice {
   issue_date: string;
   due_date: string;
   subtotal: number;
+  discount?: number;
   tax_rate: number;
   tax_amount: number;
   grand_total: number;
@@ -103,6 +107,25 @@ interface MockExpense {
   payment_method: string;
   created_by_name: string;
   notes?: string;
+}
+
+interface MockPayment {
+  id: string;
+  payment_number: string;
+  customer_id?: string;
+  customer_name?: string;
+  invoice_id?: string;
+  invoice_number?: string;
+  order_id?: string;
+  amount: number;
+  method: string;
+  date: string;
+  reference_number?: string;
+  notes?: string;
+  status: 'COMPLETED' | 'VOID' | 'REVERSED';
+  recorded_by: string;
+  recorded_by_name: string;
+  created_at: string;
 }
 
 const PARTNER_1 = {
@@ -139,478 +162,125 @@ const PARTNER_2 = {
 
 const INITIAL_CUSTOMERS: MockCustomer[] = [
   {
-    id: 'cust-1',
+    id: 'cust-bvrit',
     customer_code: 'CUST-0001',
-    name: 'Rahul Sharma',
-    phone: '+91 98490 11223',
-    email: 'rahul.sharma@example.com',
-    address: 'Flat 402, Banjara Hills, Hyderabad',
-    total_orders: 3,
-    total_spent: 12500,
-    total_paid: 12500,
-    outstanding_balance: 0,
-    total_profit_generated: 4850,
-    status: 'ACTIVE',
-    created_at: '2026-06-01'
-  },
-  {
-    id: 'cust-2',
-    customer_code: 'CUST-0002',
-    name: 'Priya Patel',
-    phone: '+91 98490 22334',
-    email: 'priya.patel@example.com',
-    address: 'Villa 18, Gachibowli, Hyderabad',
-    total_orders: 2,
-    total_spent: 8600,
-    total_paid: 8600,
-    outstanding_balance: 0,
-    total_profit_generated: 3400,
-    status: 'ACTIVE',
-    created_at: '2026-06-05'
-  },
-  {
-    id: 'cust-3',
-    customer_code: 'CUST-0003',
-    name: 'Vikram Malhotra',
-    phone: '+91 98490 33445',
-    email: 'vikram.m@example.com',
-    address: 'Plot 12, Madhapur, Hyderabad',
-    total_orders: 1,
-    total_spent: 3600,
-    total_paid: 2000,
-    outstanding_balance: 1600,
-    total_profit_generated: 1450,
-    status: 'ACTIVE',
-    created_at: '2026-06-10'
-  },
-  {
-    id: 'cust-4',
-    customer_code: 'CUST-0004',
-    name: 'Ananya Rao',
-    phone: '+91 98490 44556',
-    email: 'ananya.rao@example.com',
-    address: 'Road No. 10, Jubilee Hills, Hyderabad',
-    total_orders: 2,
-    total_spent: 4200,
-    total_paid: 4200,
-    outstanding_balance: 0,
-    total_profit_generated: 1800,
-    status: 'ACTIVE',
-    created_at: '2026-06-15'
-  },
-  {
-    id: 'cust-5',
-    customer_code: 'CUST-0005',
-    name: 'Sneha Gupta',
+    name: 'BVRIT Hyderabad (B.V. Raju Institute of Technology)',
     phone: '+91 98490 55667',
-    email: 'sneha.g@example.com',
-    address: 'Apt 3B, Kondapur, Hyderabad',
+    email: 'fests@bvrit.ac.in',
+    address: 'BVRIT Campus, Bachupally / Narsapur, Hyderabad, Telangana 502313',
     total_orders: 1,
-    total_spent: 2598,
-    total_paid: 2598,
+    total_spent: 45000,
+    total_paid: 45000,
     outstanding_balance: 0,
-    total_profit_generated: 1120,
+    total_profit_generated: 13500,
     status: 'ACTIVE',
-    created_at: '2026-06-20'
-  },
-  {
-    id: 'cust-6',
-    customer_code: 'CUST-0006',
-    name: 'Karthik Iyer',
-    phone: '+91 98490 66778',
-    email: 'karthik.i@example.com',
-    address: 'Cyber Towers Lane, Hitec City, Hyderabad',
-    total_orders: 2,
-    total_spent: 9800,
-    total_paid: 9800,
-    outstanding_balance: 0,
-    total_profit_generated: 3950,
-    status: 'ACTIVE',
-    created_at: '2026-06-25'
+    created_at: '2026-09-08'
   }
 ];
 
 const INITIAL_ORDERS: MockOrder[] = [
   {
-    id: 'ord-1',
+    id: 'ord-bvrit-1',
     order_number: 'ORD-2026-0001',
-    customer_id: 'cust-1',
-    customer_name: 'Rahul Sharma',
-    customer_phone: '+91 98490 11223',
-    customer_email: 'rahul.sharma@example.com',
-    customer_address: 'Flat 402, Banjara Hills, Hyderabad',
+    customer_id: 'cust-bvrit',
+    customer_name: 'BVRIT Hyderabad (B.V. Raju Institute of Technology)',
+    customer_phone: '+91 98490 55667',
+    customer_email: 'fests@bvrit.ac.in',
+    customer_address: 'BVRIT Campus, Bachupally / Narsapur, Hyderabad, Telangana 502313',
     product_name: 'Custom Printed T-Shirt',
-    quantity: 10,
-    selling_price: 6500,
-    product_cost: 2200,
-    printing_cost: 1400,
-    tshirt_rapido_cost: 120,
-    print_rapido_cost: 80,
-    delivery_cost: 200,
-    other_cost: 50,
-    total_cost: 3850,
-    profit: 2650,
-    profit_margin: 40.8,
+    quantity: 100,
+    selling_price: 45000,
+    product_cost: 18000,
+    printing_cost: 8000,
+    tshirt_rapido_cost: 400,
+    print_rapido_cost: 350,
+    delivery_cost: 750,
+    other_cost: 500,
+    total_cost: 31500,
+    profit: 13500,
+    profit_margin: 30.0,
     payment_status: 'PAID',
-    payment_received: 6500,
+    payment_received: 45000,
     payment_pending: 0,
-    available_amount: 2650,
+    available_amount: 13500,
     is_tshirt: 1,
+    is_partner_shared: 1,
     tshirt_neck_type: 'Collar',
     tshirt_fabric: 'Poly Cotton',
     tshirt_size: 'Custom',
-    tshirt_size_breakdown: 'M: 4, L: 4, XL: 2',
-    tshirt_color: 'Navy Blue',
-    tshirt_print_type: 'Front & Back',
-    tshirt_front_print: true,
-    tshirt_back_print: true,
-    print_meters: 1.8,
-    print_rate_per_meter: 300,
-    has_id_cards: 1,
-    id_card_quantity: 10,
-    id_card_unit_price: 70,
-    id_card_unit_cost: 35,
-    id_card_selling_price: 700,
-    id_card_cost: 350,
-    id_card_profit: 350,
-    id_card_total_cost: 350,
-    id_card_total_price: 700,
-    order_date: '2026-09-02',
-    created_at: '2026-09-02T10:30:00.000Z',
-    created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1',
-    invoice_id: 'inv-1',
-    invoice_number: 'INV-2026-0001',
-    notes: 'Urgent event batch order with customized ID cards'
-  },
-  {
-    id: 'ord-2',
-    order_number: 'ORD-2026-0002',
-    customer_id: 'cust-2',
-    customer_name: 'Priya Patel',
-    customer_phone: '+91 98490 22334',
-    customer_email: 'priya.patel@example.com',
-    customer_address: 'Villa 18, Gachibowli, Hyderabad',
-    product_name: 'Custom Printed T-Shirt',
-    quantity: 4,
-    selling_price: 4800,
-    product_cost: 1600,
-    printing_cost: 1000,
-    tshirt_rapido_cost: 80,
-    print_rapido_cost: 70,
-    delivery_cost: 150,
-    other_cost: 50,
-    total_cost: 2800,
-    profit: 2000,
-    profit_margin: 41.7,
-    payment_status: 'PAID',
-    payment_received: 4800,
-    payment_pending: 0,
-    available_amount: 2000,
-    is_tshirt: 1,
-    tshirt_neck_type: 'Round Neck',
-    tshirt_fabric: 'Pure Cotton',
-    tshirt_size: 'M',
-    tshirt_size_breakdown: 'M: 4',
-    tshirt_color: 'White',
-    tshirt_print_type: 'Front & Back',
-    tshirt_front_print: true,
-    tshirt_back_print: true,
-    print_meters: 1.2,
-    print_rate_per_meter: 300,
-    has_id_cards: 0,
-    order_date: '2026-09-03',
-    created_at: '2026-09-03T11:15:00.000Z',
-    created_by_name: 'Rajshekar Reddy',
-    created_by: 'usr-rajshekar-2',
-    invoice_id: 'inv-2',
-    invoice_number: 'INV-2026-0002',
-    notes: 'White Pure Cotton Round Neck batch'
-  },
-  {
-    id: 'ord-3',
-    order_number: 'ORD-2026-0003',
-    customer_id: 'cust-3',
-    customer_name: 'Vikram Malhotra',
-    customer_phone: '+91 98490 33445',
-    customer_email: 'vikram.m@example.com',
-    customer_address: 'Plot 12, Madhapur, Hyderabad',
-    product_name: 'Photo Frame',
-    quantity: 2,
-    selling_price: 3600,
-    product_cost: 1100,
-    printing_cost: 700,
-    tshirt_rapido_cost: 0,
-    print_rapido_cost: 0,
-    delivery_cost: 150,
-    other_cost: 50,
-    total_cost: 2000,
-    profit: 1600,
-    profit_margin: 44.4,
-    payment_status: 'PARTIALLY_PAID',
-    payment_received: 2000,
-    payment_pending: 1600,
-    available_amount: 0,
-    is_tshirt: 0,
-    order_date: '2026-09-04',
-    created_at: '2026-09-04T09:45:00.000Z',
-    created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1',
-    invoice_id: 'inv-3',
-    invoice_number: 'INV-2026-0003',
-    notes: '12x18 Inch Matte Finish Premium Photo Frame (₹1,600 balance on hand delivery)'
-  },
-  {
-    id: 'ord-4',
-    order_number: 'ORD-2026-0004',
-    customer_id: 'cust-4',
-    customer_name: 'Ananya Rao',
-    customer_phone: '+91 98490 44556',
-    customer_email: 'ananya.rao@example.com',
-    customer_address: 'Road No. 10, Jubilee Hills, Hyderabad',
-    product_name: 'Handcrafted Blossom Bouquet',
-    quantity: 2,
-    selling_price: 2598,
-    product_cost: 1000,
-    printing_cost: 200,
-    tshirt_rapido_cost: 0,
-    print_rapido_cost: 0,
-    delivery_cost: 120,
-    other_cost: 30,
-    total_cost: 1350,
-    profit: 1248,
-    profit_margin: 48.0,
-    payment_status: 'PAID',
-    payment_received: 2598,
-    payment_pending: 0,
-    available_amount: 1248,
-    is_tshirt: 0,
-    order_date: '2026-09-05',
-    created_at: '2026-09-05T14:30:00.000Z',
-    created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1',
-    invoice_id: 'inv-4',
-    invoice_number: 'INV-2026-0004',
-    notes: 'Premium Handcrafted Blossom Bouquet with personalized silk ribbon and greeting card'
-  },
-  {
-    id: 'ord-5',
-    order_number: 'ORD-2026-0005',
-    customer_id: 'cust-5',
-    customer_name: 'Sneha Gupta',
-    customer_phone: '+91 98490 55667',
-    customer_email: 'sneha.g@example.com',
-    customer_address: 'Apt 3B, Kondapur, Hyderabad',
-    product_name: 'Custom Printed T-Shirt',
-    quantity: 2,
-    selling_price: 2598,
-    product_cost: 760,
-    printing_cost: 440,
-    tshirt_rapido_cost: 60,
-    print_rapido_cost: 60,
-    delivery_cost: 120,
-    other_cost: 30,
-    total_cost: 1350,
-    profit: 1248,
-    profit_margin: 48.0,
-    payment_status: 'PAID',
-    payment_received: 2598,
-    payment_pending: 0,
-    available_amount: 1248,
-    is_tshirt: 1,
-    tshirt_neck_type: 'Round Neck',
-    tshirt_fabric: 'Nano Curve',
-    tshirt_size: 'S',
-    tshirt_size_breakdown: 'S: 2',
-    tshirt_color: 'Black',
-    tshirt_print_type: 'Front Print',
-    tshirt_front_print: true,
-    print_meters: 0.8,
-    print_rate_per_meter: 300,
-    has_id_cards: 0,
-    order_date: '2026-09-06',
-    created_at: '2026-09-06T16:00:00.000Z',
-    created_by_name: 'Rajshekar Reddy',
-    created_by: 'usr-rajshekar-2',
-    invoice_id: 'inv-5',
-    invoice_number: 'INV-2026-0005',
-    notes: 'Nano Curve Matte Black finish'
-  },
-  {
-    id: 'ord-6',
-    order_number: 'ORD-2026-0006',
-    customer_id: 'cust-6',
-    customer_name: 'Karthik Iyer',
-    customer_phone: '+91 98490 66778',
-    customer_email: 'karthik.i@example.com',
-    customer_address: 'Cyber Towers Lane, Hitec City, Hyderabad',
-    product_name: 'Custom Printed T-Shirt',
-    quantity: 15,
-    selling_price: 9800,
-    product_cost: 3300,
-    printing_cost: 2100,
-    tshirt_rapido_cost: 140,
-    print_rapido_cost: 110,
-    delivery_cost: 250,
-    other_cost: 80,
-    total_cost: 5730,
-    profit: 4070,
-    profit_margin: 41.5,
-    payment_status: 'PAID',
-    payment_received: 9800,
-    payment_pending: 0,
-    available_amount: 4070,
-    is_tshirt: 1,
-    tshirt_neck_type: 'Collar',
-    tshirt_fabric: 'Cotton',
-    tshirt_size: 'Custom',
-    tshirt_size_breakdown: 'S: 3, M: 6, L: 4, XL: 2',
+    tshirt_size_breakdown: 'S: 15, M: 35, L: 35, XL: 15',
     tshirt_color: 'Royal Blue',
     tshirt_print_type: 'Front & Back',
     tshirt_front_print: true,
     tshirt_back_print: true,
-    print_meters: 2.5,
+    print_meters: 15.0,
     print_rate_per_meter: 300,
     has_id_cards: 1,
-    id_card_quantity: 15,
+    id_card_quantity: 100,
     id_card_unit_price: 70,
     id_card_unit_cost: 35,
-    id_card_selling_price: 1050,
-    id_card_cost: 525,
-    id_card_profit: 525,
-    id_card_total_cost: 525,
-    id_card_total_price: 1050,
-    order_date: '2026-09-07',
-    created_at: '2026-09-07T12:00:00.000Z',
+    id_card_selling_price: 7000,
+    id_card_cost: 3500,
+    id_card_profit: 3500,
+    id_card_total_cost: 3500,
+    id_card_total_price: 7000,
+    id_card_type: 'PVC Card + Multicolor Printed Lanyard',
+    order_date: '2026-09-08',
+    created_at: '2026-09-08T10:30:00.000Z',
     created_by_name: 'Jashwanth Reddy',
     created_by: 'usr-jashwanth-1',
-    invoice_id: 'inv-6',
-    invoice_number: 'INV-2026-0006',
-    notes: 'Annual tech fest batch uniforms and ID cards'
+    invoice_id: 'inv-bvrit-1',
+    invoice_number: 'INV-2026-0001',
+    notes: 'Annual Tech Fest batch order for BVRIT with 100 T-Shirts and 100 ID Cards',
+    partner_share_allocation: {
+      isShared: true,
+      categoryTag: 'T-Shirts & ID Cards (Shared 50/50)',
+      scopeLabel: 'Equal 50/50 split with Rajshekar Reddy',
+      jashwanthShare: 6750,
+      rajshekarShare: 6750,
+      jashwanthPercentage: 50,
+      rajshekarPercentage: 50,
+      explanation: 'Custom Printed T-Shirts and ID Cards net profits are shared equally 50% / 50% between Jashwanth Reddy and Rajshekar Reddy.'
+    }
   }
 ];
 
 const INITIAL_INVOICES: MockInvoice[] = [
   {
-    id: 'inv-1',
+    id: 'inv-bvrit-1',
     invoice_number: 'INV-2026-0001',
-    customer_id: 'cust-1',
-    customer_name: 'Rahul Sharma',
-    issue_date: '2026-09-02',
-    due_date: '2026-09-12',
-    subtotal: 6500,
+    customer_id: 'cust-bvrit',
+    customer_name: 'BVRIT Hyderabad (B.V. Raju Institute of Technology)',
+    issue_date: '2026-09-08',
+    due_date: '2026-09-18',
+    subtotal: 45000,
     tax_rate: 0,
     tax_amount: 0,
-    grand_total: 6500,
-    amount_paid: 6500,
+    grand_total: 45000,
+    amount_paid: 45000,
     balance_due: 0,
     status: 'PAID',
     created_by_name: 'Jashwanth Reddy',
     created_by: 'usr-jashwanth-1',
     items: [
-      { description: 'Custom Collar T-Shirts (Poly Cotton, Front & Back)', quantity: 10, unit_price: 580, amount: 5800 },
-      { description: 'Custom College ID Cards with Lanyards', quantity: 10, unit_price: 70, amount: 700 }
-    ]
-  },
-  {
-    id: 'inv-2',
-    invoice_number: 'INV-2026-0002',
-    customer_id: 'cust-2',
-    customer_name: 'Priya Patel',
-    issue_date: '2026-09-03',
-    due_date: '2026-09-13',
-    subtotal: 4800,
-    tax_rate: 0,
-    tax_amount: 0,
-    grand_total: 4800,
-    amount_paid: 4800,
-    balance_due: 0,
-    status: 'PAID',
-    created_by_name: 'Rajshekar Reddy',
-    created_by: 'usr-rajshekar-2',
-    items: [
-      { description: 'Custom Round Neck Pure Cotton T-Shirts (White, M)', quantity: 4, unit_price: 1200, amount: 4800 }
-    ]
-  },
-  {
-    id: 'inv-3',
-    invoice_number: 'INV-2026-0003',
-    customer_id: 'cust-3',
-    customer_name: 'Vikram Malhotra',
-    issue_date: '2026-09-04',
-    due_date: '2026-09-14',
-    subtotal: 3600,
-    tax_rate: 0,
-    tax_amount: 0,
-    grand_total: 3600,
-    amount_paid: 2000,
-    balance_due: 1600,
-    status: 'PARTIAL',
-    created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1',
-    items: [
-      { description: '12x18 Inch Matte Finish Premium Photo Frame', quantity: 2, unit_price: 1800, amount: 3600 }
-    ]
-  },
-  {
-    id: 'inv-4',
-    invoice_number: 'INV-2026-0004',
-    customer_id: 'cust-4',
-    customer_name: 'Ananya Rao',
-    issue_date: '2026-09-05',
-    due_date: '2026-09-15',
-    subtotal: 2598,
-    tax_rate: 0,
-    tax_amount: 0,
-    grand_total: 2598,
-    amount_paid: 2598,
-    balance_due: 0,
-    status: 'PAID',
-    created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1',
-    items: [
-      { description: 'Handcrafted Blossom Bouquet with Silk Ribbon & Greeting Card', quantity: 2, unit_price: 1299, amount: 2598 }
-    ]
-  },
-  {
-    id: 'inv-5',
-    invoice_number: 'INV-2026-0005',
-    customer_id: 'cust-5',
-    customer_name: 'Sneha Gupta',
-    issue_date: '2026-09-06',
-    due_date: '2026-09-16',
-    subtotal: 2598,
-    tax_rate: 0,
-    tax_amount: 0,
-    grand_total: 2598,
-    amount_paid: 2598,
-    balance_due: 0,
-    status: 'PAID',
-    created_by_name: 'Rajshekar Reddy',
-    created_by: 'usr-rajshekar-2',
-    items: [
-      { description: 'Custom Nano Curve Round Neck T-Shirts (Black, S)', quantity: 2, unit_price: 1299, amount: 2598 }
-    ]
-  },
-  {
-    id: 'inv-6',
-    invoice_number: 'INV-2026-0006',
-    customer_id: 'cust-6',
-    customer_name: 'Karthik Iyer',
-    issue_date: '2026-09-07',
-    due_date: '2026-09-17',
-    subtotal: 9800,
-    tax_rate: 0,
-    tax_amount: 0,
-    grand_total: 9800,
-    amount_paid: 9800,
-    balance_due: 0,
-    status: 'PAID',
-    created_by_name: 'Jashwanth Reddy',
-    created_by: 'usr-jashwanth-1',
-    items: [
-      { description: 'Collar Cotton T-Shirts (Royal Blue, Front & Back)', quantity: 15, unit_price: 583.33, amount: 8750 },
-      { description: 'Custom ID Cards + Printed Lanyards', quantity: 15, unit_price: 70, amount: 1050 }
+      {
+        description: 'Custom College Fest Collar T-Shirts (Poly Cotton, Screen Printed Front & Back)',
+        quantity: 100,
+        unit_price: 380,
+        rate: 380,
+        discount: 0,
+        tax_rate: 0,
+        amount: 38000
+      },
+      {
+        description: 'Custom Student ID Cards + Multicolor Printed Satin Lanyards',
+        quantity: 100,
+        unit_price: 70,
+        rate: 70,
+        discount: 0,
+        tax_rate: 0,
+        amount: 7000
+      }
     ]
   }
 ];
@@ -631,7 +301,7 @@ const INITIAL_EXPENSES: MockExpense[] = [
     expense_number: 'EXP-0002',
     date: '2026-09-03',
     category: 'Materials',
-    description: 'Bulk Blank Premium Cotton T-Shirts S/M/L/XL Roll',
+    description: 'Bulk Blank Premium Cotton T-Shirts Roll & Screen Mesh',
     amount: 8500,
     payment_method: 'UPI',
     created_by_name: 'Rajshekar Reddy'
@@ -648,11 +318,33 @@ const INITIAL_EXPENSES: MockExpense[] = [
   }
 ];
 
+const INITIAL_PAYMENTS: MockPayment[] = [
+  {
+    id: 'pay-bvrit-1',
+    payment_number: 'PAY-2026-0001',
+    customer_id: 'cust-bvrit',
+    customer_name: 'BVRIT Hyderabad (B.V. Raju Institute of Technology)',
+    invoice_id: 'inv-bvrit-1',
+    invoice_number: 'INV-2026-0001',
+    order_id: 'ord-bvrit-1',
+    amount: 45000,
+    method: 'UPI',
+    date: '2026-09-08',
+    reference_number: 'UPI/625291827361/BVRIT',
+    notes: 'Full advance payment for 100 T-Shirts and 100 ID Cards via UPI QR',
+    status: 'COMPLETED',
+    recorded_by: 'usr-jashwanth-1',
+    recorded_by_name: 'Jashwanth Reddy',
+    created_at: '2026-09-08T11:00:00.000Z'
+  }
+];
+
 class MockDatabase {
   customers: MockCustomer[] = [];
   orders: MockOrder[] = [];
   invoices: MockInvoice[] = [];
   expenses: MockExpense[] = [];
+  payments: MockPayment[] = [];
   currentUser: any = PARTNER_1;
 
   constructor() {
@@ -660,32 +352,59 @@ class MockDatabase {
   }
 
   load() {
-    const DB_KEY = 'infinity_mock_db_v3';
+    const DB_KEY = 'infinity_mock_db_v4';
     try {
       localStorage.removeItem('infinity_mock_db_v1');
       localStorage.removeItem('infinity_mock_db_v2');
 
-      const stored = localStorage.getItem(DB_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        this.customers = parsed.customers || INITIAL_CUSTOMERS;
-        this.orders = (parsed.orders || INITIAL_ORDERS).map((o: any) => ({
-          ...o,
-          payment_pending: o.payment_pending !== undefined ? Number(o.payment_pending) : Math.max(0, (Number(o.selling_price) || 0) - (Number(o.payment_received) || 0)),
-          created_at: o.created_at || (o.order_date ? `${o.order_date}T12:00:00.000Z` : new Date().toISOString()),
-          product_cost: Number(o.product_cost) || 0,
-          printing_cost: Number(o.printing_cost) || 0,
-          delivery_cost: Number(o.delivery_cost) || 0,
-          other_cost: Number(o.other_cost) || 0,
-          tshirt_rapido_cost: Number(o.tshirt_rapido_cost) || 0,
-          print_rapido_cost: Number(o.print_rapido_cost) || 0,
-          total_cost: Number(o.total_cost) || 0,
-          selling_price: Number(o.selling_price) || 0,
-          profit: Number(o.profit) || 0,
-          available_amount: Number(o.available_amount) || 0
-        }));
-        this.invoices = parsed.invoices || INITIAL_INVOICES;
+      const isBvrit = (item: any) => {
+        const text = `${item?.customer_name || ''} ${item?.name || ''} ${item?.invoice_number || ''} ${item?.order_number || ''} ${item?.notes || ''} ${item?.description || ''} ${JSON.stringify(item?.items || [])}`.toLowerCase();
+        return text.includes('bvrit');
+      };
+
+      const storedV3 = localStorage.getItem('infinity_mock_db_v3');
+      const storedV4 = localStorage.getItem(DB_KEY);
+      const rawStored = storedV4 || storedV3;
+
+      if (rawStored) {
+        const parsed = JSON.parse(rawStored);
+        
+        // Remove ALL invoices except BVRIT!
+        const existingBvritInvoices = (parsed.invoices || []).filter(isBvrit);
+        this.invoices = existingBvritInvoices.length > 0 ? existingBvritInvoices : [...INITIAL_INVOICES];
+
+        // Format orders and ensure accurate calculations
+        const storedOrders = (parsed.orders || []).filter((o: any) => isBvrit(o) || o.id === 'ord-bvrit-1');
+        this.orders = (storedOrders.length > 0 ? storedOrders : INITIAL_ORDERS).map((o: any) => {
+          const fin = calculateOrderFinancials({
+            sellingPrice: Number(o.selling_price) || 0,
+            productCost: Number(o.product_cost) || 0,
+            printingCost: Number(o.printing_cost) || 0,
+            tshirtRapidoCost: Number(o.tshirt_rapido_cost) || 0,
+            printRapidoCost: Number(o.print_rapido_cost) || 0,
+            deliveryCost: Number(o.delivery_cost) || 0,
+            otherCost: Number(o.other_cost) || 0,
+            paymentReceived: Number(o.payment_received) || 0
+          });
+          return {
+            ...o,
+            total_cost: fin.totalCost,
+            profit: fin.profit,
+            profit_margin: fin.profitMargin,
+            payment_pending: fin.paymentPending,
+            available_amount: fin.availableAmount,
+            payment_status: fin.paymentStatus === 'PAID' ? 'PAID' : (fin.paymentReceived > 0 ? 'PARTIALLY_PAID' : 'PENDING'),
+            created_at: o.created_at || (o.order_date ? `${o.order_date}T12:00:00.000Z` : new Date().toISOString())
+          };
+        });
+
+        const storedCustomers = (parsed.customers || []).filter((c: any) => isBvrit(c) || c.id === 'cust-bvrit');
+        this.customers = storedCustomers.length > 0 ? storedCustomers : [...INITIAL_CUSTOMERS];
         this.expenses = parsed.expenses || INITIAL_EXPENSES;
+        this.payments = (parsed.payments && parsed.payments.length > 0) ? parsed.payments.filter((p: any) => isBvrit(p) || p.id === 'pay-bvrit-1') : [...INITIAL_PAYMENTS];
+
+        localStorage.removeItem('infinity_mock_db_v3');
+        this.save();
         return;
       }
     } catch {
@@ -693,18 +412,20 @@ class MockDatabase {
     }
     this.customers = [...INITIAL_CUSTOMERS];
     this.orders = INITIAL_ORDERS.map(o => ({ ...o }));
-    this.invoices = INITIAL_INVOICES.map(i => ({ ...i }));
+    this.invoices = [...INITIAL_INVOICES];
     this.expenses = INITIAL_EXPENSES.map(e => ({ ...e }));
+    this.payments = [...INITIAL_PAYMENTS];
     this.save();
   }
 
   save() {
     try {
-      localStorage.setItem('infinity_mock_db_v3', JSON.stringify({
+      localStorage.setItem('infinity_mock_db_v4', JSON.stringify({
         customers: this.customers,
         orders: this.orders,
         invoices: this.invoices,
-        expenses: this.expenses
+        expenses: this.expenses,
+        payments: this.payments
       }));
     } catch {
       // ignore
@@ -714,8 +435,9 @@ class MockDatabase {
   reset() {
     this.customers = [...INITIAL_CUSTOMERS];
     this.orders = INITIAL_ORDERS.map(o => ({ ...o }));
-    this.invoices = INITIAL_INVOICES.map(i => ({ ...i }));
+    this.invoices = [...INITIAL_INVOICES];
     this.expenses = INITIAL_EXPENSES.map(e => ({ ...e }));
+    this.payments = [...INITIAL_PAYMENTS];
     this.save();
   }
 }
@@ -794,40 +516,167 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
 
   // 5. Dashboard Stats
   if (pathname === '/api/dashboard/stats') {
-    const totalOrders = mockDb.orders.length;
-    const totalRevenue = mockDb.orders.reduce((sum, o) => sum + (o.selling_price || 0), 0);
-    const totalCosts = mockDb.orders.reduce((sum, o) => sum + (o.total_cost || 0), 0);
-    const netProfit = totalRevenue - totalCosts;
-    const totalAvailable = mockDb.orders.reduce((sum, o) => sum + (o.available_amount || 0), 0);
-    const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : '0.0';
+    const range = searchParams.get('range') || 'all';
+    const now = new Date();
+    let orders = [...mockDb.orders];
+    let expenses = [...mockDb.expenses];
 
-    // Partner rules: Rajshekar has share ONLY in T-Shirts, ID Cards, Caps
-    const sharedProfit = mockDb.orders
-      .filter(o => o.is_tshirt === 1 || o.product_name.includes('Cap') || o.has_id_cards === 1)
-      .reduce((sum, o) => sum + (o.profit || 0), 0);
-    const soleProfit = netProfit - sharedProfit;
-    const jashwanthProfit = Math.round(sharedProfit * 0.5) + soleProfit;
-    const rajshekarProfit = Math.round(sharedProfit * 0.5);
+    if (range === 'today') {
+      const today = now.toISOString().split('T')[0];
+      orders = orders.filter(o => (o.order_date || o.created_at || '').startsWith(today));
+      expenses = expenses.filter(e => (e.date || '').startsWith(today));
+    } else if (range === 'week') {
+      const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
+      orders = orders.filter(o => (o.order_date || o.created_at || '') >= weekAgo);
+      expenses = expenses.filter(e => (e.date || '') >= weekAgo);
+    } else if (range === 'month') {
+      const monthAgo = new Date(now.getTime() - 30 * 86400000).toISOString().split('T')[0];
+      orders = orders.filter(o => (o.order_date || o.created_at || '') >= monthAgo);
+      expenses = expenses.filter(e => (e.date || '') >= monthAgo);
+    } else if (range === 'year') {
+      const yearStart = `${now.getFullYear()}-01-01`;
+      orders = orders.filter(o => (o.order_date || o.created_at || '') >= yearStart);
+      expenses = expenses.filter(e => (e.date || '') >= yearStart);
+    }
+
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.selling_price) || 0), 0);
+    const totalCost = orders.reduce((sum, o) => sum + (Number(o.total_cost) || 0), 0);
+    const totalProfit = totalRevenue - totalCost;
+    const totalPaymentReceived = orders.reduce((sum, o) => sum + (Number(o.payment_received) || 0), 0);
+    const pendingPayments = orders.reduce((sum, o) => sum + (Number(o.payment_pending) || 0), 0);
+    const availableAmount = totalPaymentReceived - totalCost;
+    const generalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+    const profitMargin = totalRevenue > 0 ? Number(((totalProfit / totalRevenue) * 100).toFixed(1)) : 0;
+
+    // T-shirt metrics
+    const tOrders = orders.filter(o => o.is_tshirt === 1);
+    const tshirtRevenue = tOrders.reduce((sum, o) => sum + (Number(o.selling_price) || 0), 0);
+    const tshirtProductCost = tOrders.reduce((sum, o) => sum + (Number(o.product_cost) || 0), 0);
+    const tshirtPrintingCost = tOrders.reduce((sum, o) => sum + (Number(o.printing_cost) || 0), 0);
+    const tshirtDeliveryCost = tOrders.reduce((sum, o) => sum + (Number(o.delivery_cost) || 0), 0);
+    const tshirtTotalCost = tOrders.reduce((sum, o) => sum + (Number(o.total_cost) || 0), 0);
+    const tshirtProfit = tshirtRevenue - tshirtTotalCost;
+    const tshirtsSold = tOrders.reduce((sum, o) => sum + (Number(o.quantity) || 0), 0);
+
+    // Partner rules: Rajshekar has share in T-Shirts, ID Cards, Caps (is_partner_shared === 1)
+    const sharedOrders = orders.filter(o => o.is_partner_shared === 1 || o.is_tshirt === 1 || (o.product_name && o.product_name.includes('Cap')) || o.has_id_cards === 1);
+    const soleOrders = orders.filter(o => !sharedOrders.includes(o));
+
+    const sharedRevenue = sharedOrders.reduce((sum, o) => sum + (Number(o.selling_price) || 0), 0);
+    const sharedCost = sharedOrders.reduce((sum, o) => sum + (Number(o.total_cost) || 0), 0);
+    const sharedProfit = sharedOrders.reduce((sum, o) => sum + (Number(o.profit) || 0), 0);
+
+    const soleRevenue = soleOrders.reduce((sum, o) => sum + (Number(o.selling_price) || 0), 0);
+    const soleCost = soleOrders.reduce((sum, o) => sum + (Number(o.total_cost) || 0), 0);
+    const soleProfit = soleOrders.reduce((sum, o) => sum + (Number(o.profit) || 0), 0);
+
+    const jashwanthSharedPortion = Math.round(sharedProfit * 0.5);
+    const rajshekarSharedPortion = sharedProfit - jashwanthSharedPortion;
+    const jashwanthTotalProfit = jashwanthSharedPortion + soleProfit;
+    const rajshekarTotalProfit = rajshekarSharedPortion;
+
+    // Daily chart trend
+    const dateMap: Record<string, { date: string; revenue: number; cost: number; profit: number }> = {};
+    orders.forEach(o => {
+      const d = o.order_date || (o.created_at ? o.created_at.split('T')[0] : '2026-09-08');
+      if (!dateMap[d]) {
+        dateMap[d] = { date: d, revenue: 0, cost: 0, profit: 0 };
+      }
+      dateMap[d].revenue += (Number(o.selling_price) || 0);
+      dateMap[d].cost += (Number(o.total_cost) || 0);
+      dateMap[d].profit += (Number(o.profit) || 0);
+    });
+    const chartTrend = Object.values(dateMap).sort((a, b) => a.date.localeCompare(b.date));
+
+    // Product breakdown
+    const prodMap: Record<string, { product_name: string; quantity_sold: number; revenue: number; cost: number; profit: number; is_partner_shared: number }> = {};
+    orders.forEach(o => {
+      const p = o.product_name || 'Custom Product';
+      if (!prodMap[p]) {
+        prodMap[p] = { product_name: p, quantity_sold: 0, revenue: 0, cost: 0, profit: 0, is_partner_shared: o.is_partner_shared || 0 };
+      }
+      prodMap[p].quantity_sold += (Number(o.quantity) || 0);
+      prodMap[p].revenue += (Number(o.selling_price) || 0);
+      prodMap[p].cost += (Number(o.total_cost) || 0);
+      prodMap[p].profit += (Number(o.profit) || 0);
+    });
+    const productBreakdown = Object.values(prodMap);
+
+    const recentOrders = orders.slice(0, 8).map(o => ({
+      ...o,
+      partner_share_allocation: calculateOrderPartnerShare(o)
+    }));
 
     return jsonResponse({
-      revenue: totalRevenue,
-      totalCosts,
-      netProfit,
-      totalOrders,
-      totalAvailable,
-      profitMargin: Number(profitMargin),
-      margin: Number(profitMargin),
-      partnerAllocations: {
-        jashwanth: { totalProfit: jashwanthProfit, sharedProfit: Math.round(sharedProfit * 0.5), soleProfit },
-        rajshekar: { totalProfit: rajshekarProfit, sharedProfit: rajshekarProfit, soleProfit: 0 }
+      businessName: 'Infinity Customizations',
+      currencySymbol: '₹',
+      cards: {
+        totalRevenue,
+        totalCost,
+        totalProfit,
+        availableAmount,
+        totalOrders,
+        pendingPayments,
+        generalExpenses
       },
-      partner1Share: jashwanthProfit,
-      partner2Share: rajshekarProfit,
-      recentOrders: mockDb.orders.slice(0, 5),
+      partnerShares: {
+        agreementRule: 'Partner (Rajshekar Reddy) has 50% profit share in T-Shirts, ID Cards & Caps only. Bouquets, Frames, Mugs & Gifts are 100% retained by Jashwanth Reddy.',
+        sharedOrdersCount: sharedOrders.length,
+        sharedRevenue,
+        sharedCost,
+        sharedProfit,
+        soleOrdersCount: soleOrders.length,
+        soleRevenue,
+        soleCost,
+        soleProfit,
+        jashwanth: {
+          name: 'Jashwanth Reddy',
+          role: 'Owner & Partner',
+          sharedProfit: jashwanthSharedPortion,
+          soleProfit,
+          totalProfit: jashwanthTotalProfit,
+          sharePercentage: totalProfit > 0 ? Math.round((jashwanthTotalProfit / totalProfit) * 100) : 100
+        },
+        rajshekar: {
+          name: 'Rajshekar Reddy',
+          role: 'Partner (T-Shirts, ID Cards & Caps)',
+          sharedProfit: rajshekarSharedPortion,
+          soleProfit: 0,
+          totalProfit: rajshekarTotalProfit,
+          sharePercentage: totalProfit > 0 ? Math.round((rajshekarTotalProfit / totalProfit) * 100) : 0
+        }
+      },
+      tshirtOverview: {
+        tshirtRevenue,
+        tshirtProductCost,
+        tshirtPrintingCost,
+        tshirtDeliveryCost,
+        tshirtTotalCost,
+        tshirtProfit,
+        tshirtsSold,
+        tshirtOrders: tOrders.length
+      },
+      chartTrend,
+      productBreakdown,
+      recentOrders,
+      // Flat properties for backward compatibility
+      revenue: totalRevenue,
+      totalCosts: totalCost,
+      netProfit: totalProfit,
+      totalAvailable: availableAmount,
+      profitMargin,
+      margin: profitMargin,
+      partnerAllocations: {
+        jashwanth: { totalProfit: jashwanthTotalProfit, sharedProfit: jashwanthSharedPortion, soleProfit },
+        rajshekar: { totalProfit: rajshekarTotalProfit, sharedProfit: rajshekarTotalProfit, soleProfit: 0 }
+      },
+      partner1Share: jashwanthTotalProfit,
+      partner2Share: rajshekarTotalProfit,
       tshirtAnalytics: {
-        totalSold: mockDb.orders.filter(o => o.is_tshirt).reduce((sum, o) => sum + o.quantity, 0),
-        revenue: mockDb.orders.filter(o => o.is_tshirt).reduce((sum, o) => sum + o.selling_price, 0),
-        profit: mockDb.orders.filter(o => o.is_tshirt).reduce((sum, o) => sum + o.profit, 0)
+        totalSold: tshirtsSold,
+        revenue: tshirtRevenue,
+        profit: tshirtProfit
       }
     });
   }
@@ -836,6 +685,8 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
   if (pathname === '/api/orders') {
     if (method === 'POST') {
       const isTshirt = body.is_tshirt === 1 || (body.product_name && body.product_name.toLowerCase().includes('t-shirt'));
+      const isPartnerShared = isTshirt || (body.product_name && (body.product_name.includes('Cap') || body.product_name.includes('ID Card'))) || body.has_id_cards === 1;
+
       const selling = Number(body.selling_price || 0);
       const prodCost = Number(body.product_cost || 0);
       const printCost = Number(body.printing_cost || 0);
@@ -843,41 +694,57 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
       const printRapido = Number(body.print_rapido_cost || 0);
       const delCost = Number(body.delivery_cost || (tshirtRapido + printRapido) || 0);
       const otherCost = Number(body.other_cost || 0);
-      const totalCost = prodCost + printCost + delCost + otherCost;
-      const profit = selling - totalCost;
-      const margin = selling > 0 ? Number(((profit / selling) * 100).toFixed(1)) : 0;
       const received = body.payment_status === 'PAID' ? selling : Number(body.payment_received || 0);
-      const available = received - totalCost;
+
+      const fin = calculateOrderFinancials({
+        sellingPrice: selling,
+        productCost: prodCost,
+        printingCost: printCost,
+        tshirtRapidoCost: tshirtRapido,
+        printRapidoCost: printRapido,
+        deliveryCost: delCost,
+        otherCost: otherCost,
+        paymentReceived: received
+      });
+
+      const customerId = body.customer_id || 'cust-bvrit';
+      const customer = mockDb.customers.find(c => c.id === customerId);
 
       const newOrder: MockOrder = {
         id: `ord-${Date.now()}`,
         order_number: `ORD-2026-${String(mockDb.orders.length + 1).padStart(4, '0')}`,
-        customer_id: body.customer_id || 'cust-1',
-        customer_name: body.customer_name || 'Walk-in Customer',
-        customer_phone: body.customer_phone || '+91 98000 00000',
+        customer_id: customerId,
+        customer_name: body.customer_name || customer?.name || 'Customer',
+        customer_phone: body.customer_phone || customer?.phone || '+91 98000 00000',
+        customer_email: customer?.email || '',
+        customer_address: customer?.address || '',
         product_name: body.product_name || 'Custom Printed T-Shirt',
         quantity: Number(body.quantity || 1),
-        selling_price: selling,
-        product_cost: prodCost,
-        printing_cost: printCost,
-        tshirt_rapido_cost: tshirtRapido,
-        print_rapido_cost: printRapido,
-        delivery_cost: delCost,
-        other_cost: otherCost,
-        total_cost: totalCost,
-        profit,
-        profit_margin: margin,
-        payment_status: body.payment_status || (received >= selling ? 'PAID' : received > 0 ? 'PARTIALLY_PAID' : 'PENDING'),
-        payment_received: received,
-        payment_pending: Math.max(0, selling - received),
-        available_amount: available,
+        selling_price: fin.sellingPrice,
+        product_cost: fin.productCost,
+        printing_cost: fin.printingCost,
+        tshirt_rapido_cost: fin.tshirtRapidoCost,
+        print_rapido_cost: fin.printRapidoCost,
+        delivery_cost: fin.deliveryCost,
+        other_cost: fin.otherCost,
+        total_cost: fin.totalCost,
+        profit: fin.profit,
+        profit_margin: fin.profitMargin,
+        payment_status: fin.paymentStatus === 'PAID' ? 'PAID' : (fin.paymentReceived > 0 ? 'PARTIALLY_PAID' : 'PENDING'),
+        payment_received: fin.paymentReceived,
+        payment_pending: fin.paymentPending,
+        available_amount: fin.availableAmount,
         is_tshirt: isTshirt ? 1 : 0,
+        is_partner_shared: isPartnerShared ? 1 : 0,
         tshirt_neck_type: body.tshirt_neck_type || 'Round Neck',
         tshirt_fabric: body.tshirt_fabric || 'Pure Cotton',
         tshirt_size: body.tshirt_size || 'L',
         tshirt_size_breakdown: body.tshirt_size_breakdown || '',
         tshirt_color: body.tshirt_color || 'Black',
         tshirt_print_type: body.tshirt_print_type || 'Front Print',
+        tshirt_front_print: Boolean(body.tshirt_front_print),
+        tshirt_back_print: Boolean(body.tshirt_back_print),
+        tshirt_sleeve_print: Boolean(body.tshirt_sleeve_print),
         print_meters: Number(body.print_meters || 0),
         print_rate_per_meter: Number(body.print_rate_per_meter || 300),
         has_id_cards: body.has_id_cards ? 1 : 0,
@@ -887,15 +754,17 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         id_card_selling_price: Number(body.id_card_selling_price || 0),
         id_card_cost: Number(body.id_card_cost || 0),
         id_card_profit: Number(body.id_card_profit || 0),
-        order_date: new Date().toISOString().split('T')[0],
+        order_date: body.order_date || new Date().toISOString().split('T')[0],
         created_at: new Date().toISOString(),
         created_by_name: mockDb.currentUser.full_name,
-        created_by: mockDb.currentUser.id
+        created_by: mockDb.currentUser.id,
+        notes: body.notes || ''
       };
 
+      newOrder.partner_share_allocation = calculateOrderPartnerShare(newOrder);
       mockDb.orders.unshift(newOrder);
 
-      // Also create an invoice for this order automatically
+      // Create linked invoice automatically
       const newInvoice: MockInvoice = {
         id: `inv-${Date.now()}`,
         invoice_number: `INV-2026-${String(mockDb.invoices.length + 1).padStart(4, '0')}`,
@@ -903,25 +772,50 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
         customer_name: newOrder.customer_name,
         issue_date: newOrder.order_date,
         due_date: new Date(Date.now() + 10 * 86400000).toISOString().split('T')[0],
-        subtotal: selling,
+        subtotal: fin.sellingPrice,
         tax_rate: 0,
         tax_amount: 0,
-        grand_total: selling,
-        amount_paid: received,
-        balance_due: selling - received,
-        status: received >= selling ? 'PAID' : received > 0 ? 'PARTIAL' : 'SENT',
+        grand_total: fin.sellingPrice,
+        amount_paid: fin.paymentReceived,
+        balance_due: fin.paymentPending,
+        status: fin.paymentStatus === 'PAID' ? 'PAID' : (fin.paymentReceived > 0 ? 'PARTIAL' : 'SENT'),
         created_by_name: mockDb.currentUser.full_name,
         created_by: mockDb.currentUser.id,
         items: [
           {
             description: `${newOrder.product_name} (${newOrder.tshirt_neck_type || ''} ${newOrder.tshirt_fabric || ''})`.trim(),
             quantity: newOrder.quantity,
-            unit_price: selling / newOrder.quantity,
-            amount: selling
+            unit_price: newOrder.quantity > 0 ? Math.round(fin.sellingPrice / newOrder.quantity) : fin.sellingPrice,
+            rate: newOrder.quantity > 0 ? Math.round(fin.sellingPrice / newOrder.quantity) : fin.sellingPrice,
+            amount: fin.sellingPrice
           }
         ]
       };
+      newOrder.invoice_id = newInvoice.id;
+      newOrder.invoice_number = newInvoice.invoice_number;
       mockDb.invoices.unshift(newInvoice);
+
+      // Record payment in payments list if received > 0
+      if (fin.paymentReceived > 0) {
+        mockDb.payments.unshift({
+          id: `pay-${Date.now()}`,
+          payment_number: `PAY-2026-${String(mockDb.payments.length + 1).padStart(4, '0')}`,
+          customer_id: newOrder.customer_id,
+          customer_name: newOrder.customer_name,
+          invoice_id: newInvoice.id,
+          invoice_number: newInvoice.invoice_number,
+          order_id: newOrder.id,
+          amount: fin.paymentReceived,
+          method: 'UPI',
+          date: newOrder.order_date,
+          reference_number: `UPI/${Date.now().toString().slice(-8)}/ADV`,
+          notes: 'Advance / payment on order booking',
+          status: 'COMPLETED',
+          recorded_by: mockDb.currentUser.id,
+          recorded_by_name: mockDb.currentUser.full_name,
+          created_at: new Date().toISOString()
+        });
+      }
 
       mockDb.save();
       return jsonResponse({ ...newOrder, invoice_id: newInvoice.id });
@@ -958,10 +852,6 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     const isPayments = parts[4] === 'payments';
 
     let order = mockDb.orders.find(o => o.id === orderId || o.order_number === orderId);
-    if (!order && orderId === 'ord-4') {
-      order = INITIAL_ORDERS.find(o => o.id === 'ord-4');
-      if (order) mockDb.orders.push(order);
-    }
     if (!order) {
       order = mockDb.orders[0];
     }
@@ -969,10 +859,38 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
     if (isPayments && method === 'POST') {
       const payAmount = Number(body.amount || 0);
       if (order && payAmount > 0) {
-        order.payment_received = (order.payment_received || 0) + payAmount;
-        order.payment_pending = Math.max(0, (order.selling_price || 0) - order.payment_received);
-        order.payment_status = order.payment_received >= order.selling_price ? 'PAID' : 'PARTIALLY_PAID';
-        order.available_amount = (order.payment_received || 0) - (order.total_cost || 0);
+        order.payment_received = (Number(order.payment_received) || 0) + payAmount;
+        order.payment_pending = Math.max(0, (Number(order.selling_price) || 0) - order.payment_received);
+        order.payment_status = order.payment_received >= (Number(order.selling_price) || 0) ? 'PAID' : 'PARTIALLY_PAID';
+        order.available_amount = order.payment_received - (Number(order.total_cost) || 0);
+
+        // Also update linked invoice if any
+        const linkedInv = mockDb.invoices.find(i => i.id === order.invoice_id || i.customer_id === order.customer_id);
+        if (linkedInv) {
+          linkedInv.amount_paid = (Number(linkedInv.amount_paid) || 0) + payAmount;
+          linkedInv.balance_due = Math.max(0, (Number(linkedInv.grand_total) || 0) - linkedInv.amount_paid);
+          linkedInv.status = linkedInv.amount_paid >= (Number(linkedInv.grand_total) || 0) ? 'PAID' : 'PARTIAL';
+        }
+
+        mockDb.payments.unshift({
+          id: `pay-${Date.now()}`,
+          payment_number: `PAY-2026-${String(mockDb.payments.length + 1).padStart(4, '0')}`,
+          customer_id: order.customer_id,
+          customer_name: order.customer_name,
+          invoice_id: order.invoice_id,
+          invoice_number: order.invoice_number,
+          order_id: order.id,
+          amount: payAmount,
+          method: body.method || 'UPI',
+          date: body.date || new Date().toISOString().split('T')[0],
+          reference_number: body.reference_number || body.referenceNumber || `REF-${Date.now()}`,
+          notes: body.notes || 'Order payment collection',
+          status: 'COMPLETED',
+          recorded_by: mockDb.currentUser.id,
+          recorded_by_name: mockDb.currentUser.full_name,
+          created_at: new Date().toISOString()
+        });
+
         mockDb.save();
       }
       return jsonResponse({ success: true, order });
@@ -999,25 +917,71 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
   // 7. Invoices
   if (pathname === '/api/invoices') {
     if (method === 'POST') {
+      const items = (body.items || []).map((it: any) => {
+        const qty = Number(it.quantity) || 1;
+        const rate = Number(it.rate || it.unit_price) || 0;
+        const amt = Number(it.amount) || (qty * rate);
+        return {
+          description: it.description || 'Custom Item',
+          quantity: qty,
+          unit_price: rate,
+          rate: rate,
+          discount: Number(it.discount) || 0,
+          tax_rate: Number(it.tax_rate) || 0,
+          amount: amt
+        };
+      });
+
+      const computedSubtotal = items.reduce((s: number, it: any) => s + (Number(it.amount) || 0), 0);
+      const subtotal = Number(body.subtotal) || computedSubtotal;
+      const discount = Number(body.discount) || 0;
+      const taxAmount = Number(body.tax_amount) || 0;
+      const grandTotal = Number(body.grand_total) || Math.max(0, subtotal - discount + taxAmount);
+      const amountPaid = Number(body.amount_paid) || 0;
+      const balanceDue = Math.max(0, grandTotal - amountPaid);
+      const status = amountPaid >= grandTotal ? 'PAID' : (amountPaid > 0 ? 'PARTIAL' : 'SENT');
+
       const newInv: MockInvoice = {
         id: `inv-${Date.now()}`,
         invoice_number: `INV-2026-${String(mockDb.invoices.length + 1).padStart(4, '0')}`,
-        customer_id: body.customer_id || 'cust-1',
+        customer_id: body.customer_id || 'cust-bvrit',
         customer_name: body.customer_name || 'Customer',
         issue_date: body.issue_date || new Date().toISOString().split('T')[0],
         due_date: body.due_date || new Date(Date.now() + 10 * 86400000).toISOString().split('T')[0],
-        subtotal: Number(body.subtotal || body.grand_total || 0),
-        tax_rate: Number(body.tax_rate || 0),
-        tax_amount: Number(body.tax_amount || 0),
-        grand_total: Number(body.grand_total || body.subtotal || 0),
-        amount_paid: Number(body.amount_paid || 0),
-        balance_due: Number(body.grand_total || 0) - Number(body.amount_paid || 0),
-        status: (body.amount_paid >= body.grand_total) ? 'PAID' : (body.amount_paid > 0) ? 'PARTIAL' : 'SENT',
+        subtotal,
+        discount,
+        tax_rate: Number(body.tax_rate) || 0,
+        tax_amount: taxAmount,
+        grand_total: grandTotal,
+        amount_paid: amountPaid,
+        balance_due: balanceDue,
+        status,
         created_by_name: mockDb.currentUser.full_name,
         created_by: mockDb.currentUser.id,
-        items: body.items || []
+        items
       };
       mockDb.invoices.unshift(newInv);
+
+      if (amountPaid > 0) {
+        mockDb.payments.unshift({
+          id: `pay-${Date.now()}`,
+          payment_number: `PAY-2026-${String(mockDb.payments.length + 1).padStart(4, '0')}`,
+          customer_id: newInv.customer_id,
+          customer_name: newInv.customer_name,
+          invoice_id: newInv.id,
+          invoice_number: newInv.invoice_number,
+          amount: amountPaid,
+          method: body.payment_method || 'UPI',
+          date: newInv.issue_date,
+          reference_number: `UPI/${Date.now().toString().slice(-8)}`,
+          notes: 'Invoice advance / payment',
+          status: 'COMPLETED',
+          recorded_by: mockDb.currentUser.id,
+          recorded_by_name: mockDb.currentUser.full_name,
+          created_at: new Date().toISOString()
+        });
+      }
+
       mockDb.save();
       return jsonResponse(newInv);
     }
@@ -1033,8 +997,103 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
   if (pathname.startsWith('/api/invoices/')) {
     const parts = pathname.split('/');
     const invId = parts[3];
+    const isPayment = parts[4] === 'payments';
+
     const inv = mockDb.invoices.find(i => i.id === invId || i.invoice_number === invId) || mockDb.invoices[0];
+
+    if (isPayment && method === 'POST') {
+      const payAmount = Number(body.amount || 0);
+      if (inv && payAmount > 0) {
+        inv.amount_paid = (Number(inv.amount_paid) || 0) + payAmount;
+        inv.balance_due = Math.max(0, (Number(inv.grand_total) || 0) - inv.amount_paid);
+        inv.status = inv.amount_paid >= (Number(inv.grand_total) || 0) ? 'PAID' : 'PARTIAL';
+
+        // Also update matching order if exists
+        const matchedOrder = mockDb.orders.find(o => o.invoice_id === inv.id || o.customer_id === inv.customer_id);
+        if (matchedOrder) {
+          matchedOrder.payment_received = (Number(matchedOrder.payment_received) || 0) + payAmount;
+          matchedOrder.payment_pending = Math.max(0, (Number(matchedOrder.selling_price) || 0) - matchedOrder.payment_received);
+          matchedOrder.payment_status = matchedOrder.payment_received >= (Number(matchedOrder.selling_price) || 0) ? 'PAID' : 'PARTIALLY_PAID';
+          matchedOrder.available_amount = matchedOrder.payment_received - (Number(matchedOrder.total_cost) || 0);
+        }
+
+        mockDb.payments.unshift({
+          id: `pay-${Date.now()}`,
+          payment_number: `PAY-2026-${String(mockDb.payments.length + 1).padStart(4, '0')}`,
+          customer_id: inv.customer_id,
+          customer_name: inv.customer_name,
+          invoice_id: inv.id,
+          invoice_number: inv.invoice_number,
+          order_id: matchedOrder?.id,
+          amount: payAmount,
+          method: body.method || 'UPI',
+          date: body.date || new Date().toISOString().split('T')[0],
+          reference_number: body.reference_number || body.referenceNumber || `REF-${Date.now()}`,
+          notes: body.notes || 'Invoice collection payment',
+          status: 'COMPLETED',
+          recorded_by: mockDb.currentUser.id,
+          recorded_by_name: mockDb.currentUser.full_name,
+          created_at: new Date().toISOString()
+        });
+
+        mockDb.save();
+      }
+      return jsonResponse({ success: true, invoice: inv });
+    }
+
     return jsonResponse(inv);
+  }
+
+  // 7.5 Payments
+  if (pathname === '/api/payments') {
+    if (method === 'POST') {
+      const payAmount = Number(body.amount || 0);
+      const newPay: MockPayment = {
+        id: `pay-${Date.now()}`,
+        payment_number: `PAY-2026-${String(mockDb.payments.length + 1).padStart(4, '0')}`,
+        customer_id: body.customer_id || 'cust-bvrit',
+        customer_name: body.customer_name || 'BVRIT Hyderabad (B.V. Raju Institute of Technology)',
+        invoice_id: body.invoice_id,
+        invoice_number: body.invoice_number,
+        amount: payAmount,
+        method: body.method || 'UPI',
+        date: body.date || new Date().toISOString().split('T')[0],
+        reference_number: body.reference_number || body.referenceNumber || `REF-${Date.now()}`,
+        notes: body.notes || 'Payment recorded',
+        status: 'COMPLETED',
+        recorded_by: mockDb.currentUser.id,
+        recorded_by_name: mockDb.currentUser.full_name,
+        created_at: new Date().toISOString()
+      };
+      mockDb.payments.unshift(newPay);
+
+      if (body.invoice_id) {
+        const inv = mockDb.invoices.find(i => i.id === body.invoice_id);
+        if (inv) {
+          inv.amount_paid = (Number(inv.amount_paid) || 0) + payAmount;
+          inv.balance_due = Math.max(0, (Number(inv.grand_total) || 0) - inv.amount_paid);
+          inv.status = inv.amount_paid >= (Number(inv.grand_total) || 0) ? 'PAID' : 'PARTIAL';
+        }
+      }
+      mockDb.save();
+      return jsonResponse(newPay);
+    }
+
+    let filtered = [...mockDb.payments];
+    const methodFilter = searchParams.get('method');
+    const searchFilter = searchParams.get('search');
+    if (methodFilter && methodFilter !== 'ALL') {
+      filtered = filtered.filter(p => p.method.toUpperCase() === methodFilter.toUpperCase());
+    }
+    if (searchFilter) {
+      const q = searchFilter.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.payment_number.toLowerCase().includes(q) ||
+        (p.customer_name && p.customer_name.toLowerCase().includes(q)) ||
+        (p.reference_number && p.reference_number.toLowerCase().includes(q))
+      );
+    }
+    return jsonResponse(filtered);
   }
 
   // 8. Customers
@@ -1217,37 +1276,162 @@ export async function handleMockApi(path: string, options?: RequestInit): Promis
 
   // 12. Financial Report & Profit Loss
   if (pathname === '/api/reports/financial' || pathname === '/api/profit-loss') {
-    const totalRev = mockDb.orders.reduce((s, o) => s + o.selling_price, 0);
-    const totalCost = mockDb.orders.reduce((s, o) => s + o.total_cost, 0);
+    const period = searchParams.get('period') || 'monthly';
+    const now = new Date();
+    let orders = [...mockDb.orders];
+    let expenses = [...mockDb.expenses];
+
+    if (period === 'daily') {
+      const today = now.toISOString().split('T')[0];
+      orders = orders.filter(o => (o.order_date || o.created_at || '').startsWith(today));
+      expenses = expenses.filter(e => (e.date || '').startsWith(today));
+    } else if (period === 'weekly') {
+      const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
+      orders = orders.filter(o => (o.order_date || o.created_at || '') >= weekAgo);
+      expenses = expenses.filter(e => (e.date || '') >= weekAgo);
+    } else if (period === 'monthly') {
+      const monthAgo = new Date(now.getTime() - 30 * 86400000).toISOString().split('T')[0];
+      orders = orders.filter(o => (o.order_date || o.created_at || '') >= monthAgo);
+      expenses = expenses.filter(e => (e.date || '') >= monthAgo);
+    } else if (period === 'yearly') {
+      const yearStart = `${now.getFullYear()}-01-01`;
+      orders = orders.filter(o => (o.order_date || o.created_at || '') >= yearStart);
+      expenses = expenses.filter(e => (e.date || '') >= yearStart);
+    }
+
+    // 1. T-Shirts
+    const tOrders = orders.filter(o => o.is_tshirt === 1);
+    const tRev = tOrders.reduce((s, o) => s + (Number(o.selling_price) || 0), 0);
+    const tProdCost = tOrders.reduce((s, o) => s + (Number(o.product_cost) || 0), 0);
+    const tPrintCost = tOrders.reduce((s, o) => s + (Number(o.printing_cost) || 0), 0);
+    const tDelCost = tOrders.reduce((s, o) => s + (Number(o.delivery_cost) || 0), 0);
+    const tOtherCost = tOrders.reduce((s, o) => s + (Number(o.other_cost) || 0), 0);
+    const tTotalCost = tOrders.reduce((s, o) => s + (Number(o.total_cost) || 0), 0);
+    const tProfit = tRev - tTotalCost;
+    const tSold = tOrders.reduce((s, o) => s + (Number(o.quantity) || 0), 0);
+
+    // 2. Other products
+    const otherOrders = orders.filter(o => o.is_tshirt !== 1);
+    const oRev = otherOrders.reduce((s, o) => s + (Number(o.selling_price) || 0), 0);
+    const oProdCost = otherOrders.reduce((s, o) => s + (Number(o.product_cost) || 0), 0);
+    const oPrintCost = otherOrders.reduce((s, o) => s + (Number(o.printing_cost) || 0), 0);
+    const oDelCost = otherOrders.reduce((s, o) => s + (Number(o.delivery_cost) || 0), 0);
+    const oOtherCost = otherOrders.reduce((s, o) => s + (Number(o.other_cost) || 0), 0);
+    const oTotalCost = otherOrders.reduce((s, o) => s + (Number(o.total_cost) || 0), 0);
+    const oProfit = oRev - oTotalCost;
+    const oSold = otherOrders.reduce((s, o) => s + (Number(o.quantity) || 0), 0);
+
+    // 3. Overall
+    const totalRev = tRev + oRev;
+    const totalCost = tTotalCost + oTotalCost;
     const grossProfit = totalRev - totalCost;
-    const expTotal = mockDb.expenses.reduce((s, o) => s + o.amount, 0);
-    const netProfit = grossProfit - expTotal;
+    const generalExpenses = expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+    const netBusinessProfit = grossProfit - generalExpenses;
 
-    const tOrders = mockDb.orders.filter(o => o.is_tshirt === 1);
-    const sharedProfit = tOrders.reduce((s, o) => s + o.profit, 0);
-    const soleProfit = grossProfit - sharedProfit;
+    // 4. Itemized
+    const prodMap: Record<string, {
+      product_name: string;
+      is_tshirt: number;
+      orders_count: number;
+      items_sold: number;
+      revenue: number;
+      product_cost: number;
+      printing_cost: number;
+      delivery_cost: number;
+      total_cost: number;
+      profit: number;
+      margin_pct: number;
+    }> = {};
 
+    orders.forEach(o => {
+      const key = o.product_name || 'Product';
+      if (!prodMap[key]) {
+        prodMap[key] = {
+          product_name: key,
+          is_tshirt: o.is_tshirt ? 1 : 0,
+          orders_count: 0,
+          items_sold: 0,
+          revenue: 0,
+          product_cost: 0,
+          printing_cost: 0,
+          delivery_cost: 0,
+          total_cost: 0,
+          profit: 0,
+          margin_pct: 0
+        };
+      }
+      prodMap[key].orders_count += 1;
+      prodMap[key].items_sold += (Number(o.quantity) || 0);
+      prodMap[key].revenue += (Number(o.selling_price) || 0);
+      prodMap[key].product_cost += (Number(o.product_cost) || 0);
+      prodMap[key].printing_cost += (Number(o.printing_cost) || 0);
+      prodMap[key].delivery_cost += (Number(o.delivery_cost) || 0);
+      prodMap[key].total_cost += (Number(o.total_cost) || 0);
+      prodMap[key].profit += (Number(o.profit) || 0);
+    });
+
+    const itemized = Object.values(prodMap).map(item => ({
+      ...item,
+      margin_pct: item.revenue > 0 ? Number(((item.profit / item.revenue) * 100).toFixed(1)) : 0
+    }));
+
+    // Partner allocation
+    const sharedProfit = tProfit;
+    const soleProfit = oProfit;
     const jashwanthShared = Math.round(sharedProfit * 0.5);
     const jashwanthSole = soleProfit;
     const jashwanthTotal = jashwanthShared + jashwanthSole;
     const rajshekarTotal = Math.round(sharedProfit * 0.5);
 
     return jsonResponse({
+      period,
+      tshirtProfit: {
+        ordersCount: tOrders.length,
+        itemsSold: tSold,
+        revenue: tRev,
+        productCost: tProdCost,
+        printingCost: tPrintCost,
+        deliveryCost: tDelCost,
+        otherCost: tOtherCost,
+        totalCost: tTotalCost,
+        profit: tProfit,
+        margin: tRev > 0 ? Number(((tProfit / tRev) * 100).toFixed(1)) : 0
+      },
+      otherProductProfit: {
+        ordersCount: otherOrders.length,
+        itemsSold: oSold,
+        revenue: oRev,
+        productCost: oProdCost,
+        printingCost: oPrintCost,
+        deliveryCost: oDelCost,
+        otherCost: oOtherCost,
+        totalCost: oTotalCost,
+        profit: oProfit,
+        margin: oRev > 0 ? Number(((oProfit / oRev) * 100).toFixed(1)) : 0
+      },
+      overall: {
+        totalRevenue: totalRev,
+        totalProductCost: tProdCost + oProdCost,
+        totalPrintingCost: tPrintCost + oPrintCost,
+        totalDeliveryCost: tDelCost + oDelCost,
+        totalOtherCost: tOtherCost + oOtherCost,
+        orderTotalCost: totalCost,
+        grossOrderProfit: grossProfit,
+        generalExpenses,
+        netBusinessProfit,
+        netMargin: totalRev > 0 ? Number(((netBusinessProfit / totalRev) * 100).toFixed(1)) : 0
+      },
+      itemized,
       revenue: { salesRevenue: totalRev, otherIncome: 0, totalRevenue: totalRev },
-      expenses: { categories: mockDb.expenses, totalExpenses: expTotal },
-      netProfit,
-      profitMargin: totalRev > 0 ? Number(((netProfit / totalRev) * 100).toFixed(1)) : 0,
+      expenses: { categories: expenses, totalExpenses: generalExpenses },
+      netProfit: netBusinessProfit,
+      profitMargin: totalRev > 0 ? Number(((netBusinessProfit / totalRev) * 100).toFixed(1)) : 0,
       partnerAllocation: {
         sharedCategoryProfit: sharedProfit,
         soleCategoryProfit: soleProfit,
         jashwanth: { totalProfit: jashwanthTotal, sharedProfit: jashwanthShared, soleProfit: jashwanthSole },
         rajshekar: { totalProfit: rajshekarTotal, sharedProfit: rajshekarTotal, soleProfit: 0 }
-      },
-      itemized: [
-        { product_name: 'Custom Printed T-Shirt', is_tshirt: 1, orders_count: tOrders.length, items_sold: tOrders.reduce((s, o) => s + o.quantity, 0), revenue: tOrders.reduce((s, o) => s + o.selling_price, 0), total_cost: tOrders.reduce((s, o) => s + o.total_cost, 0), profit: sharedProfit, margin_pct: 42.5 },
-        { product_name: 'Photo Frame', is_tshirt: 0, orders_count: 1, items_sold: 2, revenue: 3600, total_cost: 2000, profit: 1600, margin_pct: 44.4 },
-        { product_name: 'Bouquet', is_tshirt: 0, orders_count: 1, items_sold: 2, revenue: 2598, total_cost: 1350, profit: 1248, margin_pct: 48.0 }
-      ]
+      }
     });
   }
 

@@ -137,6 +137,26 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
 
     setIsSubmitting(true);
     try {
+      const processedItems = items.map(it => {
+        const qty = Number(it.quantity) || 1;
+        const rate = Number(it.rate) || 0;
+        const discPct = Number(it.discount) || 0;
+        const taxRate = Number(it.tax_rate) || 0;
+        const raw = qty * rate;
+        const disc = raw * (discPct / 100);
+        const taxable = raw - disc;
+        const tax = taxable * (taxRate / 100);
+        return {
+          description: it.description,
+          quantity: qty,
+          rate,
+          unit_price: rate,
+          discount: discPct,
+          tax_rate: taxRate,
+          amount: Math.round(taxable + tax)
+        };
+      });
+
       const res = await fetch('/api/invoices', {
         method: 'POST',
         headers: {
@@ -145,11 +165,22 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
         },
         body: JSON.stringify({
           customerId,
+          customer_id: customerId,
           customerName,
+          customer_name: customerName,
           customerPhone,
+          customer_phone: customerPhone,
           issueDate,
+          issue_date: issueDate,
           dueDate,
-          items,
+          due_date: dueDate,
+          items: processedItems,
+          subtotal: Math.round(subtotal),
+          discount: Math.round(totalDiscount),
+          tax_amount: Math.round(totalTax),
+          grand_total: Math.round(grandTotal),
+          amount_paid: 0,
+          balance_due: Math.round(grandTotal),
           notes,
           terms
         })
@@ -160,7 +191,7 @@ export const NewInvoiceModal: React.FC<NewInvoiceModalProps> = ({ isOpen, onClos
         throw new Error(data.error || 'Failed to create invoice');
       }
 
-      success(`Invoice ${data.invoice_number} created successfully!`, `Total: ₹${data.grand_total.toLocaleString('en-IN')}`);
+      success(`Invoice ${data.invoice_number} created successfully!`, `Total: ₹${(Number(data.grand_total) || 0).toLocaleString('en-IN')}`);
       onClose();
     } catch (err: any) {
       error(err.message || 'Error creating invoice');

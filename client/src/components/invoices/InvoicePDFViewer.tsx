@@ -179,17 +179,22 @@ export const InvoicePDFViewer: React.FC<InvoicePDFViewerProps> = ({ invoice, bus
             </thead>
             <tbody className="divide-y divide-slate-200">
               {invoice.items && invoice.items.length > 0 ? (
-                invoice.items.map((item: any, idx: number) => (
-                  <tr key={idx}>
-                    <td className="py-3 px-2 font-mono text-slate-400">{idx + 1}</td>
-                    <td className="py-3 px-4 font-semibold text-slate-800">
-                      {item.description}
-                    </td>
-                    <td className="py-3 px-4 text-center font-semibold">{item.quantity}</td>
-                    <td className="py-3 px-4 text-right font-mono">₹{item.rate.toLocaleString('en-IN')}</td>
-                    <td className="py-3 px-4 text-right font-bold font-mono">₹{item.amount.toLocaleString('en-IN')}</td>
-                  </tr>
-                ))
+                invoice.items.map((item: any, idx: number) => {
+                  const qty = Number(item.quantity) || 1;
+                  const unitRate = Number(item.rate ?? item.unit_price) || 0;
+                  const itemTotal = Number(item.amount ?? (qty * unitRate)) || 0;
+                  return (
+                    <tr key={idx}>
+                      <td className="py-3 px-2 font-mono text-slate-400">{idx + 1}</td>
+                      <td className="py-3 px-4 font-semibold text-slate-800">
+                        {item.description}
+                      </td>
+                      <td className="py-3 px-4 text-center font-semibold">{qty}</td>
+                      <td className="py-3 px-4 text-right font-mono">₹{(unitRate).toLocaleString('en-IN')}</td>
+                      <td className="py-3 px-4 text-right font-bold font-mono">₹{(itemTotal).toLocaleString('en-IN')}</td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td className="py-3 px-2 font-mono text-slate-400">1</td>
@@ -197,8 +202,8 @@ export const InvoicePDFViewer: React.FC<InvoicePDFViewerProps> = ({ invoice, bus
                     {invoice.product_name || 'Custom Merchandise'}
                   </td>
                   <td className="py-3 px-4 text-center font-semibold">1</td>
-                  <td className="py-3 px-4 text-right font-mono">₹{invoice.grand_total.toLocaleString('en-IN')}</td>
-                  <td className="py-3 px-4 text-right font-bold font-mono">₹{invoice.grand_total.toLocaleString('en-IN')}</td>
+                  <td className="py-3 px-4 text-right font-mono">₹{(Number(invoice.grand_total) || 0).toLocaleString('en-IN')}</td>
+                  <td className="py-3 px-4 text-right font-bold font-mono">₹{(Number(invoice.grand_total) || 0).toLocaleString('en-IN')}</td>
                 </tr>
               )}
             </tbody>
@@ -216,7 +221,7 @@ export const InvoicePDFViewer: React.FC<InvoicePDFViewerProps> = ({ invoice, bus
             {isPaid && (
               <div className="mt-4 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 inline-flex items-center gap-2 text-emerald-800 font-bold text-xs">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Payment Received in Full (₹{invoice.amount_paid.toLocaleString('en-IN')})</span>
+                <span>Payment Received in Full (₹{(Number(invoice.amount_paid) || 0).toLocaleString('en-IN')})</span>
               </div>
             )}
           </div>
@@ -224,31 +229,31 @@ export const InvoicePDFViewer: React.FC<InvoicePDFViewerProps> = ({ invoice, bus
           <div className="w-64 space-y-2 text-xs">
             <div className="flex justify-between text-slate-600 py-1">
               <span>Subtotal:</span>
-              <span className="font-mono font-semibold">₹{invoice.subtotal.toLocaleString('en-IN')}</span>
+              <span className="font-mono font-semibold">₹{(Number(invoice.subtotal) || 0).toLocaleString('en-IN')}</span>
             </div>
-            {invoice.discount > 0 && (
+            {Number(invoice.discount) > 0 && (
               <div className="flex justify-between text-emerald-600 py-1">
                 <span>Discount:</span>
-                <span className="font-mono font-semibold">-₹{invoice.discount.toLocaleString('en-IN')}</span>
+                <span className="font-mono font-semibold">-₹{(Number(invoice.discount) || 0).toLocaleString('en-IN')}</span>
               </div>
             )}
-            {invoice.tax_amount > 0 && (
+            {Number(invoice.tax_amount) > 0 && (
               <div className="flex justify-between text-slate-600 py-1">
                 <span>GST / Tax:</span>
-                <span className="font-mono font-semibold">₹{invoice.tax_amount.toLocaleString('en-IN')}</span>
+                <span className="font-mono font-semibold">₹{(Number(invoice.tax_amount) || 0).toLocaleString('en-IN')}</span>
               </div>
             )}
             <div className="flex justify-between text-base font-black text-slate-900 border-t-2 border-slate-900 pt-2 pb-1">
               <span>Total Amount:</span>
-              <span className="font-mono text-[#0B3A82]">₹{invoice.grand_total.toLocaleString('en-IN')}</span>
+              <span className="font-mono text-[#0B3A82]">₹{(Number(invoice.grand_total) || 0).toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between text-emerald-700 font-semibold py-1">
               <span>Payment Received:</span>
-              <span className="font-mono">₹{invoice.amount_paid.toLocaleString('en-IN')}</span>
+              <span className="font-mono">₹{(Number(invoice.amount_paid) || 0).toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between text-amber-700 font-bold border-t border-slate-200 pt-1.5">
               <span>Balance Due:</span>
-              <span className="font-mono">₹{invoice.balance_due.toLocaleString('en-IN')}</span>
+              <span className="font-mono">₹{(Number(invoice.balance_due) || 0).toLocaleString('en-IN')}</span>
             </div>
           </div>
         </div>
